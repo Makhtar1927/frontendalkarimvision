@@ -161,7 +161,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
         setIsSuccess(false);
         clearCart();
         onClose();
-        window.open(whatsappLink, '_blank');
+        window.location.href = whatsappLink;
       }, 2500);
   };
 
