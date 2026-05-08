@@ -42,9 +42,9 @@ const Admin = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const [formData, setFormData] = useState({
-    name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', image_url: '', variants: []
+    name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', existing_media: [], variants: []
   });
-  const [imageFile, setImageFile] = useState(null); // Nouvel état pour le fichier
+  const [selectedFiles, setSelectedFiles] = useState([]); // Nouvel état pour les fichiers multiples
   const [isUploading, setIsUploading] = useState(false); // État pour le chargement
   const [searchQuery, setSearchQuery] = useState(''); // État pour la barre de recherche
   
@@ -115,7 +115,10 @@ const Admin = () => {
           signal: controller.signal
         });
         
-        if (!response.ok) return;
+        if (!response.ok) {
+          if (!controller.signal.aborted) setTimeout(connectSSE, 3000);
+          return;
+        }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -123,7 +126,11 @@ const Admin = () => {
 
         while (true) {
           const { value, done } = await reader.read();
-          if (done) break;
+          if (done) {
+            // Reconnexion automatique si le serveur coupe la connexion
+            if (!controller.signal.aborted) setTimeout(connectSSE, 3000);
+            break;
+          }
           
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n\n');
@@ -146,7 +153,9 @@ const Admin = () => {
             }
           });
         }
-      } catch (err) {}
+      } catch (err) {
+        if (!controller.signal.aborted) setTimeout(connectSSE, 3000);
+      }
     };
 
     connectSSE();
@@ -273,24 +282,31 @@ const Admin = () => {
   // Fonction pour ouvrir la modale en mode "Ajout"
   const handleOpenAdd = () => {
     setEditingId(null);
-    setFormData({ name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', image_url: '', variants: [] });
-    setImageFile(null);
+    setFormData({ name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', existing_media: [], variants: [] });
+    setSelectedFiles([]);
     setIsModalOpen(true);
   };
 
   // Fonction pour ouvrir la modale en mode "Modification"
   const handleOpenEdit = (product) => {
     setEditingId(product.id);
+    let existingMedia = [];
+    if (product.media_urls) {
+        existingMedia = typeof product.media_urls === 'string' ? JSON.parse(product.media_urls) : product.media_urls;
+    } else if (product.image_url) {
+        existingMedia = [product.image_url];
+    }
+    
     setFormData({
       name: product.name,
       brand: product.brand,
       category: product.category,
       base_price: product.base_price,
       compare_at_price: product.compare_at_price || '',
-      image_url: product.image_url || '',
+      existing_media: existingMedia || [],
       variants: product.variants || []
     });
-    setImageFile(null);
+    setSelectedFiles([]);
     setIsModalOpen(true);
   };
 
@@ -307,11 +323,16 @@ const Admin = () => {
     data.append('compare_at_price', formData.compare_at_price);
     data.append('is_on_sale', formData.compare_at_price && parseFloat(formData.compare_at_price) > parseFloat(formData.base_price) ? 'true' : 'false');
     
+    // Ajout des fichiers multiples
+    selectedFiles.forEach(file => {
+      data.append('media', file);
+    });
     
-    // Le champ 'image' correspond au middleware backend : upload.single('image')
-    if (imageFile) {
-      data.append('image', imageFile);
+    // Si c'est une modification, on envoie aussi les médias existants conservés
+    if (editingId) {
+        data.append('existing_media', JSON.stringify(formData.existing_media));
     }
+
     // Ajout des variantes
     data.append('variants', JSON.stringify(formData.variants || []));
 
@@ -329,8 +350,8 @@ const Admin = () => {
 
     if (success) {
       setIsModalOpen(false);
-      setFormData({ name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', image_url: '', variants: [] });
-      setImageFile(null); // On reset le fichier
+      setFormData({ name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', existing_media: [], variants: [] });
+      setSelectedFiles([]); // On reset les fichiers
       setEditingId(null);
     } else {
       alert("Une erreur est survenue lors de la sauvegarde. Veuillez réessayer.");
@@ -1391,8 +1412,43 @@ const Admin = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Image / Vidéo (Cloudinary)</label>
-                <input onChange={e => setImageFile(e.target.files[0])} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-bold file:bg-bustantech-gold file:text-white hover:file:bg-bustantech-gold-dark cursor-pointer" />
+                <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Images & Vidéos (Glissez ou Cliquez)</label>
+                <div className="flex flex-col gap-3">
+                    <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-bold file:bg-bustantech-gold file:text-white hover:file:bg-bustantech-gold-dark cursor-pointer" />
+                    
+                    {/* PREVIEW DES MÉDIAS */}
+                    {(formData.existing_media.length > 0 || selectedFiles.length > 0) && (
+                        <div className="flex gap-2 flex-wrap mt-2 p-3 bg-gray-50 dark:bg-zinc-900/50 rounded-sm border border-gray-100 dark:border-gray-800">
+                            {/* Médias Existants (Edit) */}
+                            {formData.existing_media.map((url, idx) => (
+                                <div key={`old-${idx}`} className="relative w-16 h-16 group rounded-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+                                    {url.match(/\.(mp4|webm)$/i) ? (
+                                        <video src={url} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <img src={url} className="w-full h-full object-cover" />
+                                    )}
+                                    <button type="button" onClick={() => setFormData({...formData, existing_media: formData.existing_media.filter(u => u !== url)})} className="absolute inset-0 bg-black/60 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            ))}
+                            {/* Nouveaux Médias (Files) */}
+                            {selectedFiles.map((file, idx) => (
+                                <div key={`new-${idx}`} className="relative w-16 h-16 group rounded-sm overflow-hidden border border-bustantech-gold/50 shadow-sm">
+                                    <div className="absolute top-0 left-0 bg-bustantech-gold text-white text-[8px] font-bold px-1 rounded-br-sm z-10">NOUVEAU</div>
+                                    {file.type.includes('video') ? (
+                                        <video src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
+                                    )}
+                                    <button type="button" onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))} className="absolute inset-0 bg-black/60 flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
               </div>
 
               {/* SECTION VARIANTES */}

@@ -4,7 +4,7 @@ import { useProductStore } from '../store/useProductStore';
 import { useCartStore } from '../store/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, ShoppingBag, Star, Loader2, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ShoppingBag, Star, Loader2, CheckCircle2 } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { apiFetch } from '../components/api';
 
@@ -21,6 +21,10 @@ const ProductPage = () => {
   const [newReview, setNewReview] = useState({ name: '', rating: 5, comment: '' });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  
+  // NOUVEAU : Index du carousel et Fullscreen
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Chargement des produits similaires
   useEffect(() => {
@@ -88,7 +92,33 @@ const ProductPage = () => {
     if (currentProduct && currentProduct.variants?.length > 0) {
       setSelectedVariant(currentProduct.variants[0]);
     }
+    setCurrentMediaIndex(0); // Reset index when product changes
   }, [currentProduct]);
+  
+  // Utilitaire pour récupérer toutes les images/vidéos
+  const getMediaUrls = () => {
+    if (!currentProduct) return [];
+    if (currentProduct.media_urls && currentProduct.media_urls.length > 0) {
+        return typeof currentProduct.media_urls === 'string' 
+            ? JSON.parse(currentProduct.media_urls) 
+            : currentProduct.media_urls;
+    }
+    if (currentProduct.image_url) {
+        return [currentProduct.image_url];
+    }
+    return [];
+  };
+  
+  const mediaUrls = getMediaUrls();
+
+  // NOUVEAU : Auto-scroll du carousel (Désactivé si en plein écran)
+  useEffect(() => {
+    if (mediaUrls.length <= 1 || isFullscreen) return;
+    const interval = setInterval(() => {
+      setCurrentMediaIndex((prev) => (prev + 1) % mediaUrls.length);
+    }, 5000); // Défilement auto toutes les 5 secondes
+    return () => clearInterval(interval);
+  }, [mediaUrls.length, isFullscreen]);
 
   if (loading) {
     return (
@@ -171,24 +201,70 @@ const ProductPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Colonne Image / Vidéo */}
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="relative aspect-square bg-gray-100 dark:bg-bustantech-gray rounded-sm overflow-hidden shadow-lg">
-          {currentProduct.image_url?.match(/\.(mp4|mov|webm)$/i) ? (
-            <video 
-              src={currentProduct.image_url} 
-              autoPlay 
-              loop 
-              muted 
-              playsInline 
-              controls
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <img 
-              src={currentProduct.image_url || 'https://via.placeholder.com/800'} 
-              alt={currentProduct.name} 
-              className="w-full h-full object-cover" 
-            />
+        {/* Colonne Image / Vidéo avec Carousel Professionnel */}
+        <div className="relative aspect-square bg-gray-100 dark:bg-bustantech-gray rounded-sm overflow-hidden shadow-lg group">
+          <AnimatePresence mode="wait">
+            <motion.div 
+                key={currentMediaIndex}
+                initial={{ opacity: 0, scale: 1.05 }} 
+                animate={{ opacity: 1, scale: 1 }} 
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="w-full h-full"
+            >
+              {mediaUrls.length > 0 ? (
+                mediaUrls[currentMediaIndex].match(/\.(mp4|mov|webm)$/i) ? (
+                  <video 
+                    src={mediaUrls[currentMediaIndex]} 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline 
+                    controls
+                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={() => setIsFullscreen(true)}
+                  />
+                ) : (
+                  <img 
+                    src={mediaUrls[currentMediaIndex]} 
+                    alt={`${currentProduct.name} - Vue ${currentMediaIndex + 1}`} 
+                    className="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-105" 
+                    onClick={() => setIsFullscreen(true)}
+                  />
+                )
+              ) : (
+                <img src="https://via.placeholder.com/800" alt="Placeholder" className="w-full h-full object-cover" />
+              )}
+            </motion.div>
+          </AnimatePresence>
+          
+          {/* Flèches de navigation du Carousel */}
+          {mediaUrls.length > 1 && (
+              <>
+                  <button 
+                      onClick={() => setCurrentMediaIndex((prev) => (prev - 1 + mediaUrls.length) % mediaUrls.length)}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center rounded-full text-black dark:text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-bustantech-gold hover:text-white shadow-md z-20"
+                  >
+                      <ChevronLeft size={24} />
+                  </button>
+                  <button 
+                      onClick={() => setCurrentMediaIndex((prev) => (prev + 1) % mediaUrls.length)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center rounded-full text-black dark:text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-bustantech-gold hover:text-white shadow-md z-20"
+                  >
+                      <ChevronRight size={24} />
+                  </button>
+                  
+                  {/* Indicateurs (Dots) */}
+                  <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-20">
+                      {mediaUrls.map((_, idx) => (
+                          <button 
+                              key={idx}
+                              onClick={() => setCurrentMediaIndex(idx)}
+                              className={`w-2 h-2 rounded-full transition-all ${idx === currentMediaIndex ? 'bg-bustantech-gold w-6' : 'bg-white/50 hover:bg-white/80'}`}
+                          />
+                      ))}
+                  </div>
+              </>
           )}
           
           {/* CONTENEUR DES BADGES */}
@@ -206,7 +282,7 @@ const ProductPage = () => {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Colonne Infos */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-col">
@@ -357,7 +433,7 @@ const ProductPage = () => {
         </div>
       )}
 
-      {/* TOAST DE NOTIFICATION (Fixé en bas à droite de l'écran) */}
+      {/* TOAST DE NOTIFICATION */}
       <AnimatePresence>
         {showToast && (
           <motion.div
@@ -368,6 +444,91 @@ const ProductPage = () => {
           >
             <CheckCircle2 size={24} />
             <span className="font-bold tracking-wide text-sm">{currentProduct.name} a été ajouté au panier.</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL FULLSCREEN (LIGHTBOX) POUR LES IMAGES/VIDEOS */}
+      <AnimatePresence>
+        {isFullscreen && mediaUrls.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
+            onClick={() => setIsFullscreen(false)} // Ferme si on clique à côté
+          >
+            {/* Bouton Fermer */}
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
+              className="absolute top-6 right-6 text-white hover:text-bustantech-gold transition-colors z-50 bg-black/50 p-2 rounded-full"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+
+            {/* Contenu (Image ou Vidéo) avec flexibilité absolue */}
+            <div 
+              className="relative w-full max-w-7xl h-full flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()} // Empêche la fermeture quand on clique sur l'image
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentMediaIndex}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full h-full flex items-center justify-center"
+                >
+                  {mediaUrls[currentMediaIndex].match(/\.(mp4|mov|webm)$/i) ? (
+                    <video 
+                      src={mediaUrls[currentMediaIndex]} 
+                      controls
+                      autoPlay
+                      className="max-w-full max-h-full rounded-sm object-contain shadow-2xl"
+                    />
+                  ) : (
+                    <img 
+                      src={mediaUrls[currentMediaIndex]} 
+                      alt="Aperçu HD" 
+                      className="max-w-full max-h-full rounded-sm object-contain shadow-2xl cursor-zoom-out"
+                      onClick={() => setIsFullscreen(false)}
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Flèches de navigation de la Lightbox */}
+              {mediaUrls.length > 1 && (
+                <>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setCurrentMediaIndex((prev) => (prev - 1 + mediaUrls.length) % mediaUrls.length); }}
+                    className="absolute left-0 sm:left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-bustantech-gold text-white flex items-center justify-center rounded-full transition-all shadow-lg z-20 backdrop-blur-sm"
+                  >
+                    <ChevronLeft size={32} />
+                  </button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setCurrentMediaIndex((prev) => (prev + 1) % mediaUrls.length); }}
+                    className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-bustantech-gold text-white flex items-center justify-center rounded-full transition-all shadow-lg z-20 backdrop-blur-sm"
+                  >
+                    <ChevronRight size={32} />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Indicateurs en bas */}
+            {mediaUrls.length > 1 && (
+              <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-20" onClick={(e) => e.stopPropagation()}>
+                {mediaUrls.map((_, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setCurrentMediaIndex(idx)}
+                    className={`h-1.5 rounded-full transition-all ${idx === currentMediaIndex ? 'bg-bustantech-gold w-8' : 'bg-white/50 w-2 hover:bg-white'}`}
+                  />
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

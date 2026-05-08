@@ -149,7 +149,7 @@ export const useProductStore = create((set, get) => ({
     set({ loading: true, isFetching: true, error: null });
     
     try {
-      const response = await apiFetch('/products');
+      const response = await apiFetch('/products?limit=1000');
       if (response.ok) {
         const data = await response.json();
         set({ 
@@ -175,7 +175,7 @@ export const useProductStore = create((set, get) => ({
     try {
       // On lance les appels essentiels en parallèle
       const [productsRes, statsRes, ordersRes] = await Promise.all([
-        apiFetch('/products'),
+        apiFetch('/products?limit=1000'),
         apiFetch('/products/stats'),
         apiFetch('/orders')
       ]);

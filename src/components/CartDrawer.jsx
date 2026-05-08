@@ -78,7 +78,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
   }
   const finalTotal = Math.max(0, subtotal - discountAmount + shippingCost);
 
-  const handleOrderSubmit = async () => {
+  const handleOrderSubmit = async (paymentType = 'whatsapp') => {
     if (!customerName || !customerPhone) {
       setFormError('Veuillez renseigner votre nom et votre numéro de téléphone.');
       return;
@@ -90,7 +90,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
       customer_name: customerName,
       customer_phone: customerPhone,
       customer_address: DELIVERY_ZONES[deliveryZone].name, // Sauvegardé en base de données
-      payment_method: 'WhatsApp / Paiement à la livraison',
+      payment_method: paymentType === 'wave' ? 'Wave' : 'WhatsApp / Paiement à la livraison',
       total_amount: finalTotal, // On envoie le montant TTC (avec livraison)
       promo_code: appliedPromo ? appliedPromo.code : null, // On transmet le code au backend
       items: cart.map(item => {
@@ -118,18 +118,36 @@ const CartDrawer = ({ isOpen, onClose }) => {
         throw new Error(result.error || result.message || 'La création de la commande a échoué.');
       }
 
-      triggerWhatsApp(result.orderId);
+      if (paymentType === 'wave') {
+        triggerWave(result.orderId);
+      } else {
+        triggerWhatsApp(result.orderId);
+      }
     } catch (error) {
       console.error(error);
-      // MODE HORS-LIGNE : Si le serveur est injoignable ou s'il s'agit d'une démo, on sécurise la vente en envoyant quand même le WhatsApp !
+      // MODE HORS-LIGNE : Si le serveur est injoignable ou s'il s'agit d'une démo, on sécurise la vente en envoyant quand même le WhatsApp/Wave !
       if (error.message.includes("Serveur injoignable") || error.message.includes("démonstration")) {
-        triggerWhatsApp("HORS-LIGNE");
+        if (paymentType === 'wave') {
+          triggerWave("HORS-LIGNE");
+        } else {
+          triggerWhatsApp("HORS-LIGNE");
+        }
       } else {
         setFormError(error.message || "Une erreur est survenue. Veuillez réessayer.");
       }
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const triggerWave = (orderId) => {
+    setIsSuccess(true);
+    setTimeout(() => {
+      setIsSuccess(false);
+      clearCart();
+      onClose();
+      window.location.href = "https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/";
+    }, 2500);
   };
 
   const triggerWhatsApp = (orderId) => {
@@ -333,9 +351,27 @@ const CartDrawer = ({ isOpen, onClose }) => {
             {/* BOUTON COMMANDER - FIXE EN BAS */}
             <div className="pt-4 border-t border-gray-100 dark:border-gray-800 mt-auto shrink-0 space-y-3">
               <button 
-                onClick={handleOrderSubmit}
+                onClick={() => handleOrderSubmit('wave')}
                 disabled={cart.length === 0 || isSubmitting}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-sm font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-3.5 rounded-sm font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={22} className="animate-spin" />
+                    ENREGISTREMENT...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" className="w-6 h-6"><path d="M256 0c141.4 0 256 114.6 256 256S397.4 512 256 512 0 397.4 0 256 114.6 0 256 0zM358.5 204.3c-1.3-4.1-4.8-7.3-9.1-8.2-22.3-4.6-47.5-6.5-73.4-6.5-25.9 0-51.1 1.9-73.4 6.5-4.3 .9-7.8 4.1-9.1 8.2l-13.6 42.6c-1.8 5.6-.4 11.8 3.6 16.1 4 4.3 10.1 5.9 15.8 4.1l20.4-6.4c18.5-5.8 37.9-8.8 57.5-8.8 19.6 0 39 3 57.5 8.8l20.4 6.4c5.7 1.8 11.8 .2 15.8-4.1 4-4.3 5.4-10.5 3.6-16.1l-13.6-42.6zM256 312c-46.4 0-91 8.9-131.6 24.6-6 2.3-9.5 8.8-8.1 15.1l9.9 44.5c1.4 6.3 6.9 10.9 13.3 11.1 36.3 1.1 75 1.7 116.5 1.7s80.2-.6 116.5-1.7c6.4-.2 11.9-4.8 13.3-11.1l9.9-44.5c1.4-6.3-2.1-12.8-8.1-15.1C347 320.9 302.4 312 256 312z"/></svg>
+                    PAYER AVEC WAVE
+                  </>
+                )}
+              </button>
+
+              <button 
+                onClick={() => handleOrderSubmit('whatsapp')}
+                disabled={cart.length === 0 || isSubmitting}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-3.5 rounded-sm font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <>
@@ -349,7 +385,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   </>
                 )}
               </button>
-              <p className="text-[10px] text-center text-gray-400 uppercase tracking-widest pb-1">Paiement à la livraison ou via Wave/Orange Money</p>
+              <p className="text-[10px] text-center text-gray-400 uppercase tracking-widest pb-1">Paiement 100% sécurisé</p>
             </div>
           </motion.div>
         </>
