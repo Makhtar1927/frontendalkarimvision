@@ -30,6 +30,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [formError, setFormError] = useState('');
   const [deliveryZone, setDeliveryZone] = useState('dakar'); // Zone par défaut
+  const [waveSummaryData, setWaveSummaryData] = useState(null);
 
   // --- RÉCUPÉRATION DES RÉGLAGES ---
   useEffect(() => {
@@ -47,36 +48,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
     if (isOpen) loadSettings();
   }, [isOpen]);
 
-  // --- GESTION DES CODES PROMO ---
-  const [promoCodeInput, setPromoCodeInput] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState(null);
-  const [promoMessage, setPromoMessage] = useState({ type: '', text: '' });
-
-  const VALID_PROMOS = {
-    'VIP10': { type: 'percent', value: 10, description: '10% de remise' },
-    'WELCOME5': { type: 'fixed', value: 5000, description: '-5 000 FCFA' }
-  };
-
-  const handleApplyPromo = () => {
-    const code = promoCodeInput.trim().toUpperCase();
-    if (VALID_PROMOS[code]) {
-      setAppliedPromo({ code, ...VALID_PROMOS[code] });
-      setPromoMessage({ type: 'success', text: `Code appliqué : ${VALID_PROMOS[code].description}` });
-    } else {
-      setAppliedPromo(null);
-      setPromoMessage({ type: 'error', text: 'Code promo invalide ou expiré.' });
-    }
-  };
-
   const subtotal = getTotal();
   const shippingCost = DELIVERY_ZONES[deliveryZone].cost;
-  
-  // Calcul de la remise
-  let discountAmount = 0;
-  if (appliedPromo) {
-    discountAmount = appliedPromo.type === 'percent' ? (subtotal * appliedPromo.value) / 100 : appliedPromo.value;
-  }
-  const finalTotal = Math.max(0, subtotal - discountAmount + shippingCost);
+  const finalTotal = subtotal + shippingCost;
 
   const handleOrderSubmit = async (paymentType = 'whatsapp') => {
     if (!customerName || !customerPhone) {
@@ -92,7 +66,6 @@ const CartDrawer = ({ isOpen, onClose }) => {
       customer_address: DELIVERY_ZONES[deliveryZone].name, // Sauvegardé en base de données
       payment_method: paymentType === 'wave' ? 'Wave' : 'WhatsApp / Paiement à la livraison',
       total_amount: finalTotal, // On envoie le montant TTC (avec livraison)
-      promo_code: appliedPromo ? appliedPromo.code : null, // On transmet le code au backend
       items: cart.map(item => {
         // Détection robuste au cas où la variante est stockée comme un objet complet
         let variantId = item.variant_id || item.variantId || null;
@@ -141,13 +114,14 @@ const CartDrawer = ({ isOpen, onClose }) => {
   };
 
   const triggerWave = (orderId) => {
-    setIsSuccess(true);
-    setTimeout(() => {
-      setIsSuccess(false);
-      clearCart();
-      onClose();
-      window.location.href = "https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/";
-    }, 2500);
+    setWaveSummaryData({ orderId });
+  };
+
+  const handleContinueToWave = () => {
+    clearCart();
+    setWaveSummaryData(null);
+    onClose();
+    window.location.href = "https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/";
   };
 
   const triggerWhatsApp = (orderId) => {
@@ -162,9 +136,6 @@ const CartDrawer = ({ isOpen, onClose }) => {
         message += ` - ${new Intl.NumberFormat('fr-FR').format(item.price * item.quantity)} FCFA\n`;
       });
       
-      if (appliedPromo) {
-        message += `\n🎟️ *Code Promo (${appliedPromo.code}) :* -${new Intl.NumberFormat('fr-FR').format(discountAmount)} FCFA`;
-      }
       message += `\n📦 *Livraison :* ${DELIVERY_ZONES[deliveryZone].name} (+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA)\n`;
       message += `💰 *TOTAL À PAYER : ${new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA*\n\n`;
       message += `Bonjour BoustaneTech Store, je souhaite confirmer ma commande.`;
@@ -227,6 +198,83 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     <div className="w-2 h-2 bg-bustantech-gold rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
                     <div className="w-2 h-2 bg-bustantech-gold rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     <div className="w-2 h-2 bg-bustantech-gold rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                  </div>
+                </motion.div>
+              )}
+              {waveSummaryData && (
+                <motion.div 
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                  className="absolute inset-0 z-[90] bg-white dark:bg-bustantech-black flex flex-col h-full"
+                >
+                  <div className="flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
+                    <h3 className="text-xl font-bold dark:text-white">Récapitulatif</h3>
+                    <button onClick={() => setWaveSummaryData(null)} className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full dark:text-white transition-colors">
+                      <X size={20} />
+                    </button>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-gray-50/50 dark:bg-zinc-900/50">
+                    <div className="bg-white dark:bg-zinc-800 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
+                      <p className="text-gray-700 dark:text-gray-300">
+                        Bonjour <span className="font-bold">{customerName}</span>,
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">
+                        Votre commande a été préparée avec succès. Veuillez vérifier les détails ci-dessous avant de procéder au paiement.
+                      </p>
+                      
+                      <div className="pt-4 pb-2 border-b border-gray-100 dark:border-gray-700">
+                        <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Numéro de commande</p>
+                        <p className="text-2xl md:text-3xl font-black text-bustantech-black dark:text-white tracking-wider">
+                          {waveSummaryData.orderId !== "HORS-LIGNE" ? `N°${waveSummaryData.orderId}` : 'HORS-LIGNE'}
+                        </p>
+                      </div>
+
+                      <div className="space-y-3 pt-2">
+                        <p className="text-xs text-gray-500 uppercase tracking-widest">Articles commandés</p>
+                        {cart.map((item, idx) => (
+                          <div key={idx} className="flex justify-between items-start text-sm">
+                            <div className="flex-1 pr-4">
+                              <span className="font-medium text-gray-800 dark:text-gray-200">{item.quantity}x {item.name}</span>
+                              {item.variant && <p className="text-xs text-gray-500 dark:text-gray-400">{item.variant}</p>}
+                            </div>
+                            <span className="font-bold whitespace-nowrap text-gray-800 dark:text-gray-200">
+                              {new Intl.NumberFormat('fr-FR').format(item.price * item.quantity)} FCFA
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="space-y-2 pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Sous-total</span>
+                          <span className="dark:text-gray-300">{new Intl.NumberFormat('fr-FR').format(subtotal)} FCFA</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Livraison ({DELIVERY_ZONES[deliveryZone].name})</span>
+                          <span className="dark:text-gray-300">{shippingCost > 0 ? `+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA` : 'Gratuit'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <span className="font-bold text-gray-800 dark:text-gray-200">Total à payer</span>
+                        <span className="text-xl font-black text-[#1cc6ff]">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-bustantech-black shrink-0 space-y-3">
+                    <button 
+                      onClick={handleContinueToWave}
+                      className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-4 rounded-sm font-bold flex items-center justify-center gap-3 transition-all text-lg shadow-lg shadow-[#1cc6ff]/20"
+                    >
+                      CONTINUER VERS WAVE
+                    </button>
+                    <p className="text-xs text-center text-gray-400">
+                      Vous serez redirigé vers l'application Wave de manière sécurisée
+                    </p>
                   </div>
                 </motion.div>
               )}
@@ -304,37 +352,12 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     {formError && <p className="text-xs text-center text-red-500">{formError}</p>}
                   </div>
 
-                  {/* CHAMP CODE PROMO */}
-                  <div className="pt-2">
-                    <div className="flex gap-2">
-                      <input 
-                        type="text" 
-                        value={promoCodeInput} 
-                        onChange={(e) => setPromoCodeInput(e.target.value)} 
-                        placeholder="Code promo (Optionnel)" 
-                        className="flex-1 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 text-base md:text-sm dark:text-white focus:border-bustantech-gold outline-none transition-colors uppercase" 
-                      />
-                      <button type="button" onClick={handleApplyPromo} disabled={!promoCodeInput.trim()} className="px-4 py-2 bg-bustantech-black dark:bg-zinc-800 text-white rounded-sm font-bold text-xs hover:bg-bustantech-gold transition-colors disabled:opacity-50">
-                        APPLIQUER
-                      </button>
-                    </div>
-                    {promoMessage.text && (
-                      <p className={`text-xs mt-2 font-bold ${promoMessage.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>{promoMessage.text}</p>
-                    )}
-                  </div>
-
                   {/* RÉCAPITULATIF DES PRIX */}
                   <div className="space-y-2 border-t border-gray-100 dark:border-gray-800 pt-4 pb-2">
                     <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
                       <span>Sous-total</span>
                       <span>{new Intl.NumberFormat('fr-FR').format(subtotal)} FCFA</span>
                     </div>
-                    {discountAmount > 0 && (
-                      <div className="flex justify-between items-center text-sm font-bold text-green-600 dark:text-green-500">
-                        <span>Remise ({appliedPromo.code})</span>
-                        <span>-{new Intl.NumberFormat('fr-FR').format(discountAmount)} FCFA</span>
-                      </div>
-                    )}
                     <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
                       <span>Frais de livraison</span>
                       <span>{shippingCost > 0 ? `+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA` : 'Offerts'}</span>

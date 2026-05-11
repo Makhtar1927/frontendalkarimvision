@@ -66,10 +66,15 @@ const ContactLocation = () => {
               </div>
             </div>
 
-            <button className="flex items-center justify-center w-full sm:w-auto gap-3 bg-bustantech-black dark:bg-bustantech-gold text-white px-6 py-4 md:px-8 rounded-sm font-bold transition-all hover:opacity-90">
+            <a 
+              href="https://wa.me/221774133645" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-full sm:w-auto gap-3 bg-bustantech-black dark:bg-bustantech-gold text-white px-6 py-4 md:px-8 rounded-sm font-bold transition-all hover:opacity-90"
+            >
               <MessageCircle size={20} />
               DISCUTER SUR WHATSAPP
-            </button>
+            </a>
           </motion.div>
 
           {/* DROITE : CARTE INTERACTIVE (Embed Google Maps avec filtre de couleur) */}

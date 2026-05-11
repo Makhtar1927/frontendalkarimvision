@@ -57,17 +57,17 @@ const CategoryGrids = () => {
   return (
     <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-20 bg-white dark:bg-bustantech-black">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 gap-4">
           <div className="space-y-2">
             <h3 className="text-bustantech-gold font-bold tracking-widest text-sm">NOS RAYONS</h3>
-            <h2 className="text-3xl sm:text-4xl font-luxury font-bold dark:text-white">Choisissez votre univers</h2>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-luxury font-bold dark:text-white">Choisissez votre univers</h2>
           </div>
-          <p className="text-gray-500 max-w-sm text-sm">
-            BoustaneTech Store réunit le meilleur de trois mondes pour une expérience shopping unique.
+          <p className="text-gray-500 max-w-sm text-xs sm:text-sm">
+            BoustaneTech Store réunit le meilleur de cinq mondes pour une expérience shopping unique.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
           {categories.map((cat, index) => (
             <motion.div
               key={cat.id}
@@ -80,7 +80,7 @@ const CategoryGrids = () => {
               onClick={() => navigate(cat.route)}
               onKeyDown={(e) => e.key === 'Enter' && navigate(cat.route)}
               aria-label={`Découvrir la catégorie ${cat.title}`}
-              className="group relative h-[350px] sm:h-[400px] lg:h-[500px] overflow-hidden cursor-pointer rounded-sm"
+              className="group relative h-[250px] sm:h-[350px] lg:h-[500px] overflow-hidden cursor-pointer rounded-md"
             >
               {/* IMAGE DE FOND AVEC ZOOM */}
               <div 
@@ -92,21 +92,21 @@ const CategoryGrids = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-opacity group-hover:opacity-80" />
 
               {/* CONTENU TEXTE */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                    {cat.icon}
+              <div className="absolute inset-0 p-4 sm:p-6 lg:p-8 flex flex-col justify-end">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
+                  <div className="p-1 sm:p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                    {React.cloneElement(cat.icon, { size: 16, className: "text-bustantech-gold sm:w-6 sm:h-6" })}
                   </div>
-                  <span className="text-xs font-bold text-bustantech-gold tracking-widest">{cat.name}</span>
+                  <span className="text-[9px] sm:text-xs font-bold text-bustantech-gold tracking-widest truncate">{cat.name}</span>
                 </div>
                 
-                <h4 className="text-2xl font-bold text-white mb-2">{cat.title}</h4>
-                <p className="text-gray-300 text-sm mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h4 className="text-base sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2 leading-tight">{cat.title}</h4>
+                <p className="hidden sm:block text-gray-300 text-sm mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {cat.description}
                 </p>
 
-                <div className="flex items-center gap-2 text-white font-bold text-xs tracking-widest group-hover:text-bustantech-gold transition-colors">
-                  DÉCOUVRIR <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <div className="flex items-center gap-1 sm:gap-2 text-white font-bold text-[9px] sm:text-xs tracking-widest group-hover:text-bustantech-gold transition-colors mt-2 sm:mt-0">
+                  DÉCOUVRIR <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform sm:w-4 sm:h-4" />
                 </div>
               </div>
 

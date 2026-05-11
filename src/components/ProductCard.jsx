@@ -61,7 +61,7 @@ const ProductCard = ({ product }) => {
       whileHover={{ y: -10 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group bg-white dark:bg-bustantech-gray rounded-sm overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-white/5 cursor-pointer"
+      className="group flex flex-col h-full bg-white dark:bg-bustantech-gray rounded-sm overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-white/5 cursor-pointer"
     >
       {/* IMAGE & BADGE */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
@@ -69,6 +69,7 @@ const ProductCard = ({ product }) => {
           src={imageUrl} 
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          onError={(e) => { e.target.src = 'https://placehold.co/400x400/png?text=Image+Indisponible'; }}
         />
         
         {/* CONTENEUR DES BADGES */}
@@ -99,6 +100,7 @@ const ProductCard = ({ product }) => {
             muted
             playsInline
             className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => { e.target.style.display = 'none'; }}
           />
         )}
 
@@ -120,10 +122,10 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* INFOS PRODUIT */}
-      <div className="p-5 space-y-2">
-        <div className="flex justify-between items-center text-[10px] font-bold tracking-widest text-bustantech-gold uppercase">
-          <span>{product.brand}</span>
-          <div className="flex items-center gap-1" title={reviewCount > 0 ? `${reviewCount} avis client(s)` : "Aucun avis"}>
+      <div className="p-4 sm:p-5 flex-1 flex flex-col space-y-2">
+        <div className="flex justify-between items-center text-[10px] font-bold tracking-widest text-bustantech-gold uppercase gap-2">
+          <span className="truncate">{product.brand}</span>
+          <div className="flex items-center gap-1 shrink-0" title={reviewCount > 0 ? `${reviewCount} avis client(s)` : "Aucun avis"}>
             <Star 
               size={10} 
               fill={averageRating > 0 ? "currentColor" : "none"} 
@@ -135,44 +137,46 @@ const ProductCard = ({ product }) => {
           </div>
         </div>
 
-        <h3 className="font-luxury text-lg font-bold dark:text-white truncate">
+        <h3 className="font-luxury text-base sm:text-lg font-bold dark:text-white line-clamp-2">
           {product.name}
         </h3>
 
-        {/* SÉLECTEUR DE VARIANTE */}
-        {validVariants.length > 1 ? (
-          <div className="my-2 relative z-20">
-            <select
-              value={selectedVariant?.sku || ''}
-              onChange={(e) => {
-                const variant = validVariants.find(v => v.sku === e.target.value);
-                setSelectedVariant(variant);
-              }}
-              onClick={(e) => e.stopPropagation()} // Pour ne pas déclencher d'éventuels liens sur la carte
-              onKeyDown={(e) => e.stopPropagation()}
-              aria-label={`Sélectionner une variante pour ${product.name}`}
-              className="w-full text-xs p-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors cursor-pointer"
-            >
-              {validVariants.map((variant) => (
-                <option key={variant.id || variant.sku} value={variant.sku} disabled={Number(variant.stock_quantity) <= 0}>
-                  {variant.attribute_value} {parseFloat(variant.price_modifier) > 0 ? `(+ ${new Intl.NumberFormat('fr-FR').format(variant.price_modifier)} FCFA)` : ''} {Number(variant.stock_quantity) <= 0 ? '(Rupture)' : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : validVariants.length === 1 ? (
-          <p className="text-xs text-gray-500 my-1">{validVariants[0].attribute_value}</p>
-        ) : null}
+        <div className="mt-auto pt-2">
+          {/* SÉLECTEUR DE VARIANTE */}
+          {validVariants.length > 1 ? (
+            <div className="mb-2 relative z-20">
+              <select
+                value={selectedVariant?.sku || ''}
+                onChange={(e) => {
+                  const variant = validVariants.find(v => v.sku === e.target.value);
+                  setSelectedVariant(variant);
+                }}
+                onClick={(e) => e.stopPropagation()} // Pour ne pas déclencher d'éventuels liens sur la carte
+                onKeyDown={(e) => e.stopPropagation()}
+                aria-label={`Sélectionner une variante pour ${product.name}`}
+                className="w-full text-xs p-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors cursor-pointer"
+              >
+                {validVariants.map((variant) => (
+                  <option key={variant.id || variant.sku} value={variant.sku} disabled={Number(variant.stock_quantity) <= 0}>
+                    {variant.attribute_value} {parseFloat(variant.price_modifier) > 0 ? `(+ ${new Intl.NumberFormat('fr-FR').format(variant.price_modifier)} FCFA)` : ''} {Number(variant.stock_quantity) <= 0 ? '(Rupture)' : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : validVariants.length === 1 ? (
+            <p className="text-xs text-gray-500 mb-2 truncate">{validVariants[0].attribute_value}</p>
+          ) : null}
 
-        <div className="flex items-baseline gap-2">
-          <span className="text-xl font-bold text-bustantech-gold">
-            {new Intl.NumberFormat('fr-FR').format(displayPrice)} FCFA
-          </span>
-          {compareAtPrice > basePrice && (
-            <span className="text-xs font-medium text-gray-400 line-through decoration-gray-400/70">
-              {new Intl.NumberFormat('fr-FR').format(compareAtPrice + (selectedVariant?.price_modifier ? parseFloat(selectedVariant.price_modifier) : 0))}
+          <div className="flex items-baseline gap-2">
+            <span className="text-lg sm:text-xl font-bold text-bustantech-gold">
+              {new Intl.NumberFormat('fr-FR').format(displayPrice)} FCFA
             </span>
-          )}
+            {compareAtPrice > basePrice && (
+              <span className="text-[10px] sm:text-xs font-medium text-gray-400 line-through decoration-gray-400/70">
+                {new Intl.NumberFormat('fr-FR').format(compareAtPrice + (selectedVariant?.price_modifier ? parseFloat(selectedVariant.price_modifier) : 0))}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

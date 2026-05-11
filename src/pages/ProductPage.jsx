@@ -223,6 +223,7 @@ const ProductPage = () => {
                     controls
                     className="w-full h-full object-cover cursor-pointer"
                     onClick={() => setIsFullscreen(true)}
+                    onError={(e) => { e.target.style.display = 'none'; }}
                   />
                 ) : (
                   <img 
@@ -230,6 +231,7 @@ const ProductPage = () => {
                     alt={`${currentProduct.name} - Vue ${currentMediaIndex + 1}`} 
                     className="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-105" 
                     onClick={() => setIsFullscreen(true)}
+                    onError={(e) => { e.target.src = 'https://placehold.co/800x800/png?text=Image+Indisponible'; }}
                   />
                 )
               ) : (
@@ -411,7 +413,7 @@ const ProductPage = () => {
           <h2 className="text-2xl font-luxury font-bold dark:text-white mb-8">
             Vous aimerez aussi
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {similarProducts.map(p => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -425,7 +427,7 @@ const ProductPage = () => {
           <h2 className="text-2xl font-luxury font-bold dark:text-white mb-8">
             Récemment consultés
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {recentlyViewed.map(p => (
               <ProductCard key={`recent-${p.id}`} product={p} />
             ))}
@@ -486,6 +488,7 @@ const ProductPage = () => {
                       controls
                       autoPlay
                       className="max-w-full max-h-full rounded-sm object-contain shadow-2xl"
+                      onError={(e) => { e.target.style.display = 'none'; }}
                     />
                   ) : (
                     <img 
@@ -493,6 +496,7 @@ const ProductPage = () => {
                       alt="Aperçu HD" 
                       className="max-w-full max-h-full rounded-sm object-contain shadow-2xl cursor-zoom-out"
                       onClick={() => setIsFullscreen(false)}
+                      onError={(e) => { e.target.src = 'https://placehold.co/800x800/png?text=Image+Indisponible'; }}
                     />
                   )}
                 </motion.div>

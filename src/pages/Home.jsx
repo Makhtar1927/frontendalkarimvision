@@ -1,6 +1,7 @@
 import Hero from '../components/Hero';
 import CategoryGrids from '../components/CategoryGrids';
 import ProductGrid from '../components/ProductGrid';
+import QuickCategories from '../components/QuickCategories';
 import ContactLocation from '../components/ContactLocation';
 
 const Home = () => {
@@ -9,6 +10,7 @@ const Home = () => {
       <Hero />
       <CategoryGrids />
       <ProductGrid />
+      <QuickCategories />
       <ContactLocation />
     </>
   );

@@ -18,8 +18,7 @@ export const useCartStore = create((set, get) => ({
       set({ 
         cart: currentCart.map(item => 
           item.id === itemIdentifier ? { ...item, quantity: item.quantity + 1 } : item
-        ),
-        isCartOpen: true // UX Rapide: Ouvre le panier
+        )
       });
     } else {
       set({ 
@@ -32,8 +31,7 @@ export const useCartStore = create((set, get) => ({
           price: parseFloat(product.base_price) + parseFloat(safeVariant.price_modifier || 0),
           quantity: 1,
           sku: safeVariant.sku
-        }],
-        isCartOpen: true // UX Rapide: Ouvre le panier
+        }]
       });
     }
   },

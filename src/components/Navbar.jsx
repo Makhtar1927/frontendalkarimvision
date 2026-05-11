@@ -109,6 +109,8 @@ const Navbar = () => {
   const mainName = storeParts[0] || 'BOUSTANETECH';
   const subName = storeParts.slice(1).join('') || 'STORE';
 
+  // Le clic à l'extérieur est géré par un overlay invisible (voir plus bas)
+
   return (
     <>
     <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-bustantech-black/80 backdrop-blur-md border-b border-bustantech-gold/20 transition-colors duration-300">
@@ -117,9 +119,7 @@ const Navbar = () => {
           
           {/* LOGO */}
           <Link to="/" className="flex-shrink-0 flex items-center gap-3">
-            <h1 className="text-2xl font-luxury font-bold text-bustantech-gold tracking-widest">
-              {mainName}<span className="text-bustantech-black dark:text-white">{subName}</span>
-            </h1>
+            <img src="/favicon.svg" alt={settings.store_name} className="h-10 md:h-12 w-auto object-contain" />
             {settings.maintenance_mode && isAuthenticated && (
               <div className="flex items-center gap-1 bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-[10px] font-bold border border-red-200">
                 <HardHat size={12} /> MAINTENANCE
@@ -127,77 +127,109 @@ const Navbar = () => {
             )}
           </Link>
 
-          {/* NAVIGATION DESKTOP (Menu complet) */}
-          <div className="hidden xl:flex space-x-8 items-center">
-            <Link to="/category/tech" className="flex items-center gap-2 text-sm font-medium hover:text-bustantech-gold transition-colors dark:text-white">
-              <Smartphone size={18} /> TÉLÉPHONES
+          {/* NAVIGATION DESKTOP (Icônes avec texte permanent) */}
+          <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center space-x-6">
+            <Link to="/category/tech" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
+                <Smartphone size={22} />
+              </div>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Téléphones</span>
             </Link>
-            <Link to="/category/computers" className="flex items-center gap-2 text-sm font-medium hover:text-bustantech-gold transition-colors dark:text-white">
-              <Laptop size={18} /> ORDINATEURS
+            <Link to="/category/computers" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
+                <Laptop size={22} />
+              </div>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Ordinateurs</span>
             </Link>
-            <Link to="/category/accessories" className="flex items-center gap-2 text-sm font-medium hover:text-bustantech-gold transition-colors dark:text-white">
-              <Headphones size={18} /> ACCESSOIRES
+            <Link to="/category/accessories" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
+                <Headphones size={22} />
+              </div>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Accessoires</span>
             </Link>
-            <Link to="/category/perfume" className="flex items-center gap-2 text-sm font-medium hover:text-bustantech-gold transition-colors dark:text-white">
-              <Wind size={18} /> PARFUMERIE
+            <Link to="/category/perfume" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
+                <Wind size={22} />
+              </div>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Parfumerie</span>
             </Link>
-            <Link to="/category/coffee" className="flex items-center gap-2 text-sm font-medium hover:text-bustantech-gold transition-colors dark:text-white">
-              <Coffee size={18} /> CAFE
+            <Link to="/category/coffee" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
+                <Coffee size={22} />
+              </div>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Le Coin Café</span>
             </Link>
             {isAuthenticated && (
               <>
-                <Link to="/admin" className="flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-bustantech-gold transition-colors">
-                  <ShieldAlert size={18} /> ADMIN
+                <Link to="/admin" className="group flex flex-col items-center justify-center text-gray-400 hover:text-bustantech-gold transition-all">
+                  <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
+                    <ShieldAlert size={22} />
+                  </div>
+                  <span className="text-[9px] font-bold tracking-widest uppercase">Admin</span>
                 </Link>
                 <button 
                   onClick={() => { logout(); navigate('/'); }}
-                  title="Se déconnecter"
-                  className="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-600 transition-colors ml-4"
+                  className="group flex flex-col items-center justify-center text-red-400 hover:text-red-600 transition-all"
                 >
-                  <LogOut size={18} />
+                  <div className="p-2 rounded-full group-hover:bg-red-50 dark:group-hover:bg-red-900/20 transition-colors">
+                    <LogOut size={22} />
+                  </div>
+                  <span className="text-[9px] font-bold tracking-widest uppercase">Déconnexion</span>
                 </button>
               </>
             )}
           </div>
 
-          {/* OUTILS DESKTOP (Recherche, DarkMode, Panier, Suivi) */}
-          <div className="hidden xl:flex items-center space-x-5">
-            <button onClick={() => setIsTrackingOpen(true)} aria-label="Suivre ma commande" title="Suivre ma commande" className="p-2 hover:text-bustantech-gold dark:text-white transition-colors">
-              <PackageSearch aria-hidden="true" size={22} />
+          {/* OUTILS ET MENU */}
+          <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+            <button onClick={() => setIsTrackingOpen(true)} aria-label="Suivre ma commande" title="Suivre ma commande" className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 hover:bg-bustantech-gold hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
+              <PackageSearch aria-hidden="true" size={18} className="sm:w-5 sm:h-5" />
             </button>
 
-            <button onClick={() => setIsSearchOpen(true)} aria-label="Rechercher des produits" className="p-2 hover:text-bustantech-gold dark:text-white transition-colors">
-              <Search aria-hidden="true" size={22} />
+            <button onClick={() => setIsSearchOpen(true)} aria-label="Rechercher des produits" className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 hover:bg-bustantech-gold hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
+              <Search aria-hidden="true" size={18} className="sm:w-5 sm:h-5" />
             </button>
             
-            <button onClick={toggleDarkMode} aria-label={isDarkMode ? "Passer au mode clair" : "Passer au mode sombre"} className="p-2 rounded-full bg-bustantech-beige dark:bg-bustantech-gray text-bustantech-gold transition-all">
+            <button onClick={toggleDarkMode} aria-label={isDarkMode ? "Passer au mode clair" : "Passer au mode sombre"} className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-bustantech-beige dark:bg-bustantech-gray text-bustantech-gold transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
               {isDarkMode ? <Sun aria-hidden="true" size={20} /> : <Moon aria-hidden="true" size={20} />}
             </button>
 
-            <div className="relative p-2 cursor-pointer group" role="button" tabIndex={0} aria-label="Ouvrir le panier" onClick={toggleCart} onKeyDown={(e) => e.key === 'Enter' && toggleCart()}>
-              <ShoppingCart aria-hidden="true" size={24} className="group-hover:text-bustantech-gold transition-colors dark:text-white" />
+            <div className="relative cursor-pointer group" role="button" tabIndex={0} aria-label="Ouvrir le panier" onClick={toggleCart} onKeyDown={(e) => e.key === 'Enter' && toggleCart()}>
+              <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 group-hover:bg-bustantech-gold group-hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
+                <ShoppingCart aria-hidden="true" size={18} className="sm:w-5 sm:h-5" />
+              </div>
               {itemCount > 0 && (
-                <span className="absolute top-0 right-0 bg-bustantech-gold text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white dark:border-bustantech-black">
                   {itemCount}
                 </span>
               )}
             </div>
-          </div>
 
-          {/* Menu Mobile Button */}
-          <button className="xl:hidden p-2 text-bustantech-black dark:text-white" aria-expanded={isMenuOpen} aria-label="Menu principal" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={32} /> : <Menu size={32} />}
-          </button>
+            {/* Menu Mobile Button */}
+            <button id="hamburger-button" className="lg:hidden flex items-center justify-center w-10 h-10 ml-1 rounded-md text-bustantech-black dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all" aria-expanded={isMenuOpen} aria-label="Menu principal" onClick={(e) => { e.stopPropagation(); setIsMenuOpen((prev) => !prev); }}>
+              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
       </div>
     </nav>
 
+      {/* OVERLAY FERMETURE MENU MOBILE (Clic à l'extérieur) */}
+      {isMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 z-30 bg-black/10 backdrop-blur-[2px]"
+          onClick={() => setIsMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* MOBILE MENU (Animé) */}
       {isMenuOpen && (
         <motion.div 
+          id="mobile-menu-container"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="xl:hidden fixed top-[80px] left-0 right-0 w-full bg-white/95 dark:bg-bustantech-black/95 backdrop-blur-xl border-b border-bustantech-gold/20 px-6 py-8 shadow-2xl z-40 max-h-[calc(100vh-80px)] overflow-y-auto"
+          className="lg:hidden fixed top-[80px] left-0 right-0 w-full bg-white/95 dark:bg-bustantech-black/95 backdrop-blur-xl border-b border-bustantech-gold/20 px-6 py-8 shadow-2xl z-40 max-h-[calc(100vh-80px)] overflow-y-auto"
         >
           {/* OUTILS MOBILES */}
           <div className="grid grid-cols-4 gap-3 mb-8 pb-8 border-b border-gray-100 dark:border-gray-800">
@@ -376,7 +408,12 @@ const Navbar = () => {
                           onClick={() => { navigate(`/product/${product.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                           className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-zinc-900/50 cursor-pointer border-b border-gray-50 dark:border-gray-800/50 transition-colors"
                         >
-                          <img src={imageUrl || 'https://via.placeholder.com/100'} alt={product.name} className="w-14 h-14 object-cover rounded-sm border border-gray-100 dark:border-gray-800" />
+                          <img 
+                            src={imageUrl || 'https://via.placeholder.com/100'} 
+                            alt={product.name} 
+                            className="w-14 h-14 object-cover rounded-sm border border-gray-100 dark:border-gray-800" 
+                            onError={(e) => { e.target.src = 'https://placehold.co/100x100/png?text=Indispo'; }}
+                          />
                           <div className="flex-1">
                             <h4 className="font-bold dark:text-white">{product.name}</h4>
                             <p className="text-xs text-bustantech-gold uppercase tracking-widest">{product.brand}</p>
