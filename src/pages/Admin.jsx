@@ -513,12 +513,17 @@ const Admin = () => {
             th { text-align: left; padding: 12px 10px; background: #f4f4f5; border-bottom: 2px solid #e4e4e7; color: #71717a; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
             .total-section { text-align: right; font-size: 18px; margin-top: 20px; padding-top: 20px; border-top: 2px solid #f4f4f5; }
             .total-section strong { color: #d4af37; font-size: 28px; display: block; margin-top: 5px; }
-            @media print { body { padding: 0; } @page { margin: 1.5cm; } }
+            @media print { body { padding: 0; } @page { size: A4 portrait; margin: 1.5cm; } }
           </style>
         </head>
         <body>
           <div class="header">
-            <div class="logo">BOUSTANETECH<span> STORE</span></div>
+            <div class="logo">
+              <div style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
+                <div>BOUSTANETECH<span> STORE</span></div>
+                <img src="${window.location.origin}/favicon.svg" alt="Bustantech Logo" style="height: 50px; width: auto;" />
+              </div>
+            </div>
             <div class="invoice-details">
               <h1 style="margin:0 0 5px 0; color: #18181b; letter-spacing: 2px;">FACTURE</h1>
               <strong>N° :</strong> #${order.id.toString().padStart(4, '0')}<br/>
