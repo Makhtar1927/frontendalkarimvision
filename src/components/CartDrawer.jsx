@@ -17,9 +17,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
   // 1. Tarifs de livraison par zone (Mapés sur les réglages)
   const DELIVERY_ZONES = {
-    'dakar': { name: 'Dakar', cost: settings.delivery_cost_dakar },
-    'suburbs': { name: 'Banlieue / Hors Dakar', cost: settings.delivery_cost_suburbs },
-    'regions': { name: 'Régions (Sénégal)', cost: settings.delivery_cost_regions },
+    'dakar': { name: 'Dakar', cost: Number(settings.delivery_cost_dakar) || 0 },
+    'suburbs': { name: 'Banlieue / Hors Dakar', cost: Number(settings.delivery_cost_suburbs) || 0 },
+    'regions': { name: 'Régions (Sénégal)', cost: Number(settings.delivery_cost_regions) || 0 },
     'store': { name: 'Retrait en Magasin', cost: 0 }
   };
 
