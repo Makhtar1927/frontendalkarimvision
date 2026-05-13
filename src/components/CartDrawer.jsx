@@ -118,10 +118,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
   };
 
   const handleContinueToWave = () => {
+    const amountToPay = finalTotal;
     clearCart();
     setWaveSummaryData(null);
     onClose();
-    window.location.href = "https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/";
+    window.location.href = `https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/?amount=${amountToPay}`;
   };
 
   const triggerWhatsApp = (orderId) => {
