@@ -61,7 +61,7 @@ const ProductCard = ({ product }) => {
       whileHover={{ y: -10 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group flex flex-col h-full bg-white dark:bg-bustantech-gray rounded-sm overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-white/5 cursor-pointer"
+      className="group flex flex-col h-full bg-white dark:bg-bustantech-gray rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-white/5 cursor-pointer"
     >
       {/* IMAGE & BADGE */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
@@ -73,16 +73,16 @@ const ProductCard = ({ product }) => {
         />
         
         {/* CONTENEUR DES BADGES */}
-        <div className="absolute top-3 left-3 flex flex-col items-start gap-1 z-10">
+        <div className="absolute top-3 left-3 flex flex-col items-start gap-2 z-10">
           {/* BADGE PROMO OU POURCENTAGE */}
           {(product.is_on_sale || discountPercentage > 0) && (
-            <div className="bg-red-600 dark:bg-red-500 text-white text-[10px] font-bold tracking-widest px-2 py-1 shadow-md">
+            <div className="bg-red-600 dark:bg-red-500 text-white text-[10px] font-bold tracking-widest px-3 py-1 shadow-md rounded-full animate-pulse">
               {discountPercentage > 0 ? `-${discountPercentage}%` : 'PROMO'}
             </div>
           )}
           {/* BADGE NOUVEAU */}
           {isNew && (
-            <div className="bg-blue-600 dark:bg-blue-500 text-white text-[10px] font-bold tracking-widest px-2 py-1 shadow-md">
+            <div className="bg-blue-600 dark:bg-blue-500 text-white text-[10px] font-bold tracking-widest px-3 py-1 shadow-md rounded-full">
               NOUVEAU
             </div>
           )}
@@ -154,7 +154,7 @@ const ProductCard = ({ product }) => {
                 onClick={(e) => e.stopPropagation()} // Pour ne pas déclencher d'éventuels liens sur la carte
                 onKeyDown={(e) => e.stopPropagation()}
                 aria-label={`Sélectionner une variante pour ${product.name}`}
-                className="w-full text-xs p-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors cursor-pointer"
+                className="w-full text-xs p-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors cursor-pointer"
               >
                 {validVariants.map((variant) => (
                   <option key={variant.id || variant.sku} value={variant.sku} disabled={Number(variant.stock_quantity) <= 0}>
@@ -189,7 +189,7 @@ const ProductCard = ({ product }) => {
             role="alert"
             aria-live="assertive"
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-4 left-4 right-4 md:left-auto md:bottom-6 md:right-6 z-[110] bg-green-500 text-white px-4 sm:px-6 py-4 rounded-sm shadow-2xl flex items-center justify-center md:justify-start gap-3 cursor-default"
+            className="fixed bottom-4 left-4 right-4 md:left-auto md:bottom-6 md:right-6 z-[110] bg-green-500 text-white px-4 sm:px-6 py-4 rounded-2xl shadow-2xl flex items-center justify-center md:justify-start gap-3 cursor-default"
             onClick={(e) => e.stopPropagation()} // Empêche de cliquer à travers le toast
           >
             <CheckCircle2 size={24} />

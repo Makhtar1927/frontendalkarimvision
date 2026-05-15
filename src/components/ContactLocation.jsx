@@ -70,9 +70,9 @@ const ContactLocation = () => {
               href="https://wa.me/221774133645" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-full sm:w-auto gap-3 bg-bustantech-black dark:bg-bustantech-gold text-white px-6 py-4 md:px-8 rounded-sm font-bold transition-all hover:opacity-90"
+              className="flex items-center justify-center w-full sm:w-auto gap-3 bg-green-600 hover:bg-green-700 text-white px-6 py-4 md:px-8 rounded-full font-bold transition-all shadow-md"
             >
-              <MessageCircle size={20} />
+              <img src="/WhatsApp.svg" alt="WhatsApp" className="w-6 h-6 object-contain" />
               DISCUTER SUR WHATSAPP
             </a>
           </motion.div>
@@ -82,7 +82,7 @@ const ContactLocation = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="relative h-[300px] md:h-[450px] w-full rounded-sm overflow-hidden border-4 border-white dark:border-bustantech-black shadow-2xl"
+            className="relative h-[300px] md:h-[450px] w-full rounded-2xl overflow-hidden border-4 border-white dark:border-bustantech-black shadow-2xl"
           >
             <iframe 
               src="https://maps.google.com/maps?q=14.765917,-17.394389&hl=fr&z=16&output=embed" 

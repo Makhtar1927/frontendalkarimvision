@@ -50,29 +50,35 @@ const Shop = () => {
       />
       <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 pb-20">
         {/* BANNIÈRE HERO DE LA BOUTIQUE */}
-        <div className="relative h-[30vh] md:h-[40vh] w-full flex items-center justify-center overflow-hidden bg-bustantech-black">
-          <div className="absolute inset-0 bg-gradient-to-r from-bustantech-black via-zinc-900 to-bustantech-black"></div>
-          <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay"></div>
-          <div className="relative z-10 text-center px-4">
-            <motion.h1 
-              initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-              className="text-4xl md:text-5xl font-luxury font-bold text-white mb-4 tracking-wide flex items-center justify-center gap-4"
-            >
-              <Store size={40} className="text-bustantech-gold" />
-              Notre Boutique
-            </motion.h1>
-            <motion.p 
-              initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-              className="text-gray-300 text-sm md:text-base max-w-2xl mx-auto"
-            >
-              Parcourez tous nos univers et trouvez les meilleurs produits.
-            </motion.p>
+        <div 
+          className="relative h-[40vh] md:h-[50vh] w-full flex items-center overflow-hidden bg-cover bg-center md:bg-right bg-no-repeat"
+          style={{ backgroundImage: `url('https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876055/Boustanetech8_klrkma.png')` }}
+        >
+          {/* Overlay: Sombre sur mobile, Dégradé Premium sur desktop */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent"></div>
+          
+          <div className="relative z-10 px-4 w-full max-w-7xl mx-auto flex items-center">
+            <div className="max-w-2xl">
+              <motion.h1 
+                initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-luxury font-bold text-white md:text-bustantech-black dark:text-white mb-4 tracking-wide leading-tight flex items-center gap-4"
+              >
+                <Store size={40} className="text-bustantech-gold hidden sm:block" />
+                Notre Boutique
+              </motion.h1>
+              <motion.p 
+                initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
+                className="text-gray-200 md:text-gray-700 dark:text-gray-300 text-lg md:text-xl"
+              >
+                Parcourez tous nos univers et trouvez les meilleurs produits.
+              </motion.p>
+            </div>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
           {/* BARRE D'OUTILS ET FILTRES */}
-          <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-bustantech-black p-4 rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 gap-4 mb-10">
+          <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-bustantech-black p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 gap-4 mb-10">
             <div className="relative w-full md:w-1/3">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input 
@@ -80,7 +86,7 @@ const Shop = () => {
                 placeholder="Rechercher un produit..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
               />
             </div>
 
@@ -91,7 +97,7 @@ const Shop = () => {
                 placeholder="Prix min"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
               />
               <span className="text-gray-400 font-bold">-</span>
               <input 
@@ -99,7 +105,7 @@ const Shop = () => {
                 placeholder="Prix max"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
               />
             </div>
 
@@ -107,7 +113,7 @@ const Shop = () => {
             <div className="flex items-center gap-3 w-full lg:w-auto relative">
               <Filter size={18} className="absolute left-3 text-gray-400 pointer-events-none" />
               <select 
-                className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-sm focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
+                className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-full focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
@@ -120,7 +126,7 @@ const Shop = () => {
             <div className="flex items-center gap-3 w-full lg:w-auto">
               <SlidersHorizontal size={18} className="text-gray-400" />
               <select 
-                className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 px-4 text-sm rounded-sm focus:outline-none focus:border-bustantech-gold flex-1 cursor-pointer"
+                className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 px-4 text-sm rounded-full focus:outline-none focus:border-bustantech-gold flex-1 cursor-pointer"
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
               >

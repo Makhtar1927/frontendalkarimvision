@@ -62,7 +62,7 @@ const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 mt-1 text-gray-900 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-bustantech-gold focus:border-bustantech-gold dark:bg-zinc-800 dark:text-white dark:border-zinc-700"
+              className="w-full px-3 py-2 mt-1 text-gray-900 bg-gray-100 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-bustantech-gold focus:border-bustantech-gold dark:bg-zinc-800 dark:text-white dark:border-zinc-700"
             />
           </div>
           <div>
@@ -80,7 +80,7 @@ const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 mt-1 text-gray-900 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-bustantech-gold focus:border-bustantech-gold dark:bg-zinc-800 dark:text-white dark:border-zinc-700"
+              className="w-full px-3 py-2 mt-1 text-gray-900 bg-gray-100 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-bustantech-gold focus:border-bustantech-gold dark:bg-zinc-800 dark:text-white dark:border-zinc-700"
             />
           </div>
           {error && <p className="text-sm text-center text-red-500">{error}</p>}
@@ -88,7 +88,7 @@ const Login = () => {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full flex justify-center items-center gap-2 px-4 py-2 font-bold text-white bg-bustantech-gold rounded-md hover:bg-bustantech-gold-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bustantech-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center items-center gap-2 px-4 py-2 font-bold text-white bg-bustantech-gold rounded-2xl hover:bg-bustantech-gold-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bustantech-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <><Loader2 size={20} className="animate-spin" /> Connexion...</>

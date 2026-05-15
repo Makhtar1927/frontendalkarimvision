@@ -87,7 +87,7 @@ const Footer = () => {
                   value={email}
                   aria-label="Votre adresse e-mail"
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white rounded-sm py-3 pl-4 pr-12 focus:outline-none focus:border-bustantech-gold transition-colors text-base md:text-sm"
+                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white rounded-full py-3 pl-4 pr-12 focus:outline-none focus:border-bustantech-gold transition-colors text-base md:text-sm"
                 />
                 <button
                   type="submit"

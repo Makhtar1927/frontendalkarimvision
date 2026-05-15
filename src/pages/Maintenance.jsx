@@ -31,12 +31,12 @@ const Maintenance = () => {
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                    <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-sm border border-gray-100 dark:border-gray-800">
+                    <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-gray-800">
                         <Clock className="text-bustantech-gold mx-auto mb-3" size={24} />
                         <h3 className="font-bold dark:text-white uppercase tracking-wider text-xs mb-1">Retour Prévu</h3>
                         <p className="text-sm text-gray-500">D'ici peu de temps</p>
                     </div>
-                    <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-sm border border-gray-100 dark:border-gray-800">
+                    <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-gray-800">
                         <Phone className="text-bustantech-gold mx-auto mb-3" size={24} />
                         <h3 className="font-bold dark:text-white uppercase tracking-wider text-xs mb-1">Besoin d'aide ?</h3>
                         <p className="text-sm text-gray-500">+221 77 413 36 45</p>

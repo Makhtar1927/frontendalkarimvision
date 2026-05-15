@@ -10,27 +10,32 @@ const CATEGORY_INFO = {
   tech: {
     title: "Téléphones & Smartphones",
     subtitle: "Découvrez notre sélection de smartphones haut de gamme.",
-    bg: "https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=1600&auto=format&fit=crop"
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876111/Boustanetech2_biqfvg.png",
+    color: "from-gray-200 to-white dark:from-zinc-900 dark:to-black"
   },
   computers: {
     title: "Ordinateurs & Machines",
     subtitle: "PC Portables, MacBooks et stations de travail performantes.",
-    bg: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1600&auto=format&fit=crop"
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876055/Boustanetech8_klrkma.png",
+    color: "from-indigo-100 to-white dark:from-indigo-950/30 dark:to-black"
   },
   accessories: {
     title: "Accessoires Tech",
     subtitle: "Coques, chargeurs, écouteurs et équipements essentiels.",
-    bg: "https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=1600&auto=format&fit=crop"
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876447/Boustanetech5_u8bcnz.png",
+    color: "from-sky-100 to-white dark:from-sky-950/30 dark:to-black"
   },
   perfume: {
     title: "Haute Parfumerie",
     subtitle: "Des fragrances rares et luxueuses pour affirmer votre identité.",
-    bg: "https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1600&auto=format&fit=crop"
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876028/Boustanetech6_mktyyf.png",
+    color: "from-bustantech-beige to-white dark:from-stone-900 dark:to-black"
   },
   coffee: {
     title: "Torréfaction d'Exception",
     subtitle: "Sélection exclusive. Poudre prestige, sachets de 1 KG uniquement.",
-    bg: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1600&auto=format&fit=crop"
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876070/Boustanetech4_jvddxx.png",
+    color: "from-amber-100 to-white dark:from-orange-950/20 dark:to-black"
   }
 };
 
@@ -70,43 +75,45 @@ const CategoryPage = () => {
       return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
     });
 
-  const info = CATEGORY_INFO[categoryId] || { title: "Collection Exclusive", subtitle: "Découvrez nos articles", bg: "" };
+  const info = CATEGORY_INFO[categoryId] || { title: "Collection Exclusive", subtitle: "Découvrez nos articles", image: "", color: "from-gray-100 to-white dark:from-zinc-900 dark:to-black" };
 
   return (
     <>
       <SEO 
         title={info.title} 
         description={info.subtitle} 
-        image={info.bg}
+        image={info.image}
       />
       <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 pb-20">
       {/* BANNIÈRE HERO DE LA CATÉGORIE */}
-      <div className="relative h-[40vh] md:h-[50vh] w-full flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${info.bg})` }}
-        >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
-        </div>
-        <div className="relative z-10 text-center px-4">
-          <motion.h1 
-            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-            className="text-4xl md:text-6xl font-luxury font-bold text-white mb-4 tracking-wide"
-          >
-            {info.title}
-          </motion.h1>
-          <motion.p 
-            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-            className="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto"
-          >
-            {info.subtitle}
-          </motion.p>
+      <div 
+        className="relative h-[40vh] md:h-[50vh] w-full flex items-center overflow-hidden bg-cover bg-center md:bg-right bg-no-repeat"
+        style={{ backgroundImage: `url(${info.image})` }}
+      >
+        {/* Overlay: Sombre sur mobile, Dégradé Premium sur desktop */}
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent"></div>
+        
+        <div className="relative z-10 px-4 w-full max-w-7xl mx-auto flex items-center">
+          <div className="max-w-2xl">
+            <motion.h1 
+              initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-luxury font-bold text-white md:text-bustantech-black dark:text-white mb-4 tracking-wide leading-tight"
+            >
+              {info.title}
+            </motion.h1>
+            <motion.p 
+              initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
+              className="text-gray-200 md:text-gray-700 dark:text-gray-300 text-lg md:text-xl"
+            >
+              {info.subtitle}
+            </motion.p>
+          </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         {/* BARRE D'OUTILS ET FILTRES (Fonctionnalité Moderne) */}
-        <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-bustantech-black p-4 rounded-sm shadow-sm md:shadow-md mb-8 border border-gray-100 dark:border-gray-800 gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-bustantech-black p-4 rounded-2xl shadow-sm md:shadow-md mb-8 border border-gray-100 dark:border-gray-800 gap-4">
           <div className="relative w-full md:w-1/3">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input 
@@ -115,7 +122,7 @@ const CategoryPage = () => {
               placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
             />
           </div>
 
@@ -127,7 +134,7 @@ const CategoryPage = () => {
               placeholder="Prix min"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
-              className="w-1/2 lg:w-32 py-2 px-3 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+              className="w-1/2 lg:w-32 py-2 px-3 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
             />
             <span className="text-gray-400 font-bold">-</span>
             <input 
@@ -136,7 +143,7 @@ const CategoryPage = () => {
               placeholder="Prix max"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-1/2 lg:w-32 py-2 px-3 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+              className="w-1/2 lg:w-32 py-2 px-3 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
             />
           </div>
 
@@ -145,7 +152,7 @@ const CategoryPage = () => {
             <Filter size={18} className="absolute left-3 text-gray-400 pointer-events-none" />
             <select 
               aria-label="Filtrer par marque"
-              className="w-full lg:w-48 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-sm focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
+              className="w-full lg:w-48 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-full focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
             >
@@ -158,7 +165,7 @@ const CategoryPage = () => {
             <SlidersHorizontal size={18} className="text-gray-400" />
             <select 
               aria-label="Trier les produits"
-              className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 px-4 text-base sm:text-sm rounded-sm focus:outline-none focus:border-bustantech-gold flex-1"
+              className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 px-4 text-base sm:text-sm rounded-full focus:outline-none focus:border-bustantech-gold flex-1"
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
             >

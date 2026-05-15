@@ -80,7 +80,7 @@ const CategoryGrids = () => {
               onClick={() => navigate(cat.route)}
               onKeyDown={(e) => e.key === 'Enter' && navigate(cat.route)}
               aria-label={`Découvrir la catégorie ${cat.title}`}
-              className="group relative h-[250px] sm:h-[350px] lg:h-[500px] overflow-hidden cursor-pointer rounded-md"
+              className="group relative h-[250px] sm:h-[350px] lg:h-[500px] overflow-hidden cursor-pointer rounded-2xl"
             >
               {/* IMAGE DE FOND AVEC ZOOM */}
               <div 

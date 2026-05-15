@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useProductStore } from '../store/useProductStore';
 import { useCartStore } from '../store/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import { ChevronRight, ChevronLeft, ShoppingBag, Star, Loader2, CheckCircle2 } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { apiFetch } from '../components/api';
@@ -185,12 +185,34 @@ const ProductPage = () => {
 
   const isVariantOutOfStock = selectedVariant ? selectedVariant.stock_quantity === 0 : false;
 
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": currentProduct.name,
+    "image": currentProduct.image_url,
+    "description": currentProduct.description?.substring(0, 160) || `Découvrez ${currentProduct.name} chez BoustaneTech Store`,
+    "sku": currentProduct.id,
+    "brand": {
+      "@type": "Brand",
+      "name": currentProduct.brand || "BoustaneTech Store"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": window.location.href,
+      "priceCurrency": "XOF",
+      "price": currentProduct.base_price,
+      "availability": isVariantOutOfStock ? "https://schema.org/OutOfStock" : "https://schema.org/InStock"
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <Helmet>
-        <title>{currentProduct.name} | BoustaneTech Store</title>
-        <meta name="description" content={currentProduct.description?.substring(0, 160) || `Découvrez ${currentProduct.name} chez BoustaneTech Store`} />
-      </Helmet>
+      <SEO 
+        title={currentProduct.name}
+        description={currentProduct.description?.substring(0, 160)}
+        image={currentProduct.image_url}
+        schema={productSchema}
+      />
       {/* Breadcrumbs */}
       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-8">
         <Link to="/" className="hover:text-bustantech-gold">Accueil</Link>
@@ -202,7 +224,7 @@ const ProductPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Colonne Image / Vidéo avec Carousel Professionnel */}
-        <div className="relative aspect-square bg-gray-100 dark:bg-bustantech-gray rounded-sm overflow-hidden shadow-lg group">
+        <div className="relative aspect-square bg-gray-100 dark:bg-bustantech-gray rounded-2xl overflow-hidden shadow-lg group">
           <AnimatePresence mode="wait">
             <motion.div 
                 key={currentMediaIndex}
@@ -273,13 +295,13 @@ const ProductPage = () => {
           <div className="absolute top-4 left-4 flex flex-col items-start gap-2 z-10">
             {/* BADGE PROMO OU POURCENTAGE */}
             {(currentProduct.is_on_sale || discountPercentage > 0) && (
-              <div className="bg-red-600 dark:bg-red-500 text-white text-xs font-bold tracking-widest px-3 py-1.5 shadow-md">
+              <div className="bg-red-600 dark:bg-red-500 text-white text-xs font-bold tracking-widest px-4 py-1.5 shadow-md rounded-full animate-pulse">
                 {discountPercentage > 0 ? `-${discountPercentage}%` : 'PROMO'}
               </div>
             )}
             {/* BADGE NOUVEAU */}
             {isNew && (
-              <div className="bg-blue-600 dark:bg-blue-500 text-white text-xs font-bold tracking-widest px-3 py-1.5 shadow-md">
+              <div className="bg-blue-600 dark:bg-blue-500 text-white text-xs font-bold tracking-widest px-4 py-1.5 shadow-md rounded-full">
                 NOUVEAU
               </div>
             )}
@@ -310,7 +332,7 @@ const ProductPage = () => {
                     key={variant.sku}
                     onClick={() => setSelectedVariant(variant)}
                     disabled={variant.stock_quantity === 0}
-                    className={`px-4 py-2 text-sm font-bold border rounded-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
+                    className={`px-4 py-2 text-sm font-bold border rounded-full transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
                       selectedVariant?.sku === variant.sku
                         ? 'bg-bustantech-gold text-white border-bustantech-gold'
                         : 'bg-white dark:bg-bustantech-gray border-gray-200 dark:border-gray-700 hover:border-bustantech-gold dark:text-white'
@@ -341,7 +363,7 @@ const ProductPage = () => {
             <button
               onClick={handleAddToCart}
               disabled={isVariantOutOfStock}
-              className="w-full bg-bustantech-black dark:bg-bustantech-gold text-white dark:text-black py-4 rounded-sm font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+              className="w-full bg-bustantech-black dark:bg-bustantech-gold text-white dark:text-black py-4 rounded-full font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
             >
               <ShoppingBag size={20} />
               {isVariantOutOfStock ? 'Indisponible' : 'Ajouter au Panier'}
@@ -356,24 +378,24 @@ const ProductPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           
           {/* Formulaire d'avis */}
-          <div className="lg:col-span-1 bg-gray-50 dark:bg-zinc-900/50 p-6 rounded-sm border border-gray-100 dark:border-gray-800 h-fit">
+          <div className="lg:col-span-1 bg-gray-50 dark:bg-zinc-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 h-fit">
             <h3 className="font-bold dark:text-white mb-4">Laisser un avis</h3>
             <form onSubmit={handleReviewSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs text-gray-500 mb-1">Votre nom</label>
-                <input required value={newReview.name} onChange={e => setNewReview({...newReview, name: e.target.value})} type="text" className="w-full p-3 text-sm bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-sm dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors" />
+                <input required value={newReview.name} onChange={e => setNewReview({...newReview, name: e.target.value})} type="text" className="w-full p-3 text-sm bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-full dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors" />
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">Note sur 5</label>
-                <select value={newReview.rating} onChange={e => setNewReview({...newReview, rating: Number(e.target.value)})} className="w-full p-3 text-sm bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-sm dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors cursor-pointer">
+                <select value={newReview.rating} onChange={e => setNewReview({...newReview, rating: Number(e.target.value)})} className="w-full p-3 text-sm bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-full dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors cursor-pointer">
                   {[5,4,3,2,1].map(num => <option key={num} value={num}>{num} Étoile{num > 1 ? 's' : ''}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">Votre commentaire</label>
-                <textarea required value={newReview.comment} onChange={e => setNewReview({...newReview, comment: e.target.value})} rows="4" className="w-full p-3 text-sm bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-sm dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors"></textarea>
+                <textarea required value={newReview.comment} onChange={e => setNewReview({...newReview, comment: e.target.value})} rows="4" className="w-full p-3 text-sm bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-2xl dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors"></textarea>
               </div>
-              <button disabled={isSubmittingReview} type="submit" className="w-full bg-bustantech-gold text-white font-bold py-3 rounded-sm hover:bg-yellow-600 transition-colors disabled:opacity-50 uppercase tracking-widest text-xs">
+              <button disabled={isSubmittingReview} type="submit" className="w-full bg-bustantech-gold text-white font-bold py-3 rounded-full hover:bg-yellow-600 transition-colors disabled:opacity-50 uppercase tracking-widest text-xs">
                 {isSubmittingReview ? 'Envoi...' : 'Publier mon avis'}
               </button>
             </form>
@@ -382,12 +404,12 @@ const ProductPage = () => {
           {/* Liste des avis */}
           <div className="lg:col-span-2 space-y-4">
             {reviews.length === 0 ? (
-              <div className="p-8 text-center bg-gray-50 dark:bg-zinc-900/30 rounded-sm border border-dashed border-gray-200 dark:border-gray-800">
+              <div className="p-8 text-center bg-gray-50 dark:bg-zinc-900/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
                 <p className="text-gray-500">Aucun avis pour le moment. Soyez le premier à donner votre avis sur ce produit d'exception.</p>
               </div>
             ) : (
               reviews.map(review => (
-                <div key={review.id} className="bg-white dark:bg-bustantech-black p-6 border border-gray-100 dark:border-gray-800 rounded-sm shadow-sm transition-hover hover:border-bustantech-gold/30">
+                <div key={review.id} className="bg-white dark:bg-bustantech-black p-6 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm transition-hover hover:border-bustantech-gold/30">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
                     <div>
                       <p className="font-bold text-sm dark:text-white">{review.customer_name}</p>
@@ -442,7 +464,7 @@ const ProductPage = () => {
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-6 right-6 z-[110] bg-green-500 text-white px-6 py-4 rounded-sm shadow-2xl flex items-center gap-3"
+            className="fixed bottom-6 right-6 z-[110] bg-green-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3"
           >
             <CheckCircle2 size={24} />
             <span className="font-bold tracking-wide text-sm">{currentProduct.name} a été ajouté au panier.</span>
@@ -487,14 +509,14 @@ const ProductPage = () => {
                       src={mediaUrls[currentMediaIndex]} 
                       controls
                       autoPlay
-                      className="max-w-full max-h-full rounded-sm object-contain shadow-2xl"
+                      className="max-w-full max-h-full rounded-2xl object-contain shadow-2xl"
                       onError={(e) => { e.target.style.display = 'none'; }}
                     />
                   ) : (
                     <img 
                       src={mediaUrls[currentMediaIndex]} 
                       alt="Aperçu HD" 
-                      className="max-w-full max-h-full rounded-sm object-contain shadow-2xl cursor-zoom-out"
+                      className="max-w-full max-h-full rounded-2xl object-contain shadow-2xl cursor-zoom-out"
                       onClick={() => setIsFullscreen(false)}
                       onError={(e) => { e.target.src = 'https://placehold.co/800x800/png?text=Image+Indisponible'; }}
                     />

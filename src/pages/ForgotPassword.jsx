@@ -37,7 +37,7 @@ const ForgotPassword = () => {
 
   return (
     <div className="flex items-center justify-center min-h-[80vh] bg-gray-50 dark:bg-zinc-950 px-4">
-      <div className="w-full max-w-md p-8 bg-white rounded-sm shadow-xl dark:bg-bustantech-black border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-300">
+      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl dark:bg-bustantech-black border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-300">
         <div className="text-center mb-8">
           <div className="mx-auto bg-bustantech-gold/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 text-bustantech-gold">
             <ShieldAlert size={32} />
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
         </div>
 
         {status === 'success' ? (
-          <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-sm flex flex-col items-center justify-center text-center space-y-4 border border-green-200 dark:border-green-800/50 animate-in fade-in">
+          <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4 border border-green-200 dark:border-green-800/50 animate-in fade-in">
             <CheckCircle2 className="text-green-500 w-12 h-12" />
             <p className="text-sm text-green-700 dark:text-green-400 font-medium leading-relaxed">
               {message}
@@ -71,17 +71,17 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@bustantech.com"
-                className="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-sm focus:outline-none focus:ring-1 focus:ring-bustantech-gold focus:border-bustantech-gold dark:bg-zinc-900 dark:text-white dark:border-gray-800 transition-colors"
+                className="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-1 focus:ring-bustantech-gold focus:border-bustantech-gold dark:bg-zinc-900 dark:text-white dark:border-gray-800 transition-colors"
               />
             </div>
 
             {status === 'error' && (
-              <p className="text-sm text-center text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-sm border border-red-100 dark:border-red-800/50">
+              <p className="text-sm text-center text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-2xl border border-red-100 dark:border-red-800/50">
                 {message}
               </p>
             )}
 
-            <button type="submit" disabled={status === 'loading' || !email} className="w-full px-4 py-3 text-sm font-bold text-white bg-bustantech-gold rounded-sm shadow-md hover:bg-bustantech-gold-dark focus:outline-none transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider">
+            <button type="submit" disabled={status === 'loading' || !email} className="w-full px-4 py-3 text-sm font-bold text-white bg-bustantech-gold rounded-full shadow-md hover:bg-bustantech-gold-dark focus:outline-none transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider">
               {status === 'loading' ? <><Loader2 size={18} className="animate-spin mr-2" /> ENVOI...</> : 'ENVOYER LE LIEN'}
             </button>
           </form>

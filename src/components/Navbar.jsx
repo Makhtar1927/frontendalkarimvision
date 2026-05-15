@@ -201,7 +201,7 @@ const Navbar = () => {
               {isDarkMode ? <Sun aria-hidden="true" size={20} /> : <Moon aria-hidden="true" size={20} />}
             </button>
 
-            <div className="relative cursor-pointer group" role="button" tabIndex={0} aria-label="Ouvrir le panier" onClick={toggleCart} onKeyDown={(e) => e.key === 'Enter' && toggleCart()}>
+            <div className="hidden md:block relative cursor-pointer group" role="button" tabIndex={0} aria-label="Ouvrir le panier" onClick={toggleCart} onKeyDown={(e) => e.key === 'Enter' && toggleCart()}>
               <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 group-hover:bg-bustantech-gold group-hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
                 <ShoppingCart aria-hidden="true" size={18} className="sm:w-5 sm:h-5" />
               </div>
@@ -213,7 +213,7 @@ const Navbar = () => {
             </div>
 
             {/* Menu Mobile Button */}
-            <button id="hamburger-button" className="lg:hidden flex items-center justify-center w-10 h-10 ml-1 rounded-md text-bustantech-black dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all" aria-expanded={isMenuOpen} aria-label="Menu principal" onClick={(e) => { e.stopPropagation(); setIsMenuOpen((prev) => !prev); }}>
+            <button id="hamburger-button" className="lg:hidden flex items-center justify-center w-10 h-10 ml-1 rounded-full text-bustantech-black dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all" aria-expanded={isMenuOpen} aria-label="Menu principal" onClick={(e) => { e.stopPropagation(); setIsMenuOpen((prev) => !prev); }}>
               {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
@@ -240,7 +240,7 @@ const Navbar = () => {
           className="lg:hidden fixed top-[80px] left-0 right-0 w-full bg-white/95 dark:bg-bustantech-black/95 backdrop-blur-xl border-b border-bustantech-gold/20 px-6 py-8 shadow-2xl z-40 max-h-[calc(100vh-80px)] overflow-y-auto"
         >
           {/* OUTILS MOBILES */}
-          <div className="grid grid-cols-4 gap-3 mb-8 pb-8 border-b border-gray-100 dark:border-gray-800">
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mb-8 pb-8 border-b border-gray-100 dark:border-gray-800">
             <button onClick={() => { setIsTrackingOpen(true); setIsMenuOpen(false); }} className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-gray-600 hover:text-bustantech-gold dark:text-gray-400 transition-all">
               <PackageSearch size={22} className="mb-2" />
               <span className="text-[10px] font-bold tracking-widest uppercase">Suivi</span>
@@ -249,7 +249,7 @@ const Navbar = () => {
               <Search size={22} className="mb-2" />
               <span className="text-[10px] font-bold tracking-widest uppercase">Chercher</span>
             </button>
-            <button onClick={() => { toggleCart(); setIsMenuOpen(false); }} className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-gray-600 hover:text-bustantech-gold dark:text-gray-400 transition-all relative">
+            <button onClick={() => { toggleCart(); setIsMenuOpen(false); }} className="hidden md:flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-gray-600 hover:text-bustantech-gold dark:text-gray-400 transition-all relative">
               <ShoppingCart size={22} className="mb-2" />
               {itemCount > 0 && <span className="absolute top-2 right-2 bg-bustantech-gold text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{itemCount}</span>}
               <span className="text-[10px] font-bold tracking-widest uppercase">Panier</span>
@@ -261,7 +261,7 @@ const Navbar = () => {
           </div>
 
           <div className="space-y-2">
-            <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
+            <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="hidden md:flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
               <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
                 <Store size={22} />
               </div>
@@ -324,7 +324,7 @@ const Navbar = () => {
             role="dialog"
             aria-modal="true"
             onClick={(e) => e.stopPropagation()} // Empêche le clic à l'intérieur de la modale de la fermer
-            className="bg-white dark:bg-bustantech-black w-full max-w-md rounded-sm shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 cursor-default"
+            className="bg-white dark:bg-bustantech-black w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 cursor-default"
           >
             <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-800">
               <h3 className="text-xl font-bold font-luxury tracking-wider dark:text-white flex items-center gap-2">
@@ -344,17 +344,17 @@ const Navbar = () => {
                   placeholder="Numéro (ex: 142)"
                   value={trackingId}
                   onChange={(e) => setTrackingId(e.target.value)}
-                  className="flex-1 w-full px-4 py-3 text-base md:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+                  className="flex-1 w-full px-4 py-3 text-base md:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
                 />
-                <button type="submit" disabled={trackingLoading || !trackingId} className="px-6 py-3 bg-bustantech-gold text-white font-bold rounded-sm hover:bg-yellow-600 transition-colors disabled:opacity-50 flex items-center justify-center min-w-[110px]">
+                <button type="submit" disabled={trackingLoading || !trackingId} className="px-6 py-3 bg-bustantech-gold text-white font-bold rounded-full hover:bg-yellow-600 transition-colors disabled:opacity-50 flex items-center justify-center min-w-[110px]">
                   {trackingLoading ? <Loader2 size={20} className="animate-spin" /> : "Chercher"}
                 </button>
               </form>
 
-              {trackingError && <p className="text-red-500 text-sm text-center font-medium bg-red-50 dark:bg-red-900/20 p-3 rounded-sm">{trackingError}</p>}
+              {trackingError && <p className="text-red-500 text-sm text-center font-medium bg-red-50 dark:bg-red-900/20 p-3 rounded-2xl">{trackingError}</p>}
 
               {trackingResult && (
-                <div className="bg-gray-50 dark:bg-zinc-900/50 p-5 rounded-sm border border-gray-200 dark:border-gray-800 animate-in fade-in slide-in-from-bottom-2">
+                <div className="bg-gray-50 dark:bg-zinc-900/50 p-5 rounded-2xl border border-gray-200 dark:border-gray-800 animate-in fade-in slide-in-from-bottom-2">
                   <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-200 dark:border-gray-800">
                     <span className="text-gray-500 dark:text-gray-400 text-sm">Commande N°</span>
                     <span className="font-bold dark:text-white text-lg">#{trackingResult.id.toString().padStart(4, '0')}</span>
@@ -391,7 +391,7 @@ const Navbar = () => {
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
-            className="bg-white dark:bg-bustantech-black w-full max-w-3xl rounded-sm shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 cursor-default"
+            className="bg-white dark:bg-bustantech-black w-full max-w-3xl rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 cursor-default"
           >
             <div className="flex items-center p-4 border-b border-gray-100 dark:border-gray-800">
               <Search className="text-gray-400 mr-4" size={24} />
@@ -404,7 +404,7 @@ const Navbar = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 bg-transparent border-none focus:outline-none dark:text-white text-lg md:text-xl font-medium"
               />
-              <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} aria-label="Fermer la recherche" className="text-gray-400 hover:text-bustantech-gold transition-colors ml-4 p-2 bg-gray-50 dark:bg-zinc-900 rounded-sm">
+              <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} aria-label="Fermer la recherche" className="text-gray-400 hover:text-bustantech-gold transition-colors ml-4 p-2 bg-gray-50 dark:bg-zinc-900 rounded-full">
                 <X aria-hidden="true" size={20} />
               </button>
             </div>
@@ -425,7 +425,7 @@ const Navbar = () => {
                           <img 
                             src={imageUrl || 'https://via.placeholder.com/100'} 
                             alt={product.name} 
-                            className="w-14 h-14 object-cover rounded-sm border border-gray-100 dark:border-gray-800" 
+                            className="w-14 h-14 object-cover rounded-2xl border border-gray-100 dark:border-gray-800" 
                             onError={(e) => { e.target.src = 'https://placehold.co/100x100/png?text=Indispo'; }}
                           />
                           <div className="flex-1">

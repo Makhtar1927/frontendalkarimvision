@@ -584,7 +584,7 @@ const Admin = () => {
         {/* LOGO SECTION */}
         <div className="h-20 flex items-center px-6 border-b border-gray-100 dark:border-gray-800 overflow-hidden shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-bustantech-gold rounded-sm flex items-center justify-center shrink-0 shadow-lg shadow-gold/20">
+            <div className="w-10 h-10 bg-bustantech-gold rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-gold/20">
               <Shield className="text-white" size={20} />
             </div>
             {!isSidebarCollapsed && (
@@ -606,7 +606,7 @@ const Admin = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 title={isSidebarCollapsed ? tab.label : ''}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all relative group ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all relative group ${
                   isActive 
                     ? 'bg-bustantech-gold text-white font-bold shadow-lg shadow-gold/20' 
                     : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-900 hover:text-gray-900 dark:hover:text-white'
@@ -629,8 +629,8 @@ const Admin = () => {
             {isSidebarCollapsed ? <ChevronRight size={18} /> : <><ChevronLeft size={18} /> Réduire</>}
           </button>
           
-          <div className={`flex items-center gap-3 p-2 rounded-sm ${!isSidebarCollapsed ? 'bg-gray-50 dark:bg-zinc-900/50' : ''}`}>
-            <div className="w-10 h-10 rounded-sm bg-bustantech-gold/10 text-bustantech-gold flex items-center justify-center font-bold text-sm shrink-0 border border-bustantech-gold/20">
+          <div className={`flex items-center gap-3 p-2 rounded-2xl ${!isSidebarCollapsed ? 'bg-gray-50 dark:bg-zinc-900/50' : ''}`}>
+            <div className="w-10 h-10 rounded-2xl bg-bustantech-gold/10 text-bustantech-gold flex items-center justify-center font-bold text-sm shrink-0 border border-bustantech-gold/20">
               {userName.charAt(0).toUpperCase()}
             </div>
             {!isSidebarCollapsed && (
@@ -643,7 +643,7 @@ const Admin = () => {
 
           <button 
             onClick={() => { useAuthStore.getState().logout(); window.location.href = '/'; }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all font-bold text-sm ${isSidebarCollapsed ? 'justify-center' : ''}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all font-bold text-sm ${isSidebarCollapsed ? 'justify-center' : ''}`}
             title="Se déconnecter"
           >
             <LogOut size={20} className="shrink-0" />
@@ -680,7 +680,7 @@ const Admin = () => {
                   <button
                     key={tab.id}
                     onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }}
-                    className={`w-full flex items-center gap-4 px-6 py-4 rounded-sm text-lg font-medium transition-colors ${
+                    className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-medium transition-colors ${
                       isActive ? 'bg-bustantech-gold/10 text-bustantech-gold border-l-4 border-bustantech-gold' : 'text-gray-500 dark:text-gray-400'
                     }`}
                   >
@@ -692,7 +692,7 @@ const Admin = () => {
             </nav>
             <div className="py-8 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-sm bg-bustantech-gold text-white flex items-center justify-center font-bold">{userName.charAt(0)}</div>
+                <div className="w-10 h-10 rounded-2xl bg-bustantech-gold text-white flex items-center justify-center font-bold">{userName.charAt(0)}</div>
                 <div>
                   <p className="font-bold dark:text-white">{userName}</p>
                   <p className="text-xs text-gray-500 uppercase">{userRole}</p>
@@ -700,7 +700,7 @@ const Admin = () => {
               </div>
               <button 
                 onClick={() => { useAuthStore.getState().logout(); window.location.href = '/'; }}
-                className="p-3 text-red-500 bg-red-50 dark:bg-red-900/10 rounded-sm"
+                className="p-3 text-red-500 bg-red-50 dark:bg-red-900/10 rounded-full"
               >
                 <LogOut size={20} />
               </button>
@@ -761,21 +761,21 @@ const Admin = () => {
             
             {/* KPI CARDS (Indicateurs clés) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white dark:bg-bustantech-black p-6 rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4">
+              <div className="bg-white dark:bg-bustantech-black p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4">
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-full"><ShoppingBag size={24} /></div>
                 <div>
                   <p className="text-gray-500 text-xs font-bold tracking-widest uppercase">Commandes (Mois)</p>
                   <p className="text-2xl font-bold dark:text-white">{stats.kpi?.commandesMois || 0}</p>
                 </div>
               </div>
-              <div className="bg-white dark:bg-bustantech-black p-6 rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4">
+              <div className="bg-white dark:bg-bustantech-black p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4">
                 <div className="p-4 bg-green-50 dark:bg-green-900/20 text-green-500 rounded-full"><DollarSign size={24} /></div>
                 <div>
                   <p className="text-gray-500 text-xs font-bold tracking-widest uppercase">Revenus (Mois)</p>
                   <p className="text-xl font-bold text-bustantech-gold">{new Intl.NumberFormat('fr-FR').format(stats?.kpi?.revenusMois || 0)} FCFA</p>
                 </div>
               </div>
-              <div className="bg-white dark:bg-bustantech-black p-6 rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4">
+              <div className="bg-white dark:bg-bustantech-black p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4">
                 <div className="p-4 bg-bustantech-gold/10 text-bustantech-gold rounded-full"><TrendingUp size={24} /></div>
                 <div>
                   <p className="text-gray-500 text-xs font-bold tracking-widest uppercase">Produits Actifs</p>
@@ -786,7 +786,7 @@ const Admin = () => {
 
             {/* GRAPHIQUES ANALYTIQUES */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 bg-white dark:bg-bustantech-black p-6 rounded-sm shadow-sm border border-gray-100 dark:border-gray-800">
+              <div className="lg:col-span-2 bg-white dark:bg-bustantech-black p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                 <h3 className="text-lg font-bold dark:text-white mb-6">Évolution des Commandes et Revenus</h3>
                 <div className="h-80 w-full min-h-[320px]">
                   <ResponsiveContainer width="100%" height="100%" minHeight={300} minWidth={0}>
@@ -823,7 +823,7 @@ const Admin = () => {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-bustantech-black p-6 rounded-sm shadow-sm border border-gray-100 dark:border-gray-800">
+              <div className="bg-white dark:bg-bustantech-black p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                 <h3 className="text-lg font-bold dark:text-white mb-6">Ventes par Catégorie</h3>
                 <div className="h-80 w-full flex items-center justify-center min-h-[320px]">
                   {stats.categorySales?.length > 0 ? (
@@ -870,7 +870,7 @@ const Admin = () => {
               </div>
               <button 
                 onClick={handleOpenAdd}
-                className="w-full sm:w-auto justify-center bg-bustantech-gold hover:bg-bustantech-gold-dark text-white px-6 py-3 rounded-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-bustantech-gold/20"
+                className="w-full sm:w-auto justify-center bg-bustantech-gold hover:bg-bustantech-gold-dark text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-lg shadow-bustantech-gold/20"
               >
                 <Plus size={20} />
                 Ajouter un produit
@@ -886,13 +886,13 @@ const Admin = () => {
               placeholder="Rechercher un produit par nom..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors shadow-sm"
+              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors shadow-sm"
             />
           </div>
         </div>
 
         {/* TABLE MODERNE LUXURY */}
-        <div className="bg-white dark:bg-bustantech-black rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
+        <div className="bg-white dark:bg-bustantech-black rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
               <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
@@ -916,14 +916,14 @@ const Admin = () => {
               ) : paginatedProducts.map(product => (
                 <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
                   <td className="p-4 flex items-center gap-4">
-                    <img src={product.image_url} alt={product.name} className="w-14 h-14 object-cover rounded-sm border border-gray-100 dark:border-gray-800" />
+                    <img src={product.image_url} alt={product.name} className="w-14 h-14 object-cover rounded-2xl border border-gray-100 dark:border-gray-800" />
                     <div>
                       <p className="font-bold dark:text-white">{product.name || 'Produit sans nom'}</p>
                       <p className="text-xs text-bustantech-gold font-medium uppercase tracking-widest">{product.brand || 'Sans Marque'}</p>
                     </div>
                   </td>
                   <td className="p-4 dark:text-gray-300 uppercase text-xs tracking-widest">
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded-sm">
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl">
                       {product.category === 'tech' 
                         ? 'Téléphone' 
                         : product.category === 'computers' 
@@ -976,14 +976,14 @@ const Admin = () => {
                 <button 
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className="p-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-bustantech-black rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm"
+                  className="p-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-bustantech-black rounded-2xl disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm"
                 >
                   <ChevronLeft size={18} className="dark:text-white" />
                 </button>
                 <button 
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  className="p-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-bustantech-black rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm"
+                  className="p-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-bustantech-black rounded-2xl disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm"
                 >
                   <ChevronRight size={18} className="dark:text-white" />
                 </button>
@@ -1008,7 +1008,7 @@ const Admin = () => {
                   <select
                     value={monthFilter}
                     onChange={(e) => setMonthFilter(e.target.value)}
-                    className="w-full px-4 py-3 bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors shadow-sm cursor-pointer text-sm"
+                    className="w-full px-4 py-3 bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors shadow-sm cursor-pointer text-sm"
                   >
                     <option value="all">Tous les mois</option>
                     {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
@@ -1020,7 +1020,7 @@ const Admin = () => {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-800 rounded-sm focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors shadow-sm cursor-pointer"
+                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors shadow-sm cursor-pointer"
                   >
                     <option value="all">Tous les statuts</option>
                     <option value="pending">En attente</option>
@@ -1030,7 +1030,7 @@ const Admin = () => {
                 </div>
                 <button 
                   onClick={exportOrdersToCSV}
-                  className="w-full sm:w-auto justify-center bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 hover:border-bustantech-gold dark:hover:border-bustantech-gold text-gray-700 dark:text-white px-6 py-3 rounded-sm font-bold flex items-center gap-2 transition-all shadow-sm"
+                  className="w-full sm:w-auto justify-center bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 hover:border-bustantech-gold dark:hover:border-bustantech-gold text-gray-700 dark:text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-sm"
                 >
                   <Download size={20} />
                   Exporter CSV
@@ -1038,7 +1038,7 @@ const Admin = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-bustantech-black rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
+            <div className="bg-white dark:bg-bustantech-black rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
@@ -1101,12 +1101,12 @@ const Admin = () => {
                             </h4>
                             <button 
                               onClick={() => printInvoice(order)}
-                              className="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-white px-4 py-2 rounded-sm font-bold flex items-center gap-2 transition-colors"
+                              className="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-white px-4 py-2 rounded-full font-bold flex items-center gap-2 transition-colors"
                             >
                               <Printer size={14} /> Imprimer Facture
                             </button>
                           </div>
-                          <div className="bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-sm overflow-hidden">
+                          <div className="bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
                             <table className="w-full text-left text-sm">
                               <thead className="bg-gray-100 dark:bg-zinc-900 text-gray-500 dark:text-gray-400">
                                 <tr>
@@ -1150,7 +1150,7 @@ const Admin = () => {
               <p className="text-gray-500 mt-2">Gérez les avis et notes laissés par vos clients.</p>
             </div>
 
-            <div className="bg-white dark:bg-bustantech-black rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
+            <div className="bg-white dark:bg-bustantech-black rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
@@ -1208,7 +1208,7 @@ const Admin = () => {
               <p className="text-gray-500 mt-2 text-sm sm:text-base">Historique des actions effectuées par votre équipe sur le système.</p>
             </div>
 
-            <div className="bg-white dark:bg-bustantech-black rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
+            <div className="bg-white dark:bg-bustantech-black rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[700px]">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
@@ -1230,7 +1230,7 @@ const Admin = () => {
                         {log.user_name || 'Utilisateur inconnu'}
                       </td>
                       <td className="p-4">
-                        <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 text-xs font-bold rounded-sm text-gray-600 dark:text-gray-300 tracking-wider">
+                        <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 text-xs font-bold rounded-2xl text-gray-600 dark:text-gray-300 tracking-wider">
                           {log.action}
                         </span>
                       </td>
@@ -1256,7 +1256,7 @@ const Admin = () => {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               {/* Branding & Contact */}
               <div className="xl:col-span-2 space-y-6">
-                <form onSubmit={handleUpdateSettings} className="bg-white dark:bg-bustantech-black p-6 rounded-sm shadow-sm border border-gray-100 dark:border-gray-800 space-y-6">
+                <form onSubmit={handleUpdateSettings} className="bg-white dark:bg-bustantech-black p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2 flex items-center justify-between mb-2">
                        <h3 className="font-bold dark:text-white uppercase tracking-widest text-sm text-bustantech-gold">Information de la Boutique</h3>
@@ -1274,23 +1274,23 @@ const Admin = () => {
                     
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom de la Boutique</label>
-                      <input value={siteSettings.store_name} onChange={e => setSiteSettings({...siteSettings, store_name: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input value={siteSettings.store_name} onChange={e => setSiteSettings({...siteSettings, store_name: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Email de Contact</label>
-                      <input value={siteSettings.contact_email} onChange={e => setSiteSettings({...siteSettings, contact_email: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input value={siteSettings.contact_email} onChange={e => setSiteSettings({...siteSettings, contact_email: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Téléphone WhatsApp (International)</label>
-                      <input value={siteSettings.whatsapp_number} onChange={e => setSiteSettings({...siteSettings, whatsapp_number: e.target.value})} placeholder="22177..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input value={siteSettings.whatsapp_number} onChange={e => setSiteSettings({...siteSettings, whatsapp_number: e.target.value})} placeholder="22177..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Lien Google Maps</label>
-                      <input value={siteSettings.maps_link} onChange={e => setSiteSettings({...siteSettings, maps_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input value={siteSettings.maps_link} onChange={e => setSiteSettings({...siteSettings, maps_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div className="md:col-span-2">
                        <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Adresse Physique</label>
-                       <input value={siteSettings.contact_address} onChange={e => setSiteSettings({...siteSettings, contact_address: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                       <input value={siteSettings.contact_address} onChange={e => setSiteSettings({...siteSettings, contact_address: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                   </div>
 
@@ -1298,15 +1298,15 @@ const Admin = () => {
                     <h3 className="md:col-span-3 font-bold dark:text-white uppercase tracking-widest text-sm text-bustantech-gold">Tarifs de Livraison (FCFA)</h3>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Dakar</label>
-                      <input type="number" value={siteSettings.delivery_cost_dakar} onChange={e => setSiteSettings({...siteSettings, delivery_cost_dakar: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input type="number" value={siteSettings.delivery_cost_dakar} onChange={e => setSiteSettings({...siteSettings, delivery_cost_dakar: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Autour de Dakar / Banlieue</label>
-                      <input type="number" value={siteSettings.delivery_cost_suburbs} onChange={e => setSiteSettings({...siteSettings, delivery_cost_suburbs: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input type="number" value={siteSettings.delivery_cost_suburbs} onChange={e => setSiteSettings({...siteSettings, delivery_cost_suburbs: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Régions</label>
-                      <input type="number" value={siteSettings.delivery_cost_regions} onChange={e => setSiteSettings({...siteSettings, delivery_cost_regions: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input type="number" value={siteSettings.delivery_cost_regions} onChange={e => setSiteSettings({...siteSettings, delivery_cost_regions: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                   </div>
 
@@ -1314,11 +1314,11 @@ const Admin = () => {
                     <h3 className="md:col-span-2 font-bold dark:text-white uppercase tracking-widest text-sm text-bustantech-gold">Réseaux Sociaux</h3>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Instagram</label>
-                      <input value={siteSettings.instagram_link} onChange={e => setSiteSettings({...siteSettings, instagram_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input value={siteSettings.instagram_link} onChange={e => setSiteSettings({...siteSettings, instagram_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">TikTok</label>
-                      <input value={siteSettings.tiktok_link} onChange={e => setSiteSettings({...siteSettings, tiktok_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input value={siteSettings.tiktok_link} onChange={e => setSiteSettings({...siteSettings, tiktok_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                   </div>
 
@@ -1326,7 +1326,7 @@ const Admin = () => {
                     <button 
                       type="submit"
                       disabled={isUpdatingSettings}
-                      className="bg-bustantech-gold text-white px-8 py-3 rounded-sm font-bold flex items-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+                      className="bg-bustantech-gold text-white px-8 py-3 rounded-2xl font-bold flex items-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
                     >
                       {isUpdatingSettings ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                       SAUVEGARDER LES RÉGLAGES
@@ -1337,7 +1337,7 @@ const Admin = () => {
 
               {/* Sécurité Compte */}
               <div className="space-y-6">
-                <div className="bg-white dark:bg-bustantech-black p-6 rounded-sm shadow-sm border border-gray-100 dark:border-gray-800">
+                <div className="bg-white dark:bg-bustantech-black p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                   <div className="flex items-center gap-3 mb-6">
                     <Shield className="text-bustantech-gold" size={24} />
                     <h3 className="font-bold dark:text-white uppercase tracking-widest text-sm">Sécurité du Compte</h3>
@@ -1346,30 +1346,30 @@ const Admin = () => {
                   <form onSubmit={handleChangePassword} className="space-y-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Mot de passe actuel</label>
-                      <input required type="password" value={passwordForm.currentPassword} onChange={e => setPasswordForm({...passwordForm, currentPassword: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input required type="password" value={passwordForm.currentPassword} onChange={e => setPasswordForm({...passwordForm, currentPassword: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nouveau mot de passe</label>
-                      <input required type="password" value={passwordForm.newPassword} onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input required type="password" value={passwordForm.newPassword} onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Confirmer</label>
-                      <input required type="password" value={passwordForm.confirmPassword} onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <input required type="password" value={passwordForm.confirmPassword} onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
                     </div>
                     <button 
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-bustantech-black dark:bg-zinc-800 text-white py-3 rounded-sm font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50"
+                      className="w-full bg-bustantech-black dark:bg-zinc-800 text-white py-3 rounded-2xl font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50"
                     >
                       {isSubmitting ? <Loader2 size={18} className="animate-spin mx-auto" /> : "Changer le mot de passe"}
                     </button>
                   </form>
                 </div>
 
-                <div className="bg-red-50 dark:bg-red-950/20 p-6 rounded-sm border border-red-500/20">
+                <div className="bg-red-50 dark:bg-red-950/20 p-6 rounded-2xl border border-red-500/20">
                   <h3 className="font-bold text-red-600 dark:text-red-500 uppercase tracking-widest text-xs mb-2">Zone de Danger</h3>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">La suppression du compte administrateur est réservée au propriétaire principal.</p>
-                  <button className="text-xs font-bold text-red-500 border border-red-500/30 px-4 py-2 rounded-sm hover:bg-red-500 hover:text-white transition-all w-full">DEMANDER FERMETURE DU COMPTE</button>
+                  <button className="text-xs font-bold text-red-500 border border-red-500/30 px-4 py-2 rounded-full hover:bg-red-500 hover:text-white transition-all w-full">DEMANDER FERMETURE DU COMPTE</button>
                 </div>
               </div>
             </div>
@@ -1382,7 +1382,7 @@ const Admin = () => {
       {/* MODAL AJOUT */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => { setIsModalOpen(false); setEditingId(null); }}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-bustantech-black w-full max-w-2xl max-h-[95vh] rounded-sm shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
+          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-bustantech-black w-full max-w-2xl max-h-[95vh] rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
             <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0">
               <h3 className="text-lg md:text-xl font-bold dark:text-white tracking-widest uppercase">{editingId ? 'Modifier le Produit' : 'Nouveau Produit Exclusif'}</h3>
             </div>
@@ -1390,25 +1390,25 @@ const Admin = () => {
             <form id="productForm" onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom du Produit</label>
-                <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: iPhone 16 Pro Max" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
+                <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: iPhone 16 Pro Max" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Marque</label>
-                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Apple" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
+                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Apple" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Prix Actuel</label>
-                  <input required value={formData.base_price} onChange={e => setFormData({...formData, base_price: e.target.value})} type="number" step="0.01" placeholder="0.00" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
+                  <input required value={formData.base_price} onChange={e => setFormData({...formData, base_price: e.target.value})} type="number" step="0.01" placeholder="0.00" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Ancien Prix</label>
-                  <input value={formData.compare_at_price} onChange={e => setFormData({...formData, compare_at_price: e.target.value})} type="number" step="0.01" placeholder="Ex: 120000" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
+                  <input value={formData.compare_at_price} onChange={e => setFormData({...formData, compare_at_price: e.target.value})} type="number" step="0.01" placeholder="Ex: 120000" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Catégorie</label>
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors">
+                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors">
                   <option value="tech">Téléphones & Smartphones</option>
                   <option value="computers">Ordinateurs & Machines</option>
                   <option value="accessories">Accessoires Tech</option>
@@ -1419,14 +1419,14 @@ const Admin = () => {
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Images & Vidéos (Glissez ou Cliquez)</label>
                 <div className="flex flex-col gap-3">
-                    <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-bold file:bg-bustantech-gold file:text-white hover:file:bg-bustantech-gold-dark cursor-pointer" />
+                    <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-bustantech-gold file:text-white hover:file:bg-bustantech-gold-dark cursor-pointer" />
                     
                     {/* PREVIEW DES MÉDIAS */}
                     {(formData.existing_media.length > 0 || selectedFiles.length > 0) && (
-                        <div className="flex gap-2 flex-wrap mt-2 p-3 bg-gray-50 dark:bg-zinc-900/50 rounded-sm border border-gray-100 dark:border-gray-800">
+                        <div className="flex gap-2 flex-wrap mt-2 p-3 bg-gray-50 dark:bg-zinc-900/50 rounded-2xl border border-gray-100 dark:border-gray-800">
                             {/* Médias Existants (Edit) */}
                             {formData.existing_media.map((url, idx) => (
-                                <div key={`old-${idx}`} className="relative w-16 h-16 group rounded-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+                                <div key={`old-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
                                     {url.match(/\.(mp4|webm)$/i) ? (
                                         <video src={url} className="w-full h-full object-cover" />
                                     ) : (
@@ -1439,7 +1439,7 @@ const Admin = () => {
                             ))}
                             {/* Nouveaux Médias (Files) */}
                             {selectedFiles.map((file, idx) => (
-                                <div key={`new-${idx}`} className="relative w-16 h-16 group rounded-sm overflow-hidden border border-bustantech-gold/50 shadow-sm">
+                                <div key={`new-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-bustantech-gold/50 shadow-sm">
                                     <div className="absolute top-0 left-0 bg-bustantech-gold text-white text-[8px] font-bold px-1 rounded-br-sm z-10">NOUVEAU</div>
                                     {file.type.includes('video') ? (
                                         <video src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
@@ -1460,11 +1460,11 @@ const Admin = () => {
               <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
                 <div className="flex justify-between items-center mb-4">
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Variantes (Options, Tailles, etc.)</label>
-                  <button type="button" onClick={handleAddVariant} className="text-xs bg-gray-100 dark:bg-zinc-800 text-bustantech-gold px-3 py-1 rounded-sm font-bold hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors">+ Ajouter Option</button>
+                  <button type="button" onClick={handleAddVariant} className="text-xs bg-gray-100 dark:bg-zinc-800 text-bustantech-gold px-3 py-1 rounded-full font-bold hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors">+ Ajouter Option</button>
                 </div>
                 <div className="space-y-3 max-h-40 overflow-y-auto pr-2">
                   {formData.variants?.map((variant, idx) => (
-                    <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2 bg-gray-50 dark:bg-zinc-900/50 p-3 sm:p-2 rounded-sm border border-gray-200 dark:border-gray-800 relative">
+                    <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2 bg-gray-50 dark:bg-zinc-900/50 p-3 sm:p-2 rounded-2xl border border-gray-200 dark:border-gray-800 relative">
                       <div className="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:flex-1">
                         <input placeholder="SKU" value={variant.sku} onChange={e => handleVariantChange(idx, 'sku', e.target.value)} className="w-full sm:w-1/4 text-sm sm:text-xs bg-transparent border-b border-gray-300 dark:border-gray-700 pb-1 dark:text-white outline-none focus:border-bustantech-gold" />
                         <input placeholder="Nom/Taille" value={variant.attribute_value} onChange={e => handleVariantChange(idx, 'attribute_value', e.target.value)} className="w-full sm:w-1/4 text-sm sm:text-xs bg-transparent border-b border-gray-300 dark:border-gray-700 pb-1 dark:text-white outline-none focus:border-bustantech-gold" />
@@ -1483,7 +1483,7 @@ const Admin = () => {
             </div>
             <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-zinc-900 flex justify-end gap-3">
               <button type="button" disabled={isUploading} onClick={() => { setIsModalOpen(false); setEditingId(null); }} className="px-4 sm:px-6 py-3 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed">Annuler</button>
-              <button form="productForm" type="submit" disabled={isUploading} className="px-6 sm:px-8 py-3 text-sm bg-bustantech-gold text-white font-bold rounded-sm shadow-md hover:bg-bustantech-gold-dark transition-colors uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+              <button form="productForm" type="submit" disabled={isUploading} className="px-6 sm:px-8 py-3 text-sm bg-bustantech-gold text-white font-bold rounded-full shadow-md hover:bg-bustantech-gold-dark transition-colors uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                   {isUploading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -1501,7 +1501,7 @@ const Admin = () => {
       {/* MODAL AJOUT EMPLOYÉ */}
       {isEmployeeModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => setIsEmployeeModalOpen(false)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-bustantech-black w-full max-w-md max-h-[95vh] rounded-sm shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
+          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-bustantech-black w-full max-w-md max-h-[95vh] rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
             <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0 flex items-center gap-3">
               <Shield className="text-bustantech-gold" size={24} />
               <h3 className="text-lg md:text-xl font-bold dark:text-white tracking-widest uppercase">Nouvel Accès Collaborateur</h3>
@@ -1510,19 +1510,19 @@ const Admin = () => {
             <form id="employeeForm" onSubmit={handleEmployeeSubmit} className="space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom Complet</label>
-                <input required value={employeeForm.full_name} onChange={e => setEmployeeForm({...employeeForm, full_name: e.target.value})} type="text" placeholder="Ex: Jean Dupont" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
+                <input required value={employeeForm.full_name} onChange={e => setEmployeeForm({...employeeForm, full_name: e.target.value})} type="text" placeholder="Ex: Jean Dupont" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Email Professionnel</label>
-                <input required value={employeeForm.email} onChange={e => setEmployeeForm({...employeeForm, email: e.target.value})} type="email" placeholder="jean@bustantech.com" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
+                <input required value={employeeForm.email} onChange={e => setEmployeeForm({...employeeForm, email: e.target.value})} type="email" placeholder="jean@bustantech.com" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Mot de passe temporaire</label>
-                <input required value={employeeForm.password} onChange={e => setEmployeeForm({...employeeForm, password: e.target.value})} type="password" placeholder="••••••••" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
+                <input required value={employeeForm.password} onChange={e => setEmployeeForm({...employeeForm, password: e.target.value})} type="password" placeholder="••••••••" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors text-sm md:text-base" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Niveau d'accès (Rôle)</label>
-                <select value={employeeForm.role} onChange={e => setEmployeeForm({...employeeForm, role: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-sm px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors cursor-pointer text-sm md:text-base">
+                <select value={employeeForm.role} onChange={e => setEmployeeForm({...employeeForm, role: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors cursor-pointer text-sm md:text-base">
                   <option value="moderator">Modérateur (Peut gérer les produits et commandes)</option>
                   <option value="admin">Administrateur (Accès total)</option>
                 </select>
@@ -1531,7 +1531,7 @@ const Admin = () => {
             </div>
             <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-zinc-900 flex justify-end gap-3">
               <button type="button" disabled={isUploading} onClick={() => setIsEmployeeModalOpen(false)} className="px-4 sm:px-6 py-3 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors uppercase tracking-wider disabled:opacity-50">Annuler</button>
-              <button form="employeeForm" type="submit" disabled={isUploading} className="px-6 sm:px-8 py-3 text-sm bg-bustantech-gold text-white font-bold rounded-sm shadow-md hover:bg-bustantech-gold-dark transition-colors uppercase tracking-wider disabled:opacity-50">CRÉER LE COMPTE</button>
+              <button form="employeeForm" type="submit" disabled={isUploading} className="px-6 sm:px-8 py-3 text-sm bg-bustantech-gold text-white font-bold rounded-full shadow-md hover:bg-bustantech-gold-dark transition-colors uppercase tracking-wider disabled:opacity-50">CRÉER LE COMPTE</button>
             </div>
           </div>
         </div>
@@ -1540,7 +1540,7 @@ const Admin = () => {
       {/* MODAL DE CONFIRMATION DE SUPPRESSION */}
       {productToDelete && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => setProductToDelete(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-bustantech-black w-full max-w-md rounded-sm shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-red-500/30 cursor-default">
+          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-bustantech-black w-full max-w-md rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-red-500/30 cursor-default">
             <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-red-50 dark:bg-red-950/20 shrink-0">
               <h3 className="text-lg md:text-xl font-bold text-red-600 dark:text-red-500 tracking-widest uppercase">Confirmation de suppression</h3>
             </div>
@@ -1551,7 +1551,7 @@ const Admin = () => {
             </div>
             <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-zinc-900 flex justify-end gap-3">
               <button type="button" onClick={() => setProductToDelete(null)} className="px-4 sm:px-6 py-3 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors uppercase tracking-wider">Annuler</button>
-              <button type="button" onClick={handleDelete} className="px-6 sm:px-8 py-3 text-sm bg-red-500 text-white font-bold rounded-sm shadow-md hover:bg-red-600 transition-colors uppercase tracking-wider flex items-center gap-2">
+              <button type="button" onClick={handleDelete} className="px-6 sm:px-8 py-3 text-sm bg-red-500 text-white font-bold rounded-full shadow-md hover:bg-red-600 transition-colors uppercase tracking-wider flex items-center gap-2">
                   <Trash2 size={16} />
                   SUPPRIMER
                 </button>
@@ -1562,7 +1562,7 @@ const Admin = () => {
 
       {/* TOAST DE NOTIFICATION (Succès) */}
       {notification && (
-        <div className="fixed bottom-6 right-6 bg-green-500 text-white px-6 py-4 rounded-sm shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 z-[110]">
+        <div className="fixed bottom-6 right-6 bg-green-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 z-[110]">
           <CheckCircle2 size={20} />
           <span className="font-bold tracking-wide text-sm">{notification}</span>
         </div>

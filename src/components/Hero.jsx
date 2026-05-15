@@ -10,7 +10,7 @@ const slides = [
     subtitle: "Découvrez les derniers smartphones haut de gamme.",
     category: "TÉLÉPHONES",
     color: "from-gray-200 to-white dark:from-zinc-900 dark:to-black",
-    icon: <Smartphone className="text-bustantech-gold" size={40} />,
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778875919/Boustanetech3_gstihc.png",
     route: '/category/tech'
   },
   {
@@ -19,7 +19,7 @@ const slides = [
     subtitle: "Ordinateurs portables et machines de pointe.",
     category: "ORDINATEURS",
     color: "from-indigo-100 to-white dark:from-indigo-950/30 dark:to-black",
-    icon: <Laptop className="text-bustantech-gold" size={40} />,
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778875942/Boustanetech9_lathiv.png",
     route: '/category/computers'
   },
   {
@@ -28,7 +28,7 @@ const slides = [
     subtitle: "Protèges-écrans, chargeurs, casques et plus pour vos appareils.",
     category: "ACCESSOIRES TECH",
     color: "from-sky-100 to-white dark:from-sky-950/30 dark:to-black",
-    icon: <Headphones className="text-bustantech-gold" size={40} />,
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876042/Boustanetech7_xnwes1.png",
     route: '/category/accessories'
   },
   {
@@ -37,7 +37,7 @@ const slides = [
     subtitle: "Parfums rares et fragrances envoûtantes pour Elle & Lui.",
     category: "PARFUMERIE",
     color: "from-bustantech-beige to-white dark:from-stone-900 dark:to-black",
-    icon: <Wind className="text-bustantech-gold" size={40} />,
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876028/Boustanetech6_mktyyf.png",
     route: '/category/perfume'
   },
   {
@@ -46,7 +46,7 @@ const slides = [
     subtitle: "Cafés de spécialité fraîchement torréfiés pour vos matins.",
     category: "COFFEE BAR",
     color: "from-amber-100 to-white dark:from-orange-950/20 dark:to-black",
-    icon: <Coffee className="text-bustantech-gold" size={40} />,
+    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876070/Boustanetech4_jvddxx.png",
     route: '/category/coffee'
   }
 ];
@@ -72,9 +72,13 @@ const Hero = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className={`absolute inset-0 flex items-center px-4 sm:px-8 lg:px-20 bg-gradient-to-r ${slides[current].color}`}
+          className="absolute inset-0 flex items-center px-4 sm:px-8 lg:px-20 bg-cover bg-center md:bg-right bg-no-repeat"
+          style={{ backgroundImage: `url(${slides[current].image})` }}
         >
-          <div className="max-w-4xl space-y-6">
+          {/* Overlay: Sombre sur mobile (comme avant), Dégradé Premium sur desktop */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent"></div>
+
+          <div className="relative max-w-2xl space-y-6 z-20">
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -89,7 +93,7 @@ const Hero = () => {
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-luxury font-bold text-bustantech-black dark:text-white leading-tight"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-luxury font-bold text-white md:text-bustantech-black dark:text-white leading-tight"
             >
               {slides[current].title}
             </motion.h1>
@@ -98,7 +102,7 @@ const Hero = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl"
+              className="text-base sm:text-lg md:text-xl text-gray-200 md:text-gray-700 dark:text-gray-300 max-w-xl"
             >
               {slides[current].subtitle}
             </motion.p>
@@ -107,16 +111,11 @@ const Hero = () => {
               onClick={() => navigate(slides[current].route)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="group flex items-center justify-center sm:justify-start gap-3 bg-bustantech-gold text-white w-full sm:w-auto px-6 py-4 sm:px-8 sm:py-4 rounded-sm font-bold shadow-xl shadow-gold/20 hover:bg-bustantech-gold-dark transition-all"
+              className="group flex items-center justify-center sm:justify-start gap-3 bg-bustantech-gold text-white w-full sm:w-auto px-8 py-4 rounded-full font-bold shadow-xl hover:bg-bustantech-gold-dark transition-all"
             >
               DÉCOUVRIR LA COLLECTION
               <ArrowRight className="group-hover:translate-x-2 transition-transform" />
             </motion.button>
-          </div>
-
-          {/* Icone d'ambiance en arrière-plan (Design moderne) */}
-          <div className="absolute right-10 bottom-10 opacity-10 dark:opacity-5 scale-[5] pointer-events-none hidden lg:block">
-            {slides[current].icon}
           </div>
         </motion.div>
       </AnimatePresence>
