@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Moon, Sun, Search, Menu, X, Smartphone, Wind, Coffee, ShieldAlert, LogOut, PackageSearch, Loader2, Laptop, Headphones, HardHat } from 'lucide-react';
+import { ShoppingCart, Moon, Sun, Search, Menu, X, Smartphone, Wind, Coffee, ShieldAlert, LogOut, PackageSearch, Loader2, Laptop, Headphones, HardHat, Store } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
@@ -113,7 +113,8 @@ const Navbar = () => {
 
   return (
     <>
-    <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-bustantech-black/80 backdrop-blur-md border-b border-bustantech-gold/20 transition-colors duration-300">
+    <div className="h-20 w-full">
+      <nav className="fixed top-0 z-50 w-full bg-white/80 dark:bg-bustantech-black/80 backdrop-blur-md border-b border-bustantech-gold/20 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
@@ -129,6 +130,12 @@ const Navbar = () => {
 
           {/* NAVIGATION DESKTOP (Icônes avec texte permanent) */}
           <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center space-x-6">
+            <Link to="/shop" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
+                <Store size={22} />
+              </div>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Boutique</span>
+            </Link>
             <Link to="/category/tech" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
               <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
                 <Smartphone size={22} />
@@ -213,6 +220,7 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
+    </div>
 
       {/* OVERLAY FERMETURE MENU MOBILE (Clic à l'extérieur) */}
       {isMenuOpen && (
@@ -253,6 +261,12 @@ const Navbar = () => {
           </div>
 
           <div className="space-y-2">
+            <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
+              <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
+                <Store size={22} />
+              </div>
+              <span className="flex-1">Boutique</span>
+            </Link>
             <Link to="/category/tech" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
               <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
                 <Smartphone size={22} />

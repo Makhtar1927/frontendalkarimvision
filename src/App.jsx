@@ -6,6 +6,7 @@ import { useCartStore } from './store/useCartStore';
 import { useAuthStore } from './store/useAuthStore';
 import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
+import MobileBottomNav from './components/MobileBottomNav';
 import { apiFetch } from './components/api';
 
 // Le "Lazy loading" des pages améliore les performances.
@@ -15,6 +16,7 @@ const Home = React.lazy(() => import('./pages/Home'));
 const Login = React.lazy(() => import('./pages/Login'));
 const ProductPage = React.lazy(() => import('./pages/ProductPage'));
 const Maintenance = React.lazy(() => import('./pages/Maintenance'));
+const Shop = React.lazy(() => import('./pages/Shop'));
 
 function App() {
   const { isCartOpen, closeCart } = useCartStore();
@@ -45,7 +47,7 @@ function App() {
   }
   
   return (
-    <div className="min-h-screen bg-white dark:bg-bustantech-black transition-colors duration-300 overflow-x-hidden w-full">
+    <div className="min-h-screen bg-white dark:bg-bustantech-black transition-colors duration-300 overflow-x-hidden w-full md:pb-0 pb-16">
       {!isAdminPage && !isMaintenancePage && <Navbar />}
       <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
         <Suspense fallback={
@@ -56,6 +58,7 @@ function App() {
         }>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/shop" element={<Shop />} />
             <Route path="/login" element={<Login />} />
             <Route path="/maintenance" element={<Maintenance />} />
             <Route path="/product/:productId" element={<ProductPage />} />
@@ -67,6 +70,7 @@ function App() {
           </Routes>
         </Suspense>
         {!isAdminPage && !isMaintenancePage && <Footer />}
+        {!isAdminPage && !isMaintenancePage && <MobileBottomNav />}
       </div>
   );
 }
