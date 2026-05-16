@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 const SEO = ({ title, description, keywords, image, url, schema }) => {
   const siteName = "BoustaneTech Store";
   const defaultDesc = "L'alliance parfaite entre l'innovation technologique, le luxe de la haute parfumerie et l'art du café de spécialité.";
+  const defaultImage = "https://boustantech-store.vercel.app/Boustanetech.png";
   
   return (
     <Helmet>
@@ -16,14 +17,14 @@ const SEO = ({ title, description, keywords, image, url, schema }) => {
       <meta property="og:url" content={url || window.location.href} />
       <meta property="og:title" content={title ? `${title} | ${siteName}` : siteName} />
       <meta property="og:description" content={description || defaultDesc} />
-      {image && <meta property="og:image" content={image} />}
+      <meta property="og:image" content={image || defaultImage} />
 
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />
       <meta property="twitter:url" content={url || window.location.href} />
       <meta property="twitter:title" content={title ? `${title} | ${siteName}` : siteName} />
       <meta property="twitter:description" content={description || defaultDesc} />
-      {image && <meta property="twitter:image" content={image} />}
+      <meta property="twitter:image" content={image || defaultImage} />
 
       {/* JSON-LD Structured Data */}
       {schema && (
