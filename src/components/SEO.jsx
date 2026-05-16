@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 const SEO = ({ title, description, keywords, image, url, schema }) => {
   const siteName = "BoustaneTech Store";
   const defaultDesc = "L'alliance parfaite entre l'innovation technologique, le luxe de la haute parfumerie et l'art du café de spécialité.";
-  const defaultImage = "https://boustantech-store.vercel.app/Boustanetech.png";
+  const defaultImage = "https://boustanetech-store.vercel.app/Boustanetech.png";
   
   return (
     <Helmet>
