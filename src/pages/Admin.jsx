@@ -93,12 +93,27 @@ const Admin = () => {
   const visibleTabs = ADMIN_TABS.filter(tab => !tab.adminOnly || userRole === 'admin');
 
   useEffect(() => {
-    // Évite de déclencher des appels si déjà tenté, ou déjà fait par ce composant
-    if (!isInitialLoaded && !hasCalledInitialFetch.current) {
-      hasCalledInitialFetch.current = true;
-      fetchAdminData();
-    }
+    // Force la récupération des données à chaque visite (lors de la connexion ou navigation)
+    fetchAdminData(true, false);
     window.scrollTo(0, 0);
+
+    // Rafraîchissement automatique en arrière-plan toutes les 15 secondes
+    const interval = setInterval(() => {
+      fetchAdminData(true, true);
+    }, 15000);
+
+    // Rafraîchir les données quand l'administrateur revient sur l'onglet
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchAdminData(true, true);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []); // Dépendances vides : fetchAdminData est stable et interne au store.
 
   // --- NOTIFICATIONS TEMPS RÉEL (SSE) ---

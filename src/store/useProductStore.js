@@ -166,11 +166,12 @@ export const useProductStore = create((set, get) => ({
   },
 
   // Fonction unifiée pour charger toutes les données de l'admin
-  fetchAdminData: async (force = false) => {
+  fetchAdminData: async (force = false, background = false) => {
     const { isInitialLoaded, isFetching } = get();
     if (!force && (isInitialLoaded || isFetching)) return;
 
-    set({ loading: true, isFetching: true, error: null });
+    if (!background) set({ loading: true, error: null });
+    set({ isFetching: true });
 
     try {
       // On lance les appels essentiels en parallèle
