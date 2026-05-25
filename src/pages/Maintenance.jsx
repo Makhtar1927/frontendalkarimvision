@@ -1,11 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { HardHat, Wrench, Clock, Phone } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const Maintenance = () => {
     // On pourrait aussi charger ici le téléphone depuis l'API pour être 100% dynamique
     return (
-        <div className="min-h-screen bg-white dark:bg-bustantech-black flex flex-col items-center justify-center p-6 text-center">
+        <>
+            <SEO 
+                title="Maintenance en cours"
+                description="Notre site est actuellement en maintenance pour mise à jour. Nous serons de retour très bientôt !"
+                noindex={true}
+            />
+            <div className="min-h-screen bg-white dark:bg-bustantech-black flex flex-col items-center justify-center p-6 text-center">
             <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -50,6 +57,7 @@ const Maintenance = () => {
                 </div>
             </motion.div>
         </div>
+        </>
     );
 };
 

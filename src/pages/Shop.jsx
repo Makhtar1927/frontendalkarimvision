@@ -45,8 +45,8 @@ const Shop = () => {
   return (
     <>
       <SEO 
-        title="Boutique | BoustaneTech Store" 
-        description="Découvrez tous nos produits classés par catégories." 
+        title="Boutique en Ligne" 
+        description="Découvrez tous nos produits d'exception classés par catégories chez BoustaneTech Store : iPhones, parfums de niche et café prestigieux." 
       />
       <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 pb-20">
         {/* BANNIÈRE HERO DE LA BOUTIQUE */}

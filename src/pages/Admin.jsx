@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { apiFetch } from '../components/api';
+import SEO from '../components/SEO';
 
 const ADMIN_TABS = [
   { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
@@ -588,7 +589,12 @@ const Admin = () => {
   const paginatedProducts = processedProducts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="h-screen w-full flex bg-gray-50 dark:bg-zinc-950 overflow-hidden font-sans transition-colors duration-300">
+    <>
+      <SEO 
+        title="Dashboard Administration"
+        noindex={true}
+      />
+      <div className="h-screen w-full flex bg-gray-50 dark:bg-zinc-950 overflow-hidden font-sans transition-colors duration-300">
       
       {/* SIDEBAR DYNAMIQUE (Desktop) */}
       <motion.aside 
@@ -1583,6 +1589,7 @@ const Admin = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

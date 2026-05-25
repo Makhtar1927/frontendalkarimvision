@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { apiFetch } from '../components/api';
 import { Loader2 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 // NOTE : Ceci est un formulaire de connexion basique pour la démonstration.
 // Il est recommandé d'ajouter une validation plus robuste et une meilleure gestion des erreurs.
@@ -46,7 +47,13 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-gray-50 dark:bg-bustantech-black">
+    <>
+      <SEO 
+        title="Connexion Administration" 
+        description="Espace sécurisé de connexion pour le tableau de bord d'administration BoustaneTech Store."
+        noindex={true}
+      />
+      <div className="flex items-center justify-center min-h-[80vh] bg-gray-50 dark:bg-bustantech-black">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md dark:bg-zinc-900">
         <h2 className="text-2xl font-bold text-center text-bustantech-black dark:text-white">
           Accès Administration
@@ -98,6 +105,7 @@ const Login = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

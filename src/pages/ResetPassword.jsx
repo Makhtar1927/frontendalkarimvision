@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../components/api';
 import { Loader2, ArrowLeft, CheckCircle2, Lock } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -64,7 +65,13 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-gray-50 dark:bg-zinc-950 px-4">
+    <>
+      <SEO 
+        title="Réinitialisation mot de passe"
+        description="Choisissez votre nouveau mot de passe administrateur pour BoustaneTech Store."
+        noindex={true}
+      />
+      <div className="flex items-center justify-center min-h-[80vh] bg-gray-50 dark:bg-zinc-950 px-4">
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl dark:bg-bustantech-black border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-300">
         <div className="text-center mb-8">
           <div className="mx-auto bg-bustantech-gold/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 text-bustantech-gold">
@@ -106,6 +113,7 @@ const ResetPassword = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

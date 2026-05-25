@@ -4,4 +4,4 @@ Disallow: /admin/
 Disallow: /reset-password
 Disallow: /forgot-password
 
-Sitemap: https://boustantech-store.vercel.app/sitemap.xml
+Sitemap: https://boustanetech-store.vercel.app/sitemap.xml
