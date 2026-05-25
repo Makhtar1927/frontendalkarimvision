@@ -72,11 +72,18 @@ const Hero = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute inset-0 flex items-center px-4 sm:px-8 lg:px-20 bg-cover bg-center md:bg-right bg-no-repeat"
-          style={{ backgroundImage: `url(${slides[current].image})` }}
+          className="absolute inset-0 flex items-center px-4 sm:px-8 lg:px-20"
         >
+          <img 
+            src={slides[current].image}
+            alt={slides[current].title}
+            fetchPriority={current === 0 ? "high" : "auto"}
+            loading={current === 0 ? "eager" : "lazy"}
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+          />
           {/* Overlay: Sombre sur mobile (comme avant), Dégradé Premium sur desktop */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent"></div>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent z-10"></div>
 
           <div className="relative max-w-2xl space-y-6 z-20">
             <motion.div 

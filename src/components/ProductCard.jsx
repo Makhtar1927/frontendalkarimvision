@@ -53,7 +53,7 @@ const ProductCard = ({ product }) => {
     : (product.image_url || 'https://via.placeholder.com/400');
 
   return (
-    <motion.div 
+    <motion.article 
       role="button"
       tabIndex={0}
       onClick={() => navigate(`/product/${product.id}`)}
@@ -68,6 +68,8 @@ const ProductCard = ({ product }) => {
         <img 
           src={imageUrl} 
           alt={product.name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           onError={(e) => { e.target.src = 'https://placehold.co/400x400/png?text=Image+Indisponible'; }}
         />
@@ -197,7 +199,7 @@ const ProductCard = ({ product }) => {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </motion.article>
   );
 };
 

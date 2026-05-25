@@ -83,9 +83,12 @@ const CategoryGrids = () => {
               className="group relative h-[250px] sm:h-[350px] lg:h-[500px] overflow-hidden cursor-pointer rounded-2xl"
             >
               {/* IMAGE DE FOND AVEC ZOOM */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                style={{ backgroundImage: `url(${cat.image})` }}
+              <img 
+                src={cat.image} 
+                alt={cat.title}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               
               {/* OVERLAY SOMBRE GRADIENT */}

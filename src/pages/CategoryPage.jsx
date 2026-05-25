@@ -77,23 +77,54 @@ const CategoryPage = () => {
 
   const info = CATEGORY_INFO[categoryId] || { title: "Collection Exclusive", subtitle: "Découvrez nos articles", image: "", color: "from-gray-100 to-white dark:from-zinc-900 dark:to-black" };
 
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://boustanetech-store.vercel.app/category/${categoryId}`;
+  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://boustanetech-store.vercel.app';
+
+  const categorySchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": `${info.title} | BoustaneTech Store`,
+    "description": info.subtitle,
+    "url": currentUrl,
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": filteredProducts.slice(0, 12).map((product, idx) => ({
+        "@type": "ListItem",
+        "position": idx + 1,
+        "url": `${currentOrigin}/product/${product.id}`,
+        "name": product.name,
+        "image": product.image_url,
+        "price": product.base_price,
+        "priceCurrency": "XOF"
+      }))
+    }
+  };
+
   return (
     <>
       <SEO 
         title={info.title} 
         description={info.subtitle} 
         image={info.image}
+        schema={categorySchema}
       />
       <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 pb-20">
       {/* BANNIÈRE HERO DE LA CATÉGORIE */}
-      <div 
-        className="relative h-[40vh] md:h-[50vh] w-full flex items-center overflow-hidden bg-cover bg-center md:bg-right bg-no-repeat"
-        style={{ backgroundImage: `url(${info.image})` }}
-      >
+      <div className="relative h-[40vh] md:h-[50vh] w-full flex items-center overflow-hidden">
+        {info.image && (
+          <img 
+            src={info.image}
+            alt={info.title}
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+          />
+        )}
         {/* Overlay: Sombre sur mobile, Dégradé Premium sur desktop */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent"></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent z-10"></div>
         
-        <div className="relative z-10 px-4 w-full max-w-7xl mx-auto flex items-center">
+        <div className="relative z-20 px-4 w-full max-w-7xl mx-auto flex items-center">
           <div className="max-w-2xl">
             <motion.h1 
               initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}

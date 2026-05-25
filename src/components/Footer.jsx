@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Send, CheckCircle2, Loader2, Compass, Phone, Mail, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { apiFetch } from './api';
 
 const Footer = () => {
@@ -107,12 +108,12 @@ const Footer = () => {
           <div>
             <h3 className="text-xs font-bold text-black dark:text-white uppercase tracking-wider mb-4">Navigation</h3>
             <ul className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
-              <li><a href="/" className="hover:text-bustantech-gold transition-colors">Accueil</a></li>
-              <li><a href="/category/tech" className="hover:text-bustantech-gold transition-colors">Téléphones</a></li>
-              <li><a href="/category/computers" className="hover:text-bustantech-gold transition-colors">Ordinateurs</a></li>
-              <li><a href="/category/accessories" className="hover:text-bustantech-gold transition-colors">Accessoires</a></li>
-              <li><a href="/category/perfume" className="hover:text-bustantech-gold transition-colors">Haute Parfumerie</a></li>
-              <li><a href="/category/coffee" className="hover:text-bustantech-gold transition-colors">Le Coin Café</a></li>
+              <li><Link to="/" className="hover:text-bustantech-gold transition-colors">Accueil</Link></li>
+              <li><Link to="/category/tech" className="hover:text-bustantech-gold transition-colors">Téléphones</Link></li>
+              <li><Link to="/category/computers" className="hover:text-bustantech-gold transition-colors">Ordinateurs</Link></li>
+              <li><Link to="/category/accessories" className="hover:text-bustantech-gold transition-colors">Accessoires</Link></li>
+              <li><Link to="/category/perfume" className="hover:text-bustantech-gold transition-colors">Haute Parfumerie</Link></li>
+              <li><Link to="/category/coffee" className="hover:text-bustantech-gold transition-colors">Le Coin Café</Link></li>
             </ul>
           </div>
 

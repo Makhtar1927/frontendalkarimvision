@@ -47,9 +47,10 @@ function App() {
   }
   
   return (
-    <div className="min-h-screen bg-white dark:bg-bustantech-black transition-colors duration-300 overflow-x-hidden w-full md:pb-0 pb-16">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-bustantech-black transition-colors duration-300 overflow-x-hidden w-full md:pb-0 pb-16">
       {!isAdminPage && !isMaintenancePage && <Navbar />}
       <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
+      <main id="main-content" className="flex-grow">
         <Suspense fallback={
           <div className="min-h-screen flex flex-col items-center justify-center gap-4 dark:text-white">
             <div className="w-12 h-12 border-4 border-bustantech-gold/20 border-t-bustantech-gold rounded-full animate-spin"></div>
@@ -69,9 +70,10 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
-        {!isAdminPage && !isMaintenancePage && <Footer />}
-        {!isAdminPage && !isMaintenancePage && <MobileBottomNav />}
-      </div>
+      </main>
+      {!isAdminPage && !isMaintenancePage && <Footer />}
+      {!isAdminPage && !isMaintenancePage && <MobileBottomNav />}
+    </div>
   );
 }
 

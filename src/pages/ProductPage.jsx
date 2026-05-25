@@ -185,25 +185,55 @@ const ProductPage = () => {
 
   const isVariantOutOfStock = selectedVariant ? selectedVariant.stock_quantity === 0 : false;
 
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://boustanetech-store.vercel.app/product/${currentProduct.id}`;
+  const imageGallery = mediaUrls.filter(url => typeof url === 'string' && !url.match(/\.(mp4|mov|webm)$/i));
+  const productImages = imageGallery.length > 0 ? imageGallery : [currentProduct.image_url || 'https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778875919/Boustanetech3_gstihc.png'];
+
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
     "name": currentProduct.name,
-    "image": currentProduct.image_url,
+    "image": productImages,
     "description": currentProduct.description?.substring(0, 160) || `Découvrez ${currentProduct.name} chez BoustaneTech Store`,
-    "sku": currentProduct.id,
+    "sku": currentProduct.id ? currentProduct.id.toString() : 'SKU-UNKNOWN',
     "brand": {
       "@type": "Brand",
       "name": currentProduct.brand || "BoustaneTech Store"
     },
     "offers": {
       "@type": "Offer",
-      "url": window.location.href,
+      "url": currentUrl,
       "priceCurrency": "XOF",
-      "price": currentProduct.base_price,
-      "availability": isVariantOutOfStock ? "https://schema.org/OutOfStock" : "https://schema.org/InStock"
+      "price": displayPrice.toString(),
+      "availability": isVariantOutOfStock ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+      "priceValidUntil": new Date(new Date().getFullYear() + 1, 11, 31).toISOString().split('T')[0]
     }
   };
+
+  if (reviews && reviews.length > 0) {
+    productSchema.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": averageRating.toString(),
+      "reviewCount": reviews.length.toString(),
+      "bestRating": "5",
+      "worstRating": "1"
+    };
+    productSchema.review = reviews.map(r => ({
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": r.customer_name || 'Anonyme'
+      },
+      "datePublished": r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+      "reviewBody": r.comment || '',
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": (r.rating || 5).toString(),
+        "bestRating": "5",
+        "worstRating": "1"
+      }
+    }));
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
