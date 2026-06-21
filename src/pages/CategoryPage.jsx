@@ -7,36 +7,43 @@ import { Search, SlidersHorizontal, Filter } from 'lucide-react';
 import SEO from '../components/SEO';
 
 const CATEGORY_INFO = {
-  tech: {
-    title: "Téléphones & Smartphones",
-    subtitle: "Découvrez notre sélection de smartphones haut de gamme.",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876111/Boustanetech2_biqfvg.png",
-    color: "from-gray-200 to-white dark:from-zinc-900 dark:to-black"
-  },
-  computers: {
-    title: "Ordinateurs & Machines",
-    subtitle: "PC Portables, MacBooks et stations de travail performantes.",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876055/Boustanetech8_klrkma.png",
-    color: "from-indigo-100 to-white dark:from-indigo-950/30 dark:to-black"
-  },
-  accessories: {
-    title: "Accessoires Tech",
-    subtitle: "Coques, chargeurs, écouteurs et équipements essentiels.",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876447/Boustanetech5_u8bcnz.png",
+  glasses: {
+    title: "Lunettes & Optique",
+    subtitle: "Des modèles élégants et des verres haute technologie pour sublimer votre regard.",
+    image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=1200&auto=format&fit=crop",
     color: "from-sky-100 to-white dark:from-sky-950/30 dark:to-black"
   },
   perfume: {
     title: "Haute Parfumerie",
     subtitle: "Des fragrances rares et luxueuses pour affirmer votre identité.",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876028/Boustanetech6_mktyyf.png",
-    color: "from-bustantech-beige to-white dark:from-stone-900 dark:to-black"
+    image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1200&auto=format&fit=crop",
+    color: "from-bustantech-sky to-white dark:from-stone-900 dark:to-black"
   },
-  coffee: {
-    title: "Torréfaction d'Exception",
-    subtitle: "Sélection exclusive. Poudre prestige, sachets de 1 KG uniquement.",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876070/Boustanetech4_jvddxx.png",
-    color: "from-amber-100 to-white dark:from-orange-950/20 dark:to-black"
+  watches: {
+    title: "Montres de Prestige",
+    subtitle: "Gardez le contrôle du temps avec nos pièces horlogères d'exception.",
+    image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1200&auto=format&fit=crop",
+    color: "from-indigo-100 to-white dark:from-indigo-950/30 dark:to-black"
+  },
+  other: {
+    title: "Divers & Accessoires",
+    subtitle: "Une collection d'articles exclusifs et variés sélectionnés par nos soins.",
+    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1200&auto=format&fit=crop",
+    color: "from-gray-100 to-white dark:from-zinc-900/20 dark:to-black"
   }
+};
+
+const SUBCATEGORY_MAP = {
+  glasses: [
+    { id: '', name: 'Tous' },
+    { id: 'noir_fume', name: 'Noir Fumé' },
+    { id: 'photogray', name: 'Photogray' }
+  ],
+  perfume: [
+    { id: '', name: 'Tous' },
+    { id: 'avec_alcool', name: 'Avec Alcool' },
+    { id: 'sans_alcool', name: 'Sans Alcool' }
+  ]
 };
 
 const CategoryPage = () => {
@@ -47,11 +54,13 @@ const CategoryPage = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
 
   useEffect(() => {
     fetchProducts();
     window.scrollTo(0, 0); // Scroll top on page load
     setSelectedBrand(''); // Réinitialise le filtre marque si on change de catégorie
+    setSelectedSubcategory(''); // Réinitialise la sous-catégorie si on change de catégorie
   }, [categoryId, fetchProducts]);
 
   const rawProducts = getProductsByCategory(categoryId);
@@ -63,6 +72,7 @@ const CategoryPage = () => {
   const filteredProducts = rawProducts
     .filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
     .filter(p => selectedBrand === '' || p.brand?.toLowerCase() === selectedBrand.toLowerCase())
+    .filter(p => selectedSubcategory === '' || p.subcategory === selectedSubcategory)
     .filter(p => {
       const price = parseFloat(p.base_price);
       if (minPrice && price < parseFloat(minPrice)) return false;
@@ -83,7 +93,7 @@ const CategoryPage = () => {
   const categorySchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": `${info.title} | BoustaneTech Store`,
+    "name": `${info.title} | Al Karim Vision`,
     "description": info.subtitle,
     "url": currentUrl,
     "mainEntity": {
@@ -143,6 +153,53 @@ const CategoryPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+        {/* FILTRES PAR SOUS-CATÉGORIES */}
+        {SUBCATEGORY_MAP[categoryId] && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-wrap items-center justify-center gap-3 p-2 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md border border-gray-200/50 dark:border-zinc-800/50 rounded-3xl shadow-sm mb-8"
+          >
+            {SUBCATEGORY_MAP[categoryId].map((sub, index) => {
+              const isActive = selectedSubcategory === sub.id;
+              const count = sub.id 
+                ? rawProducts.filter(p => p.subcategory === sub.id).length
+                : rawProducts.length;
+                
+              return (
+                <motion.button
+                  key={sub.id}
+                  whileHover={{ scale: 1.03, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => setSelectedSubcategory(sub.id)}
+                  className={`
+                    px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-300 flex items-center gap-2
+                    ${isActive 
+                      ? 'bg-bustantech-gold text-white shadow-lg shadow-bustantech-gold/25' 
+                      : 'bg-white/80 dark:bg-zinc-900/85 text-gray-600 dark:text-gray-400 border border-gray-150 dark:border-zinc-800/80 hover:bg-white dark:hover:bg-zinc-800/80 hover:text-gray-900 dark:hover:text-white'
+                    }
+                  `}
+                >
+                  <span>{sub.name}</span>
+                  <span className={`
+                    text-xs px-2 py-0.5 rounded-full font-bold transition-colors duration-300
+                    ${isActive 
+                      ? 'bg-white/20 text-white' 
+                      : 'bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400'
+                    }
+                  `}>
+                    {count}
+                  </span>
+                </motion.button>
+              );
+            })}
+          </motion.div>
+        )}
+
         {/* BARRE D'OUTILS ET FILTRES (Fonctionnalité Moderne) */}
         <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-bustantech-black p-4 rounded-2xl shadow-sm md:shadow-md mb-8 border border-gray-100 dark:border-gray-800 gap-4">
           <div className="relative w-full md:w-1/3">

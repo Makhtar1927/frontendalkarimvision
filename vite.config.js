@@ -7,19 +7,19 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['logo.jpg'],
       manifest: {
-        name: 'BoustaneTech',
-        short_name: 'BoustaneTech',
-        description: 'BoustaneTech Store - Boutique en ligne',
+        name: 'Al Karim Vision',
+        short_name: 'Al Karim Vision',
+        description: 'Al Karim Vision - Boutique en ligne',
         theme_color: '#000000',
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
           {
-            src: 'favicon.svg',
+            src: 'logo.jpg',
             sizes: '512x512',
-            type: 'image/svg+xml',
+            type: 'image/jpeg',
             purpose: 'any maskable'
           }
         ]

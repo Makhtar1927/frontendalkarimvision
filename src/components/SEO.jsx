@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
 const SEO = ({ title, description, keywords, image, url, schema, noindex }) => {
-  const siteName = "BoustaneTech Store";
+  const siteName = "Al Karim Vision";
   const defaultDesc = "L'alliance parfaite entre l'innovation technologique, le luxe de la haute parfumerie et l'art du café de spécialité.";
   const defaultImage = "https://boustanetech-store.vercel.app/Boustanetech.png";
   

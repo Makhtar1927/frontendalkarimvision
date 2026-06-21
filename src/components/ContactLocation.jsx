@@ -4,7 +4,7 @@ import { MapPin, Phone, Clock, Mail, Camera, MessageCircle } from 'lucide-react'
 
 const ContactLocation = () => {
   return (
-    <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-20 bg-bustantech-beige/30 dark:bg-bustantech-gray/20">
+    <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-20 bg-bustantech-sky/30 dark:bg-bustantech-gray/20">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
@@ -17,7 +17,7 @@ const ContactLocation = () => {
           >
             <div className="space-y-4">
               <h3 className="text-bustantech-gold font-bold tracking-widest text-sm">NOUS RENDRE VISITE</h3>
-              <h2 className="text-3xl md:text-4xl font-luxury font-bold dark:text-white">BoustaneTech Experience Center</h2>
+              <h2 className="text-3xl md:text-4xl font-luxury font-bold dark:text-white">Al Karim Vision Experience Center</h2>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                 Retrouvez tous nos univers Tech, Parfumerie et Café dans notre showroom. 
                 Essais de produits et dégustations de café offertes sur place.
@@ -88,7 +88,7 @@ const ContactLocation = () => {
               src="https://maps.google.com/maps?q=14.765917,-17.394389&hl=fr&z=16&output=embed" 
               width="100%" 
               height="100%" 
-              title="Carte Google Maps indiquant l'emplacement du BoustaneTech Experience Center"
+              title="Carte Google Maps indiquant l'emplacement du Al Karim Vision Experience Center"
               style={{ border: 0, filter: 'grayscale(0.5) contrast(1.1)' }} 
               allowFullScreen="" 
               loading="lazy"

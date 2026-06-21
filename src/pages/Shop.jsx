@@ -7,11 +7,10 @@ import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 
 const CATEGORIES = [
-  { id: 'tech', name: 'Téléphones & Tech' },
-  { id: 'computers', name: 'Ordinateurs' },
-  { id: 'accessories', name: 'Accessoires' },
+  { id: 'glasses', name: 'Lunettes' },
   { id: 'perfume', name: 'Parfums de Luxe' },
-  { id: 'coffee', name: 'Le Coin Café' }
+  { id: 'watches', name: 'Montres' },
+  { id: 'other', name: 'Divers' }
 ];
 
 const Shop = () => {
@@ -21,15 +20,23 @@ const Shop = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
 
   useEffect(() => {
     fetchProducts();
     window.scrollTo(0, 0);
   }, [fetchProducts]);
 
+  // Réinitialiser la sous-catégorie si on change de catégorie
+  const handleCategoryChange = (val) => {
+    setSelectedCategory(val);
+    setSelectedSubcategory('');
+  };
+
   // Filtrage global
   const filteredProducts = products
     .filter(p => p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand?.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(p => selectedSubcategory === '' || p.subcategory === selectedSubcategory)
     .filter(p => {
       const price = parseFloat(p.base_price);
       if (minPrice && price < parseFloat(minPrice)) return false;
@@ -48,8 +55,8 @@ const Shop = () => {
   const shopSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "Boutique en Ligne | BoustaneTech Store",
-    "description": "Parcourez tous nos univers et trouvez les meilleurs produits à Dakar : iPhones, ordinateurs, accessoires, parfumerie et café d'exception.",
+    "name": "Boutique en Ligne | Al Karim Vision",
+    "description": "Parcourez tous nos univers et trouvez les meilleurs produits à Dakar : lunettes de soleil, montres de prestige, parfums de niche et articles divers.",
     "url": currentUrl,
     "mainEntity": {
       "@type": "ItemList",
@@ -69,7 +76,7 @@ const Shop = () => {
     <>
       <SEO 
         title="Boutique en Ligne" 
-        description="Découvrez tous nos produits d'exception classés par catégories chez BoustaneTech Store : iPhones, parfums de niche et café prestigieux." 
+        description="Découvrez tous nos produits d'exception classés par catégories chez Al Karim Vision : lunettes de marque, montres de luxe, parfums rares et articles divers." 
         schema={shopSchema}
       />
       <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 pb-20">
@@ -77,7 +84,7 @@ const Shop = () => {
         <div className="relative h-[40vh] md:h-[50vh] w-full flex items-center overflow-hidden">
           <img 
             src="https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876055/Boustanetech8_klrkma.png"
-            alt="BoustaneTech Store - Boutique en Ligne"
+            alt="Al Karim Vision - Boutique en Ligne"
             fetchPriority="high"
             loading="eager"
             decoding="async"
@@ -144,12 +151,37 @@ const Shop = () => {
               <select 
                 className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-full focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={(e) => handleCategoryChange(e.target.value)}
               >
                 <option value="">Toutes les catégories</option>
                 {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
+
+            {/* FILTRE PAR SOUS-CATÉGORIES */}
+            {(selectedCategory === 'glasses' || selectedCategory === 'perfume') && (
+              <div className="flex items-center gap-3 w-full lg:w-auto relative">
+                <Filter size={18} className="absolute left-3 text-gray-400 pointer-events-none" />
+                <select 
+                  className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-full focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
+                  value={selectedSubcategory}
+                  onChange={(e) => setSelectedSubcategory(e.target.value)}
+                >
+                  <option value="">Toutes les sous-catégories</option>
+                  {selectedCategory === 'glasses' ? (
+                    <>
+                      <option value="noir_fume">Noir Fumé</option>
+                      <option value="photogray">Photogray</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="avec_alcool">Avec Alcool</option>
+                      <option value="sans_alcool">Sans Alcool</option>
+                    </>
+                  )}
+                </select>
+              </div>
+            )}
 
             {/* TRI */}
             <div className="flex items-center gap-3 w-full lg:w-auto">

@@ -3,52 +3,42 @@ import { apiFetch } from '../components/api';
 
 // --- RICH DEMO DATA ---
 const DEMO_PRODUCTS = [
-  // ----------- iPHONES (tech) -----------
+  // ----------- LUNETTES (glasses) -----------
   {
-    id: 'tech-1',
-    category: 'tech',
-    brand: 'Apple',
-    name: 'iPhone 15 Pro Max',
-    base_price: '1479.00',
-    image_url: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&q=80&w=800',
+    id: 'glasses-1',
+    category: 'glasses',
+    subcategory: 'noir_fume',
+    brand: 'Ray-Ban',
+    name: 'Ray-Ban Aviator Classic',
+    base_price: '85000.00',
+    image_url: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=800&auto=format&fit=crop',
     variants: [
-      { sku: 'IP15PM-256', attribute_value: '256 Go', price_modifier: 0, stock_quantity: 10 },
-      { sku: 'IP15PM-512', attribute_value: '512 Go', price_modifier: 250, stock_quantity: 5 },
-      { sku: 'IP15PM-1TB', attribute_value: '1 To', price_modifier: 500, stock_quantity: 2 }
+      { sku: 'RB-AVIATOR', attribute_value: 'Standard', price_modifier: 0, stock_quantity: 15 }
     ]
   },
   {
-    id: 'tech-2',
-    category: 'tech',
-    brand: 'Apple',
-    name: 'iPhone 15 Pro',
-    base_price: '1229.00',
-    image_url: 'https://images.unsplash.com/photo-1695048132717-d2e7a3b302c3?auto=format&fit=crop&q=80&w=800',
+    id: 'glasses-2',
+    category: 'glasses',
+    subcategory: 'photogray',
+    brand: 'Oakley',
+    name: 'Oakley Holbrook',
+    base_price: '95000.00',
+    image_url: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=800&auto=format&fit=crop',
     variants: [
-      { sku: 'IP15P-128', attribute_value: '128 Go', price_modifier: 0, stock_quantity: 15 },
-      { sku: 'IP15P-256', attribute_value: '256 Go', price_modifier: 130, stock_quantity: 8 }
+      { sku: 'OK-HOLBROOK-BLK', attribute_value: 'Noir Mat', price_modifier: 0, stock_quantity: 10 },
+      { sku: 'OK-HOLBROOK-BLU', attribute_value: 'Prism Saphir', price_modifier: 15000, stock_quantity: 5 }
     ]
   },
   {
-    id: 'tech-3',
-    category: 'tech',
-    brand: 'Apple',
-    name: 'iPhone 14 Pro Max',
-    base_price: '1149.00',
-    image_url: 'https://images.unsplash.com/photo-1663465373017-b08e70aee1ad?auto=format&fit=crop&q=80&w=800',
+    id: 'glasses-3',
+    category: 'glasses',
+    subcategory: 'noir_fume',
+    brand: 'Tom Ford',
+    name: 'Tom Ford Square Sunglasses',
+    base_price: '120000.00',
+    image_url: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=800&auto=format&fit=crop',
     variants: [
-      { sku: 'IP14PM-128', attribute_value: '128 Go', price_modifier: 0, stock_quantity: 3 }
-    ]
-  },
-  {
-    id: 'tech-4',
-    category: 'tech',
-    brand: 'Apple',
-    name: 'iPhone 13',
-    base_price: '749.00',
-    image_url: 'https://images.unsplash.com/photo-1632661674596-618d8b64d641?auto=format&fit=crop&q=80&w=800',
-    variants: [
-      { sku: 'IP13-128', attribute_value: '128 Go', price_modifier: 0, stock_quantity: 20 }
+      { sku: 'TF-SQR-SUN', attribute_value: 'Standard', price_modifier: 0, stock_quantity: 8 }
     ]
   },
 
@@ -56,76 +46,87 @@ const DEMO_PRODUCTS = [
   {
     id: 'perf-1',
     category: 'perfume',
+    subcategory: 'avec_alcool',
     brand: 'Tom Ford',
     name: 'Oud Wood Eau de Parfum',
-    base_price: '245.00',
+    base_price: '160000.00',
     image_url: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800',
     variants: [{ sku: 'TF-OUD-50', attribute_value: '50ml', price_modifier: 0, stock_quantity: 5 }]
   },
   {
     id: 'perf-2',
     category: 'perfume',
+    subcategory: 'sans_alcool',
     brand: 'Maison Francis Kurkdjian',
     name: 'Baccarat Rouge 540',
-    base_price: '305.00',
+    base_price: '200000.00',
     image_url: 'https://images.unsplash.com/photo-1616422285623-14bf93f2f0c7?auto=format&fit=crop&q=80&w=800',
     variants: [{ sku: 'MFK-BR540-70', attribute_value: '70ml', price_modifier: 0, stock_quantity: 12 }]
   },
   {
     id: 'perf-3',
     category: 'perfume',
+    subcategory: 'avec_alcool',
     brand: 'Creed',
     name: 'Aventus',
-    base_price: '295.00',
+    base_price: '195000.00',
     image_url: 'https://images.unsplash.com/photo-1629858607106-9bd6d5254dfb?auto=format&fit=crop&q=80&w=800',
     variants: [{ sku: 'CRD-AVE-100', attribute_value: '100ml', price_modifier: 0, stock_quantity: 8 }]
   },
   {
     id: 'perf-4',
     category: 'perfume',
+    subcategory: 'avec_alcool',
     brand: 'Dior',
     name: 'Sauvage Elixir',
-    base_price: '185.00',
+    base_price: '120000.00',
     image_url: 'https://images.unsplash.com/photo-1582211594533-268f4f1edcb9?auto=format&fit=crop&q=80&w=800',
     variants: [{ sku: 'DIOR-SAU-60', attribute_value: '60ml', price_modifier: 0, stock_quantity: 25 }]
   },
+
+  // ----------- MONTRES (watches) -----------
   {
-    id: 'perf-5',
-    category: 'perfume',
-    brand: 'Byredo',
-    name: 'Gypsy Water',
-    base_price: '190.00',
-    image_url: 'https://images.unsplash.com/photo-1595425970377-c9703bc48baf?auto=format&fit=crop&q=80&w=800',
-    variants: [{ sku: 'BYR-GYP-100', attribute_value: '100ml', price_modifier: 0, stock_quantity: 4 }]
+    id: 'watches-1',
+    category: 'watches',
+    brand: 'Seiko',
+    name: 'Seiko 5 Sports',
+    base_price: '195000.00',
+    image_url: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=800&auto=format&fit=crop',
+    variants: [
+      { sku: 'SK-5SPORTS', attribute_value: 'Acier', price_modifier: 0, stock_quantity: 8 }
+    ]
+  },
+  {
+    id: 'watches-2',
+    category: 'watches',
+    brand: 'Tissot',
+    name: 'Tissot PRX Powermatic 80',
+    base_price: '450000.00',
+    image_url: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?q=80&w=800&auto=format&fit=crop',
+    variants: [
+      { sku: 'TS-PRX-BLU', attribute_value: 'Cadran Bleu', price_modifier: 0, stock_quantity: 5 },
+      { sku: 'TS-PRX-BLK', attribute_value: 'Cadran Noir', price_modifier: 0, stock_quantity: 4 }
+    ]
   },
 
-  // ----------- CAFÉ (coffee) STRICTLY POWDER / 1KG ONLY -----------
+  // ----------- DIVERS (other) -----------
   {
-    id: 'cof-1',
-    category: 'coffee',
-    brand: 'BoustaneTech Roasters',
-    name: 'Éthiopie Yirgacheffe (Mouture Fine)',
-    base_price: '38.00',
-    image_url: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=800',
-    variants: [{ sku: 'COF-ETH-1KG', attribute_value: '1 KG - Poudre', price_modifier: 0, stock_quantity: 40 }]
+    id: 'other-1',
+    category: 'other',
+    brand: 'Oraimo',
+    name: 'SpaceBuds Beyond Sound',
+    base_price: '35000.00',
+    image_url: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=800&auto=format&fit=crop',
+    variants: [{ sku: 'OR-SPACEBUDS', attribute_value: 'Standard', price_modifier: 0, stock_quantity: 15 }]
   },
   {
-    id: 'cof-2',
-    category: 'coffee',
-    brand: 'BoustaneTech Roasters',
-    name: 'Colombie Supremo (Mouture Espresso)',
-    base_price: '34.00',
-    image_url: 'https://images.unsplash.com/photo-1610632380989-680fe0659131?auto=format&fit=crop&q=80&w=800',
-    variants: [{ sku: 'COF-COL-1KG', attribute_value: '1 KG - Poudre', price_modifier: 0, stock_quantity: 15 }]
-  },
-  {
-    id: 'cof-3',
-    category: 'coffee',
-    brand: 'BoustaneTech Premium',
-    name: 'Blue Mountain Blend (Mouture Filtre)',
-    base_price: '65.00',
-    image_url: 'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&q=80&w=800',
-    variants: [{ sku: 'COF-JMB-1KG', attribute_value: '1 KG - Poudre', price_modifier: 0, stock_quantity: 2 }]
+    id: 'other-2',
+    category: 'other',
+    brand: 'Oraimo',
+    name: 'SmartTrimmer Multi-fonction',
+    base_price: '18000.00',
+    image_url: 'https://images.unsplash.com/photo-1621607512214-68297480165e?q=80&w=800&auto=format&fit=crop',
+    variants: [{ sku: 'OR-TRIMMER', attribute_value: 'Standard', price_modifier: 0, stock_quantity: 10 }]
   }
 ];
 

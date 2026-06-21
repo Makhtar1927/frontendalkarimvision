@@ -50,7 +50,7 @@ const Login = () => {
     <>
       <SEO 
         title="Connexion Administration" 
-        description="Espace sécurisé de connexion pour le tableau de bord d'administration BoustaneTech Store."
+        description="Espace sécurisé de connexion pour le tableau de bord d'administration Al Karim Vision."
         noindex={true}
       />
       <div className="flex items-center justify-center min-h-[80vh] bg-gray-50 dark:bg-bustantech-black">
@@ -77,7 +77,7 @@ const Login = () => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Mot de passe
               </label>
-              <Link to="/forgot-password" className="text-xs text-bustantech-gold hover:text-yellow-600 transition-colors font-medium">
+              <Link to="/forgot-password" className="text-xs text-bustantech-gold hover:text-bustantech-gold-dark transition-colors font-medium">
                 Mot de passe oublié ?
               </Link>
             </div>

@@ -10,11 +10,11 @@ const Home = () => {
     "@context": "https://schema.org",
     "@type": "Store",
     "@id": "https://boustanetech-store.vercel.app/#store",
-    "name": "BoustaneTech Store",
+    "name": "Al Karim Vision",
     "url": "https://boustanetech-store.vercel.app/",
-    "logo": "https://boustanetech-store.vercel.app/favicon.svg",
-    "image": "https://boustanetech-store.vercel.app/Boustanetech.png",
-    "description": "L'alliance parfaite entre l'innovation technologique, le luxe de la haute parfumerie et l'art du café de spécialité à Dakar.",
+    "logo": "https://boustanetech-store.vercel.app/logo.jpg",
+    "image": "https://boustanetech-store.vercel.app/logo.jpg",
+    "description": "Al Karim Vision - Votre opticien de prestige, haute parfumerie et horlogerie d'exception à Dakar.",
     "telephone": "+221774133645",
     "priceRange": "$$$",
     "address": {
@@ -50,8 +50,8 @@ const Home = () => {
     <>
       <SEO 
         title="iPhones, Parfumerie & Café de Luxe à Dakar"
-        description="Découvrez l'excellence chez BoustaneTech Store : iPhones d'origine garantis, parfumerie fine de niche et torréfaction de café d'exception à Dakar."
-        keywords="iPhone Dakar, iPhone original Sénégal, parfum de niche Dakar, café de spécialité, torréfaction prestige, BoustaneTech Store, e-commerce Sénégal"
+        description="Découvrez l'excellence chez Al Karim Vision : iPhones d'origine garantis, parfumerie fine de niche et torréfaction de café d'exception à Dakar."
+        keywords="iPhone Dakar, iPhone original Sénégal, parfum de niche Dakar, café de spécialité, torréfaction prestige, Al Karim Vision, e-commerce Sénégal"
         schema={storeSchema}
       />
       <Hero />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Moon, Sun, Search, Menu, X, Smartphone, Wind, Coffee, ShieldAlert, LogOut, PackageSearch, Loader2, Laptop, Headphones, HardHat, Store } from 'lucide-react';
+import { ShoppingCart, Moon, Sun, Search, Menu, X, Smartphone, Wind, Coffee, ShieldAlert, LogOut, PackageSearch, Loader2, Laptop, Headphones, HardHat, Store, Glasses, Watch } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
@@ -16,7 +16,7 @@ const Navbar = () => {
   
   // États pour les réglages dynamiques
   const [settings, setSettings] = useState({
-    store_name: 'BoustaneTech Store',
+    store_name: 'Al Karim Vision',
     maintenance_mode: false
   });
 
@@ -105,9 +105,9 @@ const Navbar = () => {
   };
 
   // Découpage du nom du site pour le logo
-  const storeParts = settings.store_name.toUpperCase().split(' ');
-  const mainName = storeParts[0] || 'BOUSTANETECH';
-  const subName = storeParts.slice(1).join('') || 'STORE';
+  const storeParts = (settings.store_name || 'Al Karim Vision').toUpperCase().split(' ');
+  const mainName = storeParts[0] || 'AL KARIM';
+  const subName = storeParts.slice(1).join(' ') || 'VISION';
 
   // Le clic à l'extérieur est géré par un overlay invisible (voir plus bas)
 
@@ -120,7 +120,7 @@ const Navbar = () => {
           
           {/* LOGO */}
           <Link to="/" className="flex-shrink-0 flex items-center gap-3">
-            <img src="/favicon.svg" alt={settings.store_name} className="h-10 md:h-12 w-auto object-contain" />
+            <img src="/logo.jpg" alt={settings.store_name} className="h-10 md:h-12 w-auto object-contain rounded-lg" />
             {settings.maintenance_mode && isAuthenticated && (
               <div className="flex items-center gap-1 bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-[10px] font-bold border border-red-200">
                 <HardHat size={12} /> MAINTENANCE
@@ -136,23 +136,11 @@ const Navbar = () => {
               </div>
               <span className="text-[9px] font-bold tracking-widest uppercase">Boutique</span>
             </Link>
-            <Link to="/category/tech" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+            <Link to="/category/glasses" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
               <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
-                <Smartphone size={22} />
+                <Glasses size={22} />
               </div>
-              <span className="text-[9px] font-bold tracking-widest uppercase">Téléphones</span>
-            </Link>
-            <Link to="/category/computers" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
-              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
-                <Laptop size={22} />
-              </div>
-              <span className="text-[9px] font-bold tracking-widest uppercase">Ordinateurs</span>
-            </Link>
-            <Link to="/category/accessories" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
-              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
-                <Headphones size={22} />
-              </div>
-              <span className="text-[9px] font-bold tracking-widest uppercase">Accessoires</span>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Lunettes</span>
             </Link>
             <Link to="/category/perfume" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
               <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
@@ -160,11 +148,17 @@ const Navbar = () => {
               </div>
               <span className="text-[9px] font-bold tracking-widest uppercase">Parfumerie</span>
             </Link>
-            <Link to="/category/coffee" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+            <Link to="/category/watches" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
               <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
-                <Coffee size={22} />
+                <Watch size={22} />
               </div>
-              <span className="text-[9px] font-bold tracking-widest uppercase">Le Coin Café</span>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Montres</span>
+            </Link>
+            <Link to="/category/other" className="group flex flex-col items-center justify-center text-gray-500 hover:text-bustantech-gold dark:text-gray-400 transition-all">
+              <div className="p-2 rounded-full group-hover:bg-bustantech-gold/10 transition-colors">
+                <PackageSearch size={22} />
+              </div>
+              <span className="text-[9px] font-bold tracking-widest uppercase">Divers</span>
             </Link>
             {isAuthenticated && (
               <>
@@ -197,7 +191,7 @@ const Navbar = () => {
               <Search aria-hidden="true" size={18} className="sm:w-5 sm:h-5" />
             </button>
             
-            <button onClick={toggleDarkMode} aria-label={isDarkMode ? "Passer au mode clair" : "Passer au mode sombre"} className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-bustantech-beige dark:bg-bustantech-gray text-bustantech-gold transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
+            <button onClick={toggleDarkMode} aria-label={isDarkMode ? "Passer au mode clair" : "Passer au mode sombre"} className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-bustantech-sky dark:bg-bustantech-gray text-bustantech-gold transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
               {isDarkMode ? <Sun aria-hidden="true" size={20} /> : <Moon aria-hidden="true" size={20} />}
             </button>
 
@@ -267,23 +261,11 @@ const Navbar = () => {
               </div>
               <span className="flex-1">Boutique</span>
             </Link>
-            <Link to="/category/tech" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
+            <Link to="/category/glasses" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
               <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
-                <Smartphone size={22} />
+                <Glasses size={22} />
               </div>
-              <span className="flex-1">Téléphones & Tech</span>
-            </Link>
-            <Link to="/category/computers" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
-              <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
-                <Laptop size={22} />
-              </div>
-              <span className="flex-1">Ordinateurs</span>
-            </Link>
-            <Link to="/category/accessories" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
-              <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
-                <Headphones size={22} />
-              </div>
-              <span className="flex-1">Accessoires</span>
+              <span className="flex-1">Lunettes</span>
             </Link>
             <Link to="/category/perfume" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
               <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
@@ -291,11 +273,17 @@ const Navbar = () => {
               </div>
               <span className="flex-1">Parfums de Luxe</span>
             </Link>
-            <Link to="/category/coffee" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
+            <Link to="/category/watches" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
               <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
-                <Coffee size={22} />
+                <Watch size={22} />
               </div>
-              <span className="flex-1">Le Coin Café</span>
+              <span className="flex-1">Montres de Prestige</span>
+            </Link>
+            <Link to="/category/other" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-lg font-medium dark:text-white hover:text-bustantech-gold transition-all group">
+              <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-zinc-900 group-hover:bg-bustantech-gold/10 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-bustantech-gold transition-colors">
+                <PackageSearch size={22} />
+              </div>
+              <span className="flex-1">Divers & Accessoires</span>
             </Link>
           </div>
           
@@ -346,7 +334,7 @@ const Navbar = () => {
                   onChange={(e) => setTrackingId(e.target.value)}
                   className="flex-1 w-full px-4 py-3 text-base md:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
                 />
-                <button type="submit" disabled={trackingLoading || !trackingId} className="px-6 py-3 bg-bustantech-gold text-white font-bold rounded-full hover:bg-yellow-600 transition-colors disabled:opacity-50 flex items-center justify-center min-w-[110px]">
+                <button type="submit" disabled={trackingLoading || !trackingId} className="px-6 py-3 bg-bustantech-gold text-white font-bold rounded-full hover:bg-bustantech-gold-dark transition-colors disabled:opacity-50 flex items-center justify-center min-w-[110px]">
                   {trackingLoading ? <Loader2 size={20} className="animate-spin" /> : "Chercher"}
                 </button>
               </form>

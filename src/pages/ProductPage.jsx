@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useProductStore } from '../store/useProductStore';
 import { useCartStore } from '../store/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import SEO from '../components/SEO';
 import { ChevronRight, ChevronLeft, ShoppingBag, Star, Loader2, CheckCircle2 } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
@@ -194,11 +195,11 @@ const ProductPage = () => {
     "@type": "Product",
     "name": currentProduct.name,
     "image": productImages,
-    "description": currentProduct.description?.substring(0, 160) || `Découvrez ${currentProduct.name} chez BoustaneTech Store`,
+    "description": currentProduct.description?.substring(0, 160) || `Découvrez ${currentProduct.name} chez Al Karim Vision`,
     "sku": currentProduct.id ? currentProduct.id.toString() : 'SKU-UNKNOWN',
     "brand": {
       "@type": "Brand",
-      "name": currentProduct.brand || "BoustaneTech Store"
+      "name": currentProduct.brand || "Al Karim Vision"
     },
     "offers": {
       "@type": "Offer",
@@ -343,7 +344,7 @@ const ProductPage = () => {
           <span className="font-bold text-bustantech-gold uppercase tracking-widest text-xs">{currentProduct.brand}</span>
           <h1 className="text-3xl md:text-4xl font-luxury font-bold dark:text-white my-2">{currentProduct.name}</h1>
           <div className="flex items-center gap-1 text-sm text-gray-500">
-            <Star size={14} fill="currentColor" className={averageRating > 0 ? "text-yellow-400" : "text-gray-300"} /> {averageRating > 0 ? `${averageRating} (${reviews.length} avis)` : 'Aucun avis'}
+            <Star size={14} fill="currentColor" className={averageRating > 0 ? "text-bustantech-gold" : "text-gray-300"} /> {averageRating > 0 ? `${averageRating} (${reviews.length} avis)` : 'Aucun avis'}
           </div>
 
           <div className="my-6 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
@@ -425,7 +426,7 @@ const ProductPage = () => {
                 <label className="block text-xs text-gray-500 mb-1">Votre commentaire</label>
                 <textarea required value={newReview.comment} onChange={e => setNewReview({...newReview, comment: e.target.value})} rows="4" className="w-full p-3 text-sm bg-white dark:bg-bustantech-black border border-gray-200 dark:border-gray-700 rounded-2xl dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors"></textarea>
               </div>
-              <button disabled={isSubmittingReview} type="submit" className="w-full bg-bustantech-gold text-white font-bold py-3 rounded-full hover:bg-yellow-600 transition-colors disabled:opacity-50 uppercase tracking-widest text-xs">
+              <button disabled={isSubmittingReview} type="submit" className="w-full bg-bustantech-gold text-white font-bold py-3 rounded-full hover:bg-bustantech-gold-dark transition-colors disabled:opacity-50 uppercase tracking-widest text-xs">
                 {isSubmittingReview ? 'Envoi...' : 'Publier mon avis'}
               </button>
             </form>
@@ -487,20 +488,46 @@ const ProductPage = () => {
         </div>
       )}
 
-      {/* TOAST DE NOTIFICATION */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-6 right-6 z-[110] bg-green-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3"
-          >
-            <CheckCircle2 size={24} />
-            <span className="font-bold tracking-wide text-sm">{currentProduct.name} a été ajouté au panier.</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* TOAST DE NOTIFICATION (Haut sur mobile, Bas-Droit sur Desktop - Portal) */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {showToast && (
+            <motion.div
+              initial={{ opacity: 0, y: -30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              role="alert"
+              aria-live="assertive"
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 350, damping: 26 }}
+              className="fixed top-4 left-4 right-4 md:top-auto md:bottom-6 md:right-6 md:left-auto z-[9999] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-emerald-500/30 dark:border-emerald-500/40 p-4 rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] flex items-center gap-4 cursor-default max-w-sm mx-auto md:mx-0"
+              onClick={(e) => e.stopPropagation()} // Empêche de cliquer à travers le toast
+            >
+              {/* Image miniature du produit */}
+              <div className="relative w-12 h-12 flex-shrink-0 rounded-xl overflow-hidden border border-gray-100 dark:border-zinc-800 bg-gray-50">
+                <img 
+                  src={mediaUrls[0]?.match(/\.(mp4|mov|webm)$/i) ? mediaUrls[0].replace(/\.(mp4|mov|webm)$/i, '.jpg') : (mediaUrls[0] || 'https://via.placeholder.com/100')} 
+                  alt={currentProduct.name} 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => { e.target.src = 'https://placehold.co/100x100/png?text=Miniature'; }}
+                />
+                <div className="absolute inset-0 bg-emerald-500/10" />
+              </div>
+              
+              {/* Contenu texte */}
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Ajouté au panier !</p>
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white truncate mt-0.5">{currentProduct.name}</h4>
+              </div>
+
+              {/* Icône de confirmation */}
+              <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+                <CheckCircle2 size={18} className="animate-pulse" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       {/* MODAL FULLSCREEN (LIGHTBOX) POUR LES IMAGES/VIDEOS */}
       <AnimatePresence>

@@ -3,11 +3,10 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const categories = [
-  { id: 'tech', name: 'Téléphones', route: '/category/tech' },
-  { id: 'computers', name: 'Ordinateurs', route: '/category/computers' },
-  { id: 'accessories', name: 'Accessoires', route: '/category/accessories' },
-  { id: 'perfume', name: 'Parfumerie', route: '/category/perfume' },
-  { id: 'coffee', name: 'Coffee Shop', route: '/category/coffee' }
+  { id: 'glasses', name: 'Lunettes', route: '/category/glasses' },
+  { id: 'perfume', name: 'Parfums', route: '/category/perfume' },
+  { id: 'watches', name: 'Montres', route: '/category/watches' },
+  { id: 'other', name: 'Divers', route: '/category/other' }
 ];
 
 // On duplique pour créer l'effet de boucle infinie parfaite

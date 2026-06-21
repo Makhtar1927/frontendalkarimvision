@@ -68,7 +68,7 @@ const ResetPassword = () => {
     <>
       <SEO 
         title="Réinitialisation mot de passe"
-        description="Choisissez votre nouveau mot de passe administrateur pour BoustaneTech Store."
+        description="Choisissez votre nouveau mot de passe administrateur pour Al Karim Vision."
         noindex={true}
       />
       <div className="flex items-center justify-center min-h-[80vh] bg-gray-50 dark:bg-zinc-950 px-4">

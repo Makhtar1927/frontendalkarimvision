@@ -23,7 +23,7 @@ const Maintenance = () => {
                     <motion.div 
                         animate={{ rotate: [0, 5, -5, 0] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        className="relative z-10 p-6 bg-bustantech-beige dark:bg-zinc-900 rounded-full border border-bustantech-gold/30"
+                        className="relative z-10 p-6 bg-bustantech-sky dark:bg-zinc-900 rounded-full border border-bustantech-gold/30"
                     >
                         <HardHat size={80} className="text-bustantech-gold" />
                     </motion.div>
@@ -52,7 +52,7 @@ const Maintenance = () => {
 
                 <div className="flex items-center justify-center gap-4 text-xs font-bold text-gray-400 uppercase tracking-[0.3em]">
                     <span className="w-12 h-[1px] bg-gray-200 dark:bg-gray-800"></span>
-                    BoustaneTech Store
+                    Al Karim Vision
                     <span className="w-12 h-[1px] bg-gray-200 dark:bg-gray-800"></span>
                 </div>
             </motion.div>

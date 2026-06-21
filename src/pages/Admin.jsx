@@ -43,7 +43,7 @@ const Admin = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const [formData, setFormData] = useState({
-    name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', existing_media: [], variants: []
+    name: '', brand: '', category: 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: []
   });
   const [selectedFiles, setSelectedFiles] = useState([]); // Nouvel état pour les fichiers multiples
   const [isUploading, setIsUploading] = useState(false); // État pour le chargement
@@ -298,7 +298,7 @@ const Admin = () => {
   // Fonction pour ouvrir la modale en mode "Ajout"
   const handleOpenAdd = () => {
     setEditingId(null);
-    setFormData({ name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', existing_media: [], variants: [] });
+    setFormData({ name: '', brand: '', category: 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: [] });
     setSelectedFiles([]);
     setIsModalOpen(true);
   };
@@ -320,6 +320,7 @@ const Admin = () => {
       base_price: product.base_price,
       compare_at_price: product.compare_at_price || '',
       existing_media: existingMedia || [],
+      subcategory: product.subcategory || '',
       variants: product.variants || []
     });
     setSelectedFiles([]);
@@ -338,6 +339,7 @@ const Admin = () => {
     data.append('base_price', formData.base_price);
     data.append('compare_at_price', formData.compare_at_price);
     data.append('is_on_sale', formData.compare_at_price && parseFloat(formData.compare_at_price) > parseFloat(formData.base_price) ? 'true' : 'false');
+    data.append('subcategory', formData.subcategory || '');
     
     // Ajout des fichiers multiples
     selectedFiles.forEach(file => {
@@ -366,7 +368,7 @@ const Admin = () => {
 
     if (success) {
       setIsModalOpen(false);
-      setFormData({ name: '', brand: '', category: 'tech', base_price: '', compare_at_price: '', existing_media: [], variants: [] });
+      setFormData({ name: '', brand: '', category: 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: [] });
       setSelectedFiles([]); // On reset les fichiers
       setEditingId(null);
     } else {
@@ -488,7 +490,7 @@ const Admin = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `commandes_bustantech_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `commandes_alkarimvision_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -536,8 +538,8 @@ const Admin = () => {
           <div class="header">
             <div class="logo">
               <div style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
-                <div>BOUSTANETECH<span> STORE</span></div>
-                <img src="${window.location.origin}/favicon.svg" alt="Bustantech Logo" style="height: 50px; width: auto;" />
+                 <div>AL KARIM<span> VISION</span></div>
+                 <img src="${window.location.origin}/logo.jpg" alt="Al Karim Vision Logo" style="height: 50px; width: auto; border-radius: 6px;" />
               </div>
             </div>
             <div class="invoice-details">
@@ -610,7 +612,7 @@ const Admin = () => {
             </div>
             {!isSidebarCollapsed && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="whitespace-nowrap">
-                <h2 className="text-sm font-bold text-bustantech-gold tracking-widest leading-none">BUSTANTECH</h2>
+                <h2 className="text-sm font-bold text-bustantech-gold tracking-widest leading-none">AL KARIM</h2>
                 <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Admin Panel</span>
               </motion.div>
             )}
@@ -677,7 +679,7 @@ const Admin = () => {
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-bustantech-black border-b border-gray-200 dark:border-gray-800 z-[60] flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Shield className="text-bustantech-gold" size={20} />
-          <h2 className="text-sm font-bold text-bustantech-gold tracking-widest">BUSTANTECH</h2>
+          <h2 className="text-sm font-bold text-bustantech-gold tracking-widest">AL KARIM</h2>
         </div>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-600 dark:text-gray-400">
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -945,18 +947,29 @@ const Admin = () => {
                   </td>
                   <td className="p-4 dark:text-gray-300 uppercase text-xs tracking-widest">
                     <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl">
-                      {product.category === 'tech' 
-                        ? 'Téléphone' 
-                        : product.category === 'computers' 
-                        ? 'Ordinateur' 
-                        : product.category === 'accessories' 
-                        ? 'Accessoire' 
+                      {product.category === 'glasses' 
+                        ? 'Lunettes' 
                         : product.category === 'perfume' 
                         ? 'Parfum' 
-                        : product.category === 'coffee' 
-                        ? 'Café' 
+                        : product.category === 'watches' 
+                        ? 'Montre' 
+                        : product.category === 'other' 
+                        ? 'Divers' 
                         : product.category}
                     </span>
+                    {product.subcategory && (
+                      <span className="text-[10px] text-gray-400 block lowercase mt-1 font-semibold tracking-wider bg-gray-50 dark:bg-zinc-900 px-2 py-0.5 rounded-full w-fit">
+                        {product.subcategory === 'noir_fume' 
+                          ? 'noir fumé' 
+                          : product.subcategory === 'photogray' 
+                          ? 'photogray' 
+                          : product.subcategory === 'avec_alcool' 
+                          ? 'avec alcool' 
+                          : product.subcategory === 'sans_alcool' 
+                          ? 'sans alcool' 
+                          : product.subcategory}
+                      </span>
+                    )}
                   </td>
                   <td className="p-4 font-bold dark:text-white">{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</td>
                   <td className="p-4">
@@ -1429,14 +1442,38 @@ const Admin = () => {
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Catégorie</label>
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors">
-                  <option value="tech">Téléphones & Smartphones</option>
-                  <option value="computers">Ordinateurs & Machines</option>
-                  <option value="accessories">Accessoires Tech</option>
+                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subcategory: ''})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors">
+                  <option value="glasses">Lunettes de Soleil & Vue</option>
                   <option value="perfume">Parfumerie de Niche</option>
-                  <option value="coffee">Café (Format 1 KG)</option>
+                  <option value="watches">Montres de Prestige</option>
+                  <option value="other">Divers & Accessoires</option>
                 </select>
               </div>
+              
+              {/* NOUVEAU : SOUS-CATÉGORIES POUR LUNETTES ET PARFUMS */}
+              {(formData.category === 'glasses' || formData.category === 'perfume') && (
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Sous-Catégorie</label>
+                  <select 
+                    value={formData.subcategory || ''} 
+                    onChange={e => setFormData({...formData, subcategory: e.target.value})} 
+                    className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-bustantech-gold outline-none transition-colors"
+                  >
+                    <option value="">Aucune sous-catégorie</option>
+                    {formData.category === 'glasses' ? (
+                      <>
+                        <option value="noir_fume">Noir Fumé</option>
+                        <option value="photogray">Photogray</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="avec_alcool">Avec Alcool</option>
+                        <option value="sans_alcool">Sans Alcool</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+              )}
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Images & Vidéos (Glissez ou Cliquez)</label>
                 <div className="flex flex-col gap-3">

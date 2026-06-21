@@ -1,53 +1,44 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Smartphone, Wind, Coffee, ChevronRight, Laptop, Headphones } from 'lucide-react';
+import { Glasses, Wind, Watch, Sparkles, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const categories = [
   {
-    id: 'tech',
-    name: 'TECHNOLOGIE',
-    title: 'Téléphones & Smartphones',
-    description: 'Les meilleurs téléphones toutes marques confondues.',
-    image: 'https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=800&auto=format&fit=crop', // Exemple d'iPhone
-    icon: <Smartphone className="text-bustantech-gold" />,
-    route: '/category/tech'
-  },
-  {
-    id: 'computers',
-    name: 'INFORMATIQUE',
-    title: 'Ordinateurs & PC',
-    description: 'Machines de travail, MacBooks et PC Gamers.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=800&auto=format&fit=crop',
-    icon: <Laptop className="text-bustantech-gold" />,
-    route: '/category/computers'
-  },
-  {
-    id: 'accessories',
-    name: 'ÉQUIPEMENTS',
-    title: 'Accessoires Tech',
-    description: 'Complétez votre écosystème technologique.',
-    image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=800&auto=format&fit=crop',
-    icon: <Headphones className="text-bustantech-gold" />,
-    route: '/category/accessories'
+    id: 'glasses',
+    name: 'OPTIQUE',
+    title: 'Lunettes de Soleil & Vue',
+    description: 'Verres haute technologie et designs iconiques pour tous.',
+    image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=800&auto=format&fit=crop',
+    icon: <Glasses className="text-bustantech-gold" />,
+    route: '/category/glasses'
   },
   {
     id: 'perfume',
     name: 'PARFUMERIE',
     title: 'Fragrances de Luxe',
-    description: 'Une sélection exclusive de parfums de niche.',
-    image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=800&auto=format&fit=crop', // Exemple de Parfum
+    description: 'Une sélection exclusive de parfums de niche et rares.',
+    image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=800&auto=format&fit=crop',
     icon: <Wind className="text-bustantech-gold" />,
     route: '/category/perfume'
   },
   {
-    id: 'coffee',
-    name: 'COFFEE SHOP',
-    title: 'Art du Café',
-    description: 'Grains d’exception et machines professionnelles.',
-    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop', // Exemple de Café
-    icon: <Coffee className="text-bustantech-gold" />,
-    route: '/category/coffee'
+    id: 'watches',
+    name: 'HORLOGERIE',
+    title: 'Montres de Prestige',
+    description: 'Garde-temps automatiques et quartz de grandes manufactures.',
+    image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=800&auto=format&fit=crop',
+    icon: <Watch className="text-bustantech-gold" />,
+    route: '/category/watches'
+  },
+  {
+    id: 'other',
+    name: 'COLLECTION DIVERS',
+    title: 'Articles Variés',
+    description: 'Accessoires lifestyle, nouveautés et coups de cœur du moment.',
+    image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=800&auto=format&fit=crop',
+    icon: <Sparkles className="text-bustantech-gold" />,
+    route: '/category/other'
   }
 ];
 
@@ -63,11 +54,11 @@ const CategoryGrids = () => {
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-luxury font-bold dark:text-white">Choisissez votre univers</h2>
           </div>
           <p className="text-gray-500 max-w-sm text-xs sm:text-sm">
-            BoustaneTech Store réunit le meilleur de cinq mondes pour une expérience shopping unique.
+            Al Karim Vision réunit le meilleur de nos différents univers pour une expérience shopping unique.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {categories.map((cat, index) => (
             <motion.div
               key={cat.id}

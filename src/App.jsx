@@ -54,7 +54,7 @@ function App() {
         <Suspense fallback={
           <div className="min-h-screen flex flex-col items-center justify-center gap-4 dark:text-white">
             <div className="w-12 h-12 border-4 border-bustantech-gold/20 border-t-bustantech-gold rounded-full animate-spin"></div>
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">BoustaneTech Store</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Al Karim Vision</p>
           </div>
         }>
           <Routes>

@@ -1,53 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Smartphone, Wind, Coffee, Headphones, Laptop } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const slides = [
   {
     id: 1,
-    title: "L'Excellence Mobile",
-    subtitle: "Découvrez les derniers smartphones haut de gamme.",
-    category: "TÉLÉPHONES",
+    title: "Clarté & Style Unique",
+    subtitle: "Découvrez notre collection de lunettes de vue et de soleil.",
+    category: "LUNETTES",
     color: "from-gray-200 to-white dark:from-zinc-900 dark:to-black",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778875919/Boustanetech3_gstihc.png",
-    route: '/category/tech'
-  },
-  {
-    id: 5,
-    title: "Puissance & Créativité",
-    subtitle: "Ordinateurs portables et machines de pointe.",
-    category: "ORDINATEURS",
-    color: "from-indigo-100 to-white dark:from-indigo-950/30 dark:to-black",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778875942/Boustanetech9_lathiv.png",
-    route: '/category/computers'
-  },
-  {
-    id: 2,
-    title: "L'Écosystème Parfait",
-    subtitle: "Protèges-écrans, chargeurs, casques et plus pour vos appareils.",
-    category: "ACCESSOIRES TECH",
-    color: "from-sky-100 to-white dark:from-sky-950/30 dark:to-black",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876042/Boustanetech7_xnwes1.png",
-    route: '/category/accessories'
+    image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=1200&auto=format&fit=crop",
+    route: '/category/glasses'
   },
   {
     id: 3,
     title: "L'Essence du Luxe",
     subtitle: "Parfums rares et fragrances envoûtantes pour Elle & Lui.",
     category: "PARFUMERIE",
-    color: "from-bustantech-beige to-white dark:from-stone-900 dark:to-black",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876028/Boustanetech6_mktyyf.png",
+    color: "from-gradient-sky to-white dark:from-stone-900 dark:to-black",
+    image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1200&auto=format&fit=crop",
     route: '/category/perfume'
   },
   {
-    id: 4,
-    title: "Le Réveil des Sens",
-    subtitle: "Cafés de spécialité fraîchement torréfiés pour vos matins.",
-    category: "COFFEE BAR",
-    color: "from-amber-100 to-white dark:from-orange-950/20 dark:to-black",
-    image: "https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876070/Boustanetech4_jvddxx.png",
-    route: '/category/coffee'
+    id: 5,
+    title: "Horlogerie de Prestige",
+    subtitle: "Gardez le contrôle du temps avec nos montres d'exception.",
+    category: "MONTRES",
+    color: "from-indigo-100 to-white dark:from-indigo-950/30 dark:to-black",
+    image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1200&auto=format&fit=crop",
+    route: '/category/watches'
+  },
+  {
+    id: 2,
+    title: "Sélection Exclusive",
+    subtitle: "Parcourez nos nouveautés, gadgets et articles divers.",
+    category: "DIVERS",
+    color: "from-sky-100 to-white dark:from-sky-950/30 dark:to-black",
+    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1200&auto=format&fit=crop",
+    route: '/category/other'
   }
 ];
 

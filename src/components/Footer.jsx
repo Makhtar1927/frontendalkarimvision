@@ -8,7 +8,7 @@ const Footer = () => {
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
   const [message, setMessage] = useState('');
   const [settings, setSettings] = useState({
-    store_name: 'BoustaneTech Store',
+    store_name: 'Al Karim Vision',
     contact_phone: '221774133645',
     contact_email: 'contact@boustantech.com',
     contact_address: 'Pikine Saf Bar, Dakar',
@@ -71,7 +71,7 @@ const Footer = () => {
           {/* BRANDING & NEWSLETTER */}
           <div className="lg:col-span-2">
             <h2 className="text-2xl font-luxury font-bold text-bustantech-gold tracking-widest mb-4">
-              BOUSTANETECH<span className="text-black dark:text-white">STORE</span>
+              AL KARIM<span className="text-black dark:text-white"> VISION</span>
             </h2>
             <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-6 text-sm">
               L'alliance parfaite entre l'innovation technologique, le luxe de la haute parfumerie et l'art du café de spécialité.
@@ -94,7 +94,7 @@ const Footer = () => {
                   type="submit"
                   aria-label="S'abonner à la newsletter"
                   disabled={status === 'loading'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-bustantech-gold hover:text-yellow-600 disabled:opacity-50 transition-colors p-2"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-bustantech-gold hover:text-bustantech-gold-dark disabled:opacity-50 transition-colors p-2"
                 >
                   {status === 'loading' ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                 </button>
@@ -109,11 +109,10 @@ const Footer = () => {
             <h3 className="text-xs font-bold text-black dark:text-white uppercase tracking-wider mb-4">Navigation</h3>
             <ul className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
               <li><Link to="/" className="hover:text-bustantech-gold transition-colors">Accueil</Link></li>
-              <li><Link to="/category/tech" className="hover:text-bustantech-gold transition-colors">Téléphones</Link></li>
-              <li><Link to="/category/computers" className="hover:text-bustantech-gold transition-colors">Ordinateurs</Link></li>
-              <li><Link to="/category/accessories" className="hover:text-bustantech-gold transition-colors">Accessoires</Link></li>
+              <li><Link to="/category/glasses" className="hover:text-bustantech-gold transition-colors">Lunettes</Link></li>
               <li><Link to="/category/perfume" className="hover:text-bustantech-gold transition-colors">Haute Parfumerie</Link></li>
-              <li><Link to="/category/coffee" className="hover:text-bustantech-gold transition-colors">Le Coin Café</Link></li>
+              <li><Link to="/category/watches" className="hover:text-bustantech-gold transition-colors">Montres de Luxe</Link></li>
+              <li><Link to="/category/other" className="hover:text-bustantech-gold transition-colors">Divers & Accessoires</Link></li>
             </ul>
           </div>
 

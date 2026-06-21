@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Star, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -131,7 +132,7 @@ const ProductCard = ({ product }) => {
             <Star 
               size={10} 
               fill={averageRating > 0 ? "currentColor" : "none"} 
-              className={averageRating > 0 ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"} 
+              className={averageRating > 0 ? "text-bustantech-gold" : "text-gray-300 dark:text-gray-600"} 
             /> 
             <span className={averageRating === 0 ? "text-gray-400 capitalize" : ""}>
               {averageRating > 0 ? averageRating : 'Nouveau'}
@@ -182,23 +183,46 @@ const ProductCard = ({ product }) => {
         </div>
       </div>
 
-      {/* TOAST DE NOTIFICATION (Fixé en bas à droite de l'écran) */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            role="alert"
-            aria-live="assertive"
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-4 left-4 right-4 md:left-auto md:bottom-6 md:right-6 z-[110] bg-green-500 text-white px-4 sm:px-6 py-4 rounded-2xl shadow-2xl flex items-center justify-center md:justify-start gap-3 cursor-default"
-            onClick={(e) => e.stopPropagation()} // Empêche de cliquer à travers le toast
-          >
-            <CheckCircle2 size={24} />
-            <span className="font-bold tracking-wide text-sm">{product.name} a été ajouté au panier.</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* TOAST DE NOTIFICATION (Haut sur mobile, Bas-Droit sur Desktop - Portal) */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {showToast && (
+            <motion.div
+              initial={{ opacity: 0, y: -30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              role="alert"
+              aria-live="assertive"
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 350, damping: 26 }}
+              className="fixed top-4 left-4 right-4 md:top-auto md:bottom-6 md:right-6 md:left-auto z-[9999] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-emerald-500/30 dark:border-emerald-500/40 p-4 rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] flex items-center gap-4 cursor-default max-w-sm mx-auto md:mx-0"
+              onClick={(e) => e.stopPropagation()} // Empêche de cliquer à travers le toast
+            >
+              {/* Image miniature du produit */}
+              <div className="relative w-12 h-12 flex-shrink-0 rounded-xl overflow-hidden border border-gray-100 dark:border-zinc-800 bg-gray-50">
+                <img 
+                  src={imageUrl} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => { e.target.src = 'https://placehold.co/100x100/png?text=Miniature'; }}
+                />
+                <div className="absolute inset-0 bg-emerald-500/10" />
+              </div>
+              
+              {/* Contenu texte */}
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Ajouté au panier !</p>
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white truncate mt-0.5">{product.name}</h4>
+              </div>
+
+              {/* Icône de confirmation */}
+              <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+                <CheckCircle2 size={18} className="animate-pulse" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </motion.article>
   );
 };
