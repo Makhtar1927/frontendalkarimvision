@@ -44,21 +44,21 @@ const ForgotPassword = () => {
         noindex={true}
       />
       <div className="flex items-center justify-center min-h-[80vh] bg-gray-50 dark:bg-zinc-950 px-4">
-      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl dark:bg-bustantech-black border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-300">
+      <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-xl dark:bg-brand-gray-dark border border-gray-150 dark:border-zinc-800 animate-in fade-in zoom-in-95 duration-300">
         <div className="text-center mb-8">
-          <div className="mx-auto bg-bustantech-gold/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 text-bustantech-gold">
+          <div className="mx-auto bg-brand-blue/10 w-16 h-16 rounded-lg flex items-center justify-center mb-4 text-brand-blue">
             <ShieldAlert size={32} />
           </div>
-          <h2 className="text-2xl font-bold font-luxury tracking-wider text-black dark:text-white mb-2">
+          <h2 className="text-xl font-black font-sans uppercase tracking-wider text-black dark:text-white mb-2">
             Récupération
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
             Entrez votre adresse e-mail d'administration pour recevoir un lien de réinitialisation sécurisé.
           </p>
         </div>
 
         {status === 'success' ? (
-          <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4 border border-green-200 dark:border-green-800/50 animate-in fade-in">
+          <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg flex flex-col items-center justify-center text-center space-y-4 border border-green-250 dark:border-green-800/50 animate-in fade-in">
             <CheckCircle2 className="text-green-500 w-12 h-12" />
             <p className="text-sm text-green-700 dark:text-green-400 font-medium leading-relaxed">
               {message}
@@ -77,25 +77,25 @@ const ForgotPassword = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@bustantech.com"
-                className="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-1 focus:ring-bustantech-gold focus:border-bustantech-gold dark:bg-zinc-900 dark:text-white dark:border-gray-800 transition-colors"
+                placeholder="admin@alkarimvision.com"
+                className="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue dark:bg-zinc-900 dark:text-white dark:border-zinc-800 transition-colors"
               />
             </div>
 
             {status === 'error' && (
-              <p className="text-sm text-center text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-2xl border border-red-100 dark:border-red-800/50">
+              <p className="text-sm text-center text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-100 dark:border-red-800/50">
                 {message}
               </p>
             )}
 
-            <button type="submit" disabled={status === 'loading' || !email} className="w-full px-4 py-3 text-sm font-bold text-white bg-bustantech-gold rounded-full shadow-md hover:bg-bustantech-gold-dark focus:outline-none transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider">
+            <button type="submit" disabled={status === 'loading' || !email} className="w-full px-4 py-3 text-xs font-bold text-white bg-brand-blue rounded-lg shadow-md hover:bg-brand-blue-dark focus:outline-none transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider">
               {status === 'loading' ? <><Loader2 size={18} className="animate-spin mr-2" /> ENVOI...</> : 'ENVOYER LE LIEN'}
             </button>
           </form>
         )}
-        <div className="text-center mt-8 border-t border-gray-100 dark:border-gray-800 pt-6">
-          <Link to="/login" className="text-sm text-gray-500 hover:text-bustantech-gold dark:text-gray-400 dark:hover:text-white transition-colors flex items-center justify-center gap-2 font-medium">
-            <ArrowLeft size={16} />
+        <div className="text-center mt-8 border-t border-gray-150 dark:border-zinc-800 pt-6">
+          <Link to="/login" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-brand-blue dark:text-gray-400 dark:hover:text-white transition-colors flex items-center justify-center gap-2">
+            <ArrowLeft size={14} />
             Retour à la connexion
           </Link>
         </div>

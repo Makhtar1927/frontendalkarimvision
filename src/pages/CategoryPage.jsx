@@ -17,7 +17,7 @@ const CATEGORY_INFO = {
     title: "Haute Parfumerie",
     subtitle: "Des fragrances rares et luxueuses pour affirmer votre identité.",
     image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1200&auto=format&fit=crop",
-    color: "from-bustantech-sky to-white dark:from-stone-900 dark:to-black"
+    color: "from-sky-50 to-white dark:from-stone-900 dark:to-black"
   },
   watches: {
     title: "Montres de Prestige",
@@ -132,19 +132,19 @@ const CategoryPage = () => {
           />
         )}
         {/* Overlay: Sombre sur mobile, Dégradé Premium sur desktop */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-gray-dark/80 dark:to-transparent z-10"></div>
         
         <div className="relative z-20 px-4 w-full max-w-7xl mx-auto flex items-center">
           <div className="max-w-2xl">
             <motion.h1 
               initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-luxury font-bold text-white md:text-bustantech-black dark:text-white mb-4 tracking-wide leading-tight"
+              className="text-4xl md:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight uppercase"
             >
               {info.title}
             </motion.h1>
             <motion.p 
               initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-              className="text-gray-200 md:text-gray-700 dark:text-gray-300 text-lg md:text-xl"
+              className="text-gray-600 dark:text-gray-300 text-lg md:text-xl font-normal leading-relaxed"
             >
               {info.subtitle}
             </motion.p>
@@ -159,7 +159,7 @@ const CategoryPage = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-3 p-2 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md border border-gray-200/50 dark:border-zinc-800/50 rounded-3xl shadow-sm mb-8"
+            className="flex flex-wrap items-center justify-center gap-3 p-2 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md border border-gray-150 dark:border-zinc-800/50 rounded-xl shadow-sm mb-8"
           >
             {SUBCATEGORY_MAP[categoryId].map((sub, index) => {
               const isActive = selectedSubcategory === sub.id;
@@ -170,23 +170,23 @@ const CategoryPage = () => {
               return (
                 <motion.button
                   key={sub.id}
-                  whileHover={{ scale: 1.03, y: -1 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02, y: -0.5 }}
+                  whileTap={{ scale: 0.98 }}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                   onClick={() => setSelectedSubcategory(sub.id)}
                   className={`
-                    px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-300 flex items-center gap-2
+                    px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2
                     ${isActive 
-                      ? 'bg-bustantech-gold text-white shadow-lg shadow-bustantech-gold/25' 
-                      : 'bg-white/80 dark:bg-zinc-900/85 text-gray-600 dark:text-gray-400 border border-gray-150 dark:border-zinc-800/80 hover:bg-white dark:hover:bg-zinc-800/80 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-brand-blue text-white shadow-sm' 
+                      : 'bg-white/80 dark:bg-zinc-900/85 text-gray-600 dark:text-gray-400 border border-gray-150 dark:border-zinc-800/85 hover:bg-white dark:hover:bg-zinc-800/80 hover:text-gray-900 dark:hover:text-white'
                     }
                   `}
                 >
                   <span>{sub.name}</span>
                   <span className={`
-                    text-xs px-2 py-0.5 rounded-full font-bold transition-colors duration-300
+                    text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors duration-300
                     ${isActive 
                       ? 'bg-white/20 text-white' 
                       : 'bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400'
@@ -201,7 +201,7 @@ const CategoryPage = () => {
         )}
 
         {/* BARRE D'OUTILS ET FILTRES (Fonctionnalité Moderne) */}
-        <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-bustantech-black p-4 rounded-2xl shadow-sm md:shadow-md mb-8 border border-gray-100 dark:border-gray-800 gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-brand-card-dark p-4 rounded-xl shadow-sm mb-8 border border-gray-150 dark:border-zinc-800 gap-4">
           <div className="relative w-full md:w-1/3">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input 
@@ -210,7 +210,7 @@ const CategoryPage = () => {
               placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors text-sm"
             />
           </div>
 
@@ -222,7 +222,7 @@ const CategoryPage = () => {
               placeholder="Prix min"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
-              className="w-1/2 lg:w-32 py-2 px-3 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+              className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
             />
             <span className="text-gray-400 font-bold">-</span>
             <input 
@@ -231,7 +231,7 @@ const CategoryPage = () => {
               placeholder="Prix max"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-1/2 lg:w-32 py-2 px-3 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+              className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
             />
           </div>
 
@@ -240,7 +240,7 @@ const CategoryPage = () => {
             <Filter size={18} className="absolute left-3 text-gray-400 pointer-events-none" />
             <select 
               aria-label="Filtrer par marque"
-              className="w-full lg:w-48 text-base sm:text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-full focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
+              className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 pl-10 pr-4 rounded-lg focus:outline-none focus:border-brand-blue appearance-none cursor-pointer"
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
             >
@@ -253,7 +253,7 @@ const CategoryPage = () => {
             <SlidersHorizontal size={18} className="text-gray-400" />
             <select 
               aria-label="Trier les produits"
-              className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 px-4 text-base sm:text-sm rounded-full focus:outline-none focus:border-bustantech-gold flex-1"
+              className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 px-4 text-sm rounded-lg focus:outline-none focus:border-brand-blue flex-1 cursor-pointer"
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
             >
@@ -266,7 +266,7 @@ const CategoryPage = () => {
         {/* GRILLE DE PRODUITS */}
         {loading ? (
           <div className="text-center py-20 dark:text-white flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-4 border-bustantech-gold border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
             Préparation de votre collection...
           </div>
         ) : filteredProducts.length === 0 ? (

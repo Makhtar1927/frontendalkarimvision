@@ -36,6 +36,7 @@ const Shop = () => {
   // Filtrage global
   const filteredProducts = products
     .filter(p => p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand?.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(p => selectedCategory === '' || p.category === selectedCategory)
     .filter(p => selectedSubcategory === '' || p.subcategory === selectedSubcategory)
     .filter(p => {
       const price = parseFloat(p.base_price);
@@ -91,20 +92,20 @@ const Shop = () => {
             className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
           />
           {/* Overlay: Sombre sur mobile, Dégradé Premium sur desktop */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-gray-dark/80 dark:to-transparent z-10"></div>
           
           <div className="relative z-20 px-4 w-full max-w-7xl mx-auto flex items-center">
             <div className="max-w-2xl">
               <motion.h1 
                 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-luxury font-bold text-white md:text-bustantech-black dark:text-white mb-4 tracking-wide leading-tight flex items-center gap-4"
+                className="text-4xl md:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight flex items-center gap-4"
               >
-                <Store size={40} className="text-bustantech-gold hidden sm:block" />
+                <Store size={40} className="text-brand-blue hidden sm:block" />
                 Notre Boutique
               </motion.h1>
               <motion.p 
                 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-                className="text-gray-200 md:text-gray-700 dark:text-gray-300 text-lg md:text-xl"
+                className="text-gray-600 dark:text-gray-300 text-lg md:text-xl font-normal leading-relaxed"
               >
                 Parcourez tous nos univers et trouvez les meilleurs produits.
               </motion.p>
@@ -114,7 +115,7 @@ const Shop = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
           {/* BARRE D'OUTILS ET FILTRES */}
-          <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-bustantech-black p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 gap-4 mb-10">
+          <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-brand-card-dark p-4 rounded-xl shadow-sm border border-gray-150 dark:border-zinc-800 gap-4 mb-10">
             <div className="relative w-full md:w-1/3">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input 
@@ -122,7 +123,7 @@ const Shop = () => {
                 placeholder="Rechercher un produit..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
               />
             </div>
 
@@ -133,7 +134,7 @@ const Shop = () => {
                 placeholder="Prix min"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
               />
               <span className="text-gray-400 font-bold">-</span>
               <input 
@@ -141,7 +142,7 @@ const Shop = () => {
                 placeholder="Prix max"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full focus:outline-none focus:border-bustantech-gold dark:text-white transition-colors"
+                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
               />
             </div>
 
@@ -149,7 +150,7 @@ const Shop = () => {
             <div className="flex items-center gap-3 w-full lg:w-auto relative">
               <Filter size={18} className="absolute left-3 text-gray-400 pointer-events-none" />
               <select 
-                className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-full focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
+                className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 pl-10 pr-4 rounded-lg focus:outline-none focus:border-brand-blue appearance-none cursor-pointer"
                 value={selectedCategory}
                 onChange={(e) => handleCategoryChange(e.target.value)}
               >
@@ -163,7 +164,7 @@ const Shop = () => {
               <div className="flex items-center gap-3 w-full lg:w-auto relative">
                 <Filter size={18} className="absolute left-3 text-gray-400 pointer-events-none" />
                 <select 
-                  className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 pl-10 pr-4 rounded-full focus:outline-none focus:border-bustantech-gold appearance-none cursor-pointer"
+                  className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 pl-10 pr-4 rounded-lg focus:outline-none focus:border-brand-blue appearance-none cursor-pointer"
                   value={selectedSubcategory}
                   onChange={(e) => setSelectedSubcategory(e.target.value)}
                 >
@@ -187,7 +188,7 @@ const Shop = () => {
             <div className="flex items-center gap-3 w-full lg:w-auto">
               <SlidersHorizontal size={18} className="text-gray-400" />
               <select 
-                className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 dark:text-white py-2 px-4 text-sm rounded-full focus:outline-none focus:border-bustantech-gold flex-1 cursor-pointer"
+                className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 px-4 text-sm rounded-lg focus:outline-none focus:border-brand-blue flex-1 cursor-pointer"
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
               >
@@ -200,47 +201,18 @@ const Shop = () => {
           {/* CONTENU */}
           {loading ? (
             <div className="text-center py-20 dark:text-white flex flex-col items-center gap-4">
-              <div className="w-8 h-8 border-4 border-bustantech-gold border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
               Chargement de la boutique...
             </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-20 text-gray-500">
+              Aucun produit ne correspond à vos critères de recherche.
+            </div>
           ) : (
-            <div className="space-y-16">
-              {CATEGORIES.filter(c => selectedCategory === '' || c.id === selectedCategory).map(category => {
-                const categoryProducts = filteredProducts.filter(p => p.category === category.id).slice(0, 10);
-
-                if (categoryProducts.length === 0) return null;
-
-                return (
-                  <div key={category.id} className="relative">
-                    <div className="flex justify-between items-end mb-6">
-                      <div>
-                        <h2 className="text-2xl font-luxury font-bold dark:text-white">{category.name}</h2>
-                        <div className="w-12 h-1 bg-bustantech-gold mt-2"></div>
-                      </div>
-                      <Link to={`/category/${category.id}`} className="text-sm font-bold text-bustantech-gold hover:underline">
-                        Voir tout
-                      </Link>
-                    </div>
-
-                    {/* SCROLL HORIZONTAL LÉTERAL */}
-                    <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar">
-                      {categoryProducts.map(product => (
-                        <div key={product.id} className="w-[70vw] sm:w-[40vw] md:w-[30vw] lg:w-[22vw] snap-start shrink-0">
-                          <ProductCard product={product} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-              
-              {CATEGORIES.filter(c => selectedCategory === '' || c.id === selectedCategory).every(category => 
-                filteredProducts.filter(p => p.category === category.id).length === 0
-              ) && (
-                <div className="text-center py-20 text-gray-500">
-                  Aucun produit ne correspond à vos critères.
-                </div>
-              )}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+              {filteredProducts.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
           )}
         </div>

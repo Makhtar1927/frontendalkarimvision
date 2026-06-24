@@ -1,7 +1,7 @@
 import { useAuthStore } from '../store/useAuthStore';
 
-// MOCK DATA SYSTEM FOR FULL OFFLINE/CLIENT-SIDE DEMO MODE
-const MOCK_MODE = true;
+// SYSTEM OF MOCK DATA FOR OFFLINE/CLIENT-SIDE DEMO MODE
+const MOCK_MODE = import.meta.env.VITE_MOCK_MODE !== 'false';
 
 const INITIAL_PRODUCTS = [
   {

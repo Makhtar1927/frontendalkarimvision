@@ -1,53 +1,51 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Star, CheckCircle2 } from 'lucide-react';
+import { ShoppingBasket, Star, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCartStore();
   const [isHovered, setIsHovered] = useState(false);
-  const [showToast, setShowToast] = useState(false); // État pour la notification
+  const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
   
-  // Filtrer les variantes invalides (nulles) retournées par json_agg() en cas de LEFT JOIN sans résultat
+  // Filtrer les variantes invalides
   const validVariants = product.variants?.filter(v => v && v.id) || [];
   const [selectedVariant, setSelectedVariant] = useState(validVariants[0] || null);
   
-  // Calcul du prix avec le modificateur de la variante sélectionnée
+  // Calcul du prix
   const basePrice = parseFloat(product.base_price || 0);
   const displayPrice = selectedVariant?.price_modifier 
     ? basePrice + parseFloat(selectedVariant.price_modifier)
     : basePrice;
 
-  // Calcul du pourcentage de réduction si un ancien prix (compare_at_price) existe
+  // Pourcentage de réduction
   const compareAtPrice = parseFloat(product.compare_at_price || 0);
   const discountPercentage = compareAtPrice > basePrice 
     ? Math.round(((compareAtPrice - basePrice) / compareAtPrice) * 100) 
     : 0;
 
-  // Calcul du badge NOUVEAU (moins de 7 jours = 7 * 24h * 60m * 60s * 1000ms)
+  // Badge nouveau
   const isNew = product.created_at 
     ? (new Date() - new Date(product.created_at)) < 7 * 24 * 60 * 60 * 1000 
     : false;
 
-  // Formatage des données de notes (récupérées depuis le nouveau backend)
   const averageRating = parseFloat(product.average_rating || 0);
   const reviewCount = parseInt(product.review_count || 0, 10);
 
-  // Fonction pour ajouter au panier et déclencher la notification
-  const handleAddToCart = (e) => {
-    e.stopPropagation(); // Évite un potentiel conflit de clic sur la carte entière
-    addToCart(product, selectedVariant);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000); // Masque le toast après 3 secondes
-  };
-
   const isGloballyOutOfStock = validVariants.length > 0 && validVariants.every(v => Number(v.stock_quantity) <= 0);
   const isVariantOutOfStock = selectedVariant ? Number(selectedVariant.stock_quantity) <= 0 : isGloballyOutOfStock;
-  
-  // Détection Cloudinary : Si l'URL est une vidéo, on génère l'URL de sa miniature (.jpg)
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    if (isVariantOutOfStock) return;
+    addToCart(product, selectedVariant);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
   const isVideo = product.image_url?.match(/\.(mp4|mov|webm)$/i);
   const imageUrl = isVideo 
     ? product.image_url.replace(/\.(mp4|mov|webm)$/i, '.jpg') 
@@ -59,35 +57,33 @@ const ProductCard = ({ product }) => {
       tabIndex={0}
       onClick={() => navigate(`/product/${product.id}`)}
       onKeyDown={(e) => e.key === 'Enter' && navigate(`/product/${product.id}`)}
-      whileHover={{ y: -10 }}
+      whileHover={{ y: -6 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group flex flex-col h-full bg-white dark:bg-bustantech-gray rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-white/5 cursor-pointer"
+      className="group flex flex-col h-full bg-white dark:bg-brand-card-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-150 dark:border-zinc-800/80 cursor-pointer"
     >
-      {/* IMAGE & BADGE */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100">
+      {/* IMAGE CONTAINER (Carré parfait comme Keurgui Store) */}
+      <div className="relative aspect-square overflow-hidden bg-gray-50 dark:bg-zinc-950/40">
         <img 
           src={imageUrl} 
           alt={product.name}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           onError={(e) => { e.target.src = 'https://placehold.co/400x400/png?text=Image+Indisponible'; }}
         />
         
-        {/* CONTENEUR DES BADGES */}
-        <div className="absolute top-3 left-3 flex flex-col items-start gap-2 z-10">
-          {/* BADGE PROMO OU POURCENTAGE */}
+        {/* BADGES */}
+        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1 z-10">
           {(product.is_on_sale || discountPercentage > 0) && (
-            <div className="bg-red-600 dark:bg-red-500 text-white text-[10px] font-bold tracking-widest px-3 py-1 shadow-md rounded-full animate-pulse">
-              {discountPercentage > 0 ? `-${discountPercentage}%` : 'PROMO'}
-            </div>
+            <span className="bg-red-500 text-white text-[9px] font-black tracking-wider px-2 py-0.5 rounded uppercase">
+              {discountPercentage > 0 ? `-${discountPercentage}%` : 'Promo'}
+            </span>
           )}
-          {/* BADGE NOUVEAU */}
           {isNew && (
-            <div className="bg-blue-600 dark:bg-blue-500 text-white text-[10px] font-bold tracking-widest px-3 py-1 shadow-md rounded-full">
-              NOUVEAU
-            </div>
+            <span className="bg-brand-blue text-white text-[9px] font-black tracking-wider px-2 py-0.5 rounded uppercase">
+              Nouveau
+            </span>
           )}
         </div>
 
@@ -108,82 +104,131 @@ const ProductCard = ({ product }) => {
         )}
 
         {isGloballyOutOfStock && (
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-            <span className="text-white font-bold tracking-widest text-xs border border-white px-4 py-2">RUPTURE</span>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center z-15">
+            <span className="text-white font-extrabold tracking-widest text-[9px] border border-white/40 px-2.5 py-1 rounded bg-black/35">
+              RUPTURE
+            </span>
           </div>
         )}
-
-        <button 
-          disabled={isVariantOutOfStock}
-          onClick={handleAddToCart}
-        onKeyDown={(e) => e.stopPropagation()}
-        aria-label={`Ajouter ${product.name} au panier`}
-          className="absolute bottom-4 right-4 p-3 bg-white dark:bg-bustantech-black text-bustantech-gold rounded-full shadow-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-bustantech-gold hover:text-white"
-        >
-          <ShoppingBag size={20} />
-        </button>
       </div>
 
-      {/* INFOS PRODUIT */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col space-y-2">
-        <div className="flex justify-between items-center text-[10px] font-bold tracking-widest text-bustantech-gold uppercase gap-2">
-          <span className="truncate">{product.brand}</span>
-          <div className="flex items-center gap-1 shrink-0" title={reviewCount > 0 ? `${reviewCount} avis client(s)` : "Aucun avis"}>
-            <Star 
-              size={10} 
-              fill={averageRating > 0 ? "currentColor" : "none"} 
-              className={averageRating > 0 ? "text-bustantech-gold" : "text-gray-300 dark:text-gray-600"} 
-            /> 
-            <span className={averageRating === 0 ? "text-gray-400 capitalize" : ""}>
-              {averageRating > 0 ? averageRating : 'Nouveau'}
-            </span>
+      {/* CONTENU INFO PRODUIT */}
+      <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-between space-y-2.5 sm:space-y-3">
+        <div className="space-y-1.5 sm:space-y-2">
+          {/* MARQUE & ÉTOILES */}
+          <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-bold tracking-wider text-gray-400 uppercase gap-1">
+            <span className="truncate max-w-[65%]">{product.brand || 'Al Karim'}</span>
+            <div className="flex items-center gap-0.5 shrink-0">
+              <Star 
+                size={9} 
+                fill={averageRating > 0 ? "#0284c7" : "none"} 
+                className={averageRating > 0 ? "text-brand-blue" : "text-gray-300 dark:text-zinc-600"} 
+              /> 
+              <span className={averageRating === 0 ? "text-gray-400" : "text-brand-blue font-extrabold ml-0.5"}>
+                {averageRating > 0 ? averageRating.toFixed(1) : '5.0'}
+              </span>
+            </div>
+          </div>
+
+          {/* NOM DU PRODUIT (Hauteur fixe adaptée) */}
+          <h3 className="font-sans text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100 line-clamp-2 leading-snug h-8 sm:h-10 overflow-hidden">
+            {product.name}
+          </h3>
+
+          {/* DESCRIPTION CLAMPÉE POUR REMPLIR LA CARTE */}
+          {product.description && (
+            <p className="text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-500 line-clamp-1 italic leading-normal">
+              {product.description}
+            </p>
+          )}
+
+          {/* BADGE DE GARANTIE/CONFIANCE */}
+          <div className="flex items-center gap-1 text-[8px] sm:text-[9px] text-emerald-600 dark:text-emerald-500 font-bold tracking-wide uppercase">
+            <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Garantie Al Karim Vision</span>
           </div>
         </div>
 
-        <h3 className="font-luxury text-base sm:text-lg font-bold dark:text-white line-clamp-2">
-          {product.name}
-        </h3>
-
-        <div className="mt-auto pt-2">
-          {/* SÉLECTEUR DE VARIANTE */}
+        <div>
+          {/* SÉLECTEUR MULTI-VARIANTES COHÉRENT */}
           {validVariants.length > 1 ? (
-            <div className="mb-2 relative z-20">
+            <div className="mb-2" onClick={e => e.stopPropagation()}>
               <select
                 value={selectedVariant?.sku || ''}
                 onChange={(e) => {
                   const variant = validVariants.find(v => v.sku === e.target.value);
                   setSelectedVariant(variant);
                 }}
-                onClick={(e) => e.stopPropagation()} // Pour ne pas déclencher d'éventuels liens sur la carte
-                onKeyDown={(e) => e.stopPropagation()}
-                aria-label={`Sélectionner une variante pour ${product.name}`}
-                className="w-full text-xs p-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl dark:text-white focus:outline-none focus:border-bustantech-gold transition-colors cursor-pointer"
+                className="w-full text-[9px] sm:text-[10px] p-1 sm:p-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg dark:text-white focus:outline-none focus:border-brand-blue transition-colors cursor-pointer"
               >
                 {validVariants.map((variant) => (
                   <option key={variant.id || variant.sku} value={variant.sku} disabled={Number(variant.stock_quantity) <= 0}>
-                    {variant.attribute_value} {parseFloat(variant.price_modifier) > 0 ? `(+ ${new Intl.NumberFormat('fr-FR').format(variant.price_modifier)} FCFA)` : ''} {Number(variant.stock_quantity) <= 0 ? '(Rupture)' : ''}
+                    {variant.attribute_value} {parseFloat(variant.price_modifier) > 0 ? `(+${new Intl.NumberFormat('fr-FR').format(variant.price_modifier)} F)` : ''} {Number(variant.stock_quantity) <= 0 ? '(Rup)' : ''}
                   </option>
                 ))}
               </select>
             </div>
           ) : validVariants.length === 1 ? (
-            <p className="text-xs text-gray-500 mb-2 truncate">{validVariants[0].attribute_value}</p>
-          ) : null}
+            <p className="text-[9px] sm:text-[10px] text-gray-400 mb-2 truncate italic">{validVariants[0].attribute_value}</p>
+          ) : (
+            <div className="h-[12px] mb-1.5" />
+          )}
 
-          <div className="flex items-baseline gap-2">
-            <span className="text-lg sm:text-xl font-bold text-bustantech-gold">
+          {/* PRIX (Stack vertical sur mobile pour éviter les débordements) */}
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-1.5 mb-2.5">
+            <span className="text-xs sm:text-base font-black text-brand-blue whitespace-nowrap">
               {new Intl.NumberFormat('fr-FR').format(displayPrice)} FCFA
             </span>
             {compareAtPrice > basePrice && (
-              <span className="text-[10px] sm:text-xs font-medium text-gray-400 line-through decoration-gray-400/70">
-                {new Intl.NumberFormat('fr-FR').format(compareAtPrice + (selectedVariant?.price_modifier ? parseFloat(selectedVariant.price_modifier) : 0))}
+              <span className="text-[9px] sm:text-[11px] font-semibold text-gray-400 line-through whitespace-nowrap">
+                {new Intl.NumberFormat('fr-FR').format(compareAtPrice + (selectedVariant?.price_modifier ? parseFloat(selectedVariant.price_modifier) : 0))} FCFA
               </span>
+            )}
+          </div>
+
+          {/* BOUTON PERSISTANT */}
+          <div className="flex gap-2">
+            <button 
+              disabled={isVariantOutOfStock}
+              onClick={handleAddToCart}
+              className={`py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 ${
+                isVariantOutOfStock
+                  ? 'w-full bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 cursor-not-allowed'
+                  : 'flex-1 bg-brand-blue hover:bg-brand-blue-dark text-white hover:shadow-md hover:shadow-brand-blue/15'
+              }`}
+            >
+              {isVariantOutOfStock ? (
+                <>
+                  <AlertCircle size={12} />
+                  Rupture
+                </>
+              ) : (
+                <>
+                  <ShoppingBasket size={12} />
+                  Panier
+                </>
+              )}
+            </button>
+
+            {!isVariantOutOfStock && (
+              <a
+                href={`https://wa.me/221774133645?text=Bonjour%20Al%20Karim%20Vision,%20je%20souhaite%20commander%20le%20produit%20*${encodeURIComponent(product.name)}*%20${selectedVariant ? `(Variante%20:%20*${encodeURIComponent(selectedVariant.attribute_value)}*)` : ''}%20au%20prix%20de%20*${encodeURIComponent(new Intl.NumberFormat('fr-FR').format(displayPrice))}%20FCFA*.%20Voici%20le%20lien%20du%20produit%20:%20${encodeURIComponent(window.location.origin + '/product/' + product.id)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/25 hover:bg-emerald-100 dark:hover:bg-emerald-950/45 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/40 flex items-center justify-center transition-all duration-300 hover:shadow-sm shrink-0"
+                title="Commander sur WhatsApp"
+              >
+                <svg className="w-4 h-4 fill-current text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.456L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.968C16.592 1.97 14.121.945 11.5.944c-5.439 0-9.865 4.371-9.87 9.799-.002 1.802.48 3.562 1.396 5.12L2.03 21.8l6.088-1.597-.03.02a9.87 9.87 0 0 1-1.441.931zm10.742-7.51c-.262-.13-1.547-.757-1.785-.841-.237-.084-.41-.127-.582.13-.172.257-.667.841-.818 1.013-.15.17-.3.195-.562.066-.262-.13-1.11-.407-2.113-1.296-.782-.693-1.309-1.55-1.463-1.807-.154-.257-.016-.397.115-.526.118-.115.262-.303.393-.455.13-.152.174-.257.262-.429.088-.172.044-.323-.022-.452-.066-.13-.582-1.393-.797-1.91-.21-.508-.44-.44-.582-.448-.135-.008-.29-.01-.445-.01-.156 0-.41.058-.625.292-.215.234-.82.796-.82 1.94 0 1.144.835 2.25.952 2.408.117.156 1.643 2.493 3.98 3.498.556.24 1.002.383 1.336.488.558.177 1.066.152 1.468.093.447-.066 1.547-.627 1.767-1.233.22-.607.22-1.127.155-1.234-.066-.108-.242-.172-.504-.303z"/>
+                </svg>
+              </a>
             )}
           </div>
         </div>
       </div>
 
-      {/* TOAST DE NOTIFICATION (Haut sur mobile, Bas-Droit sur Desktop - Portal) */}
+      {/* TOAST NOTIFICATION */}
       {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
           {showToast && (
@@ -195,9 +240,8 @@ const ProductCard = ({ product }) => {
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ type: "spring", stiffness: 350, damping: 26 }}
               className="fixed top-4 left-4 right-4 md:top-auto md:bottom-6 md:right-6 md:left-auto z-[9999] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-emerald-500/30 dark:border-emerald-500/40 p-4 rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] flex items-center gap-4 cursor-default max-w-sm mx-auto md:mx-0"
-              onClick={(e) => e.stopPropagation()} // Empêche de cliquer à travers le toast
+              onClick={(e) => e.stopPropagation()}
             >
-              {/* Image miniature du produit */}
               <div className="relative w-12 h-12 flex-shrink-0 rounded-xl overflow-hidden border border-gray-100 dark:border-zinc-800 bg-gray-50">
                 <img 
                   src={imageUrl} 
@@ -208,13 +252,11 @@ const ProductCard = ({ product }) => {
                 <div className="absolute inset-0 bg-emerald-500/10" />
               </div>
               
-              {/* Contenu texte */}
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Ajouté au panier !</p>
                 <h4 className="text-sm font-bold text-gray-900 dark:text-white truncate mt-0.5">{product.name}</h4>
               </div>
 
-              {/* Icône de confirmation */}
               <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
                 <CheckCircle2 size={18} className="animate-pulse" />
               </div>

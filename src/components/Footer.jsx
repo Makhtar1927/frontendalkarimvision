@@ -64,21 +64,21 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-white dark:bg-bustantech-black border-t border-gray-100 dark:border-gray-800 pt-16 pb-8">
+    <footer className="bg-white dark:bg-brand-gray-dark border-t border-gray-150 dark:border-zinc-800 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           
           {/* BRANDING & NEWSLETTER */}
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-luxury font-bold text-bustantech-gold tracking-widest mb-4">
-              AL KARIM<span className="text-black dark:text-white"> VISION</span>
+            <h2 className="text-xl font-sans font-black text-brand-blue tracking-wider mb-4 uppercase">
+              AL KARIM<span className="text-gray-900 dark:text-white"> VISION</span>
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-6 text-sm">
+            <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-6 text-sm leading-relaxed">
               L'alliance parfaite entre l'innovation technologique, le luxe de la haute parfumerie et l'art du café de spécialité.
             </p>
             
             <div>
-              <h3 className="text-xs font-bold text-black dark:text-white uppercase tracking-wider mb-3">S'abonner à la Newsletter</h3>
+              <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-3">S'abonner à la Newsletter</h3>
               <form onSubmit={handleSubscribe} className="relative max-w-sm">
                 <input
                   id="newsletter-email"
@@ -88,13 +88,13 @@ const Footer = () => {
                   value={email}
                   aria-label="Votre adresse e-mail"
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white rounded-full py-3 pl-4 pr-12 focus:outline-none focus:border-bustantech-gold transition-colors text-base md:text-sm"
+                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-white rounded-lg py-2.5 pl-4 pr-12 focus:outline-none focus:border-brand-blue transition-colors text-base md:text-sm"
                 />
                 <button
                   type="submit"
                   aria-label="S'abonner à la newsletter"
                   disabled={status === 'loading'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-bustantech-gold hover:text-bustantech-gold-dark disabled:opacity-50 transition-colors p-2"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-brand-blue hover:text-brand-blue-dark disabled:opacity-50 transition-colors p-2"
                 >
                   {status === 'loading' ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                 </button>
@@ -106,33 +106,33 @@ const Footer = () => {
 
           {/* LIENS RAPIDES */}
           <div>
-            <h3 className="text-xs font-bold text-black dark:text-white uppercase tracking-wider mb-4">Navigation</h3>
+            <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Navigation</h3>
             <ul className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
-              <li><Link to="/" className="hover:text-bustantech-gold transition-colors">Accueil</Link></li>
-              <li><Link to="/category/glasses" className="hover:text-bustantech-gold transition-colors">Lunettes</Link></li>
-              <li><Link to="/category/perfume" className="hover:text-bustantech-gold transition-colors">Haute Parfumerie</Link></li>
-              <li><Link to="/category/watches" className="hover:text-bustantech-gold transition-colors">Montres de Luxe</Link></li>
-              <li><Link to="/category/other" className="hover:text-bustantech-gold transition-colors">Divers & Accessoires</Link></li>
+              <li><Link to="/" className="hover:text-brand-blue transition-colors">Accueil</Link></li>
+              <li><Link to="/category/glasses" className="hover:text-brand-blue transition-colors">Lunettes</Link></li>
+              <li><Link to="/category/perfume" className="hover:text-brand-blue transition-colors">Haute Parfumerie</Link></li>
+              <li><Link to="/category/watches" className="hover:text-brand-blue transition-colors">Montres de Luxe</Link></li>
+              <li><Link to="/category/other" className="hover:text-brand-blue transition-colors">Divers & Accessoires</Link></li>
             </ul>
           </div>
 
           {/* CONTACT */}
           <div>
-            <h3 className="text-xs font-bold text-black dark:text-white uppercase tracking-wider mb-4">Contact</h3>
+            <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Contact</h3>
             <ul className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
               <li>
-                <a href={`tel:${settings.contact_phone}`} className="hover:text-bustantech-gold transition-colors flex items-center gap-2">
-                  <Phone size={14} className="text-bustantech-gold" /> {settings.contact_phone}
+                <a href={`tel:${settings.contact_phone}`} className="hover:text-brand-blue transition-colors flex items-center gap-2">
+                  <Phone size={14} className="text-brand-blue" /> {settings.contact_phone}
                 </a>
               </li>
               <li>
-                <a href={`mailto:${settings.contact_email}`} className="hover:text-bustantech-gold transition-colors flex items-center gap-2">
-                  <Mail size={14} className="text-bustantech-gold" /> {settings.contact_email}
+                <a href={`mailto:${settings.contact_email}`} className="hover:text-brand-blue transition-colors flex items-center gap-2">
+                  <Mail size={14} className="text-brand-blue" /> {settings.contact_email}
                 </a>
               </li>
               <li>
-                <a href={settings.maps_link} target="_blank" rel="noopener noreferrer" className="hover:text-bustantech-gold transition-colors flex items-start gap-2">
-                  <MapPin size={14} className="text-bustantech-gold mt-1 shrink-0" />
+                <a href={settings.maps_link} target="_blank" rel="noopener noreferrer" className="hover:text-brand-blue transition-colors flex items-start gap-2">
+                  <MapPin size={14} className="text-brand-blue mt-1 shrink-0" />
                   <span>{settings.contact_address.split(',').map((part, i) => <React.Fragment key={i}>{part}{i === 0 && <br/>}</React.Fragment>)}</span>
                 </a>
               </li>
@@ -144,8 +144,8 @@ const Footer = () => {
         <div className="border-t border-gray-100 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
           <p>&copy; {new Date().getFullYear()} {settings.store_name}. Tous droits réservés.</p>
           <div className="flex space-x-4">
-            <a href="#" className="hover:text-bustantech-gold transition-colors">Mentions Légales</a>
-            <a href="#" className="hover:text-bustantech-gold transition-colors">Politique de Confidentialité</a>
+            <a href="#" className="hover:text-brand-blue transition-colors">Mentions Légales</a>
+            <a href="#" className="hover:text-brand-blue transition-colors">Politique de Confidentialité</a>
           </div>
         </div>
       </div>

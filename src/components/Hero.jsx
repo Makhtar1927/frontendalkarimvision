@@ -46,7 +46,7 @@ const Hero = () => {
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
 
-  // Auto-play du slider toutes le 5 secondes
+  // Auto-play du slider toutes les 6 secondes
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
@@ -55,15 +55,15 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="relative h-[85vh] w-full overflow-hidden bg-white dark:bg-bustantech-black">
+    <div className="relative h-[45vh] sm:h-[60vh] w-full overflow-hidden bg-white dark:bg-brand-gray-dark border-b border-gray-100 dark:border-zinc-800/80">
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute inset-0 flex items-center px-4 sm:px-8 lg:px-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6 }}
+          className="absolute inset-0 flex items-center px-4 sm:px-12 lg:px-24"
         >
           <img 
             src={slides[current].image}
@@ -71,62 +71,67 @@ const Hero = () => {
             fetchPriority={current === 0 ? "high" : "auto"}
             loading={current === 0 ? "eager" : "lazy"}
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
+            className="absolute inset-0 w-full h-full object-cover object-center"
           />
-          {/* Overlay: Sombre sur mobile (comme avant), Dégradé Premium sur desktop */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] md:backdrop-blur-none md:bg-transparent md:bg-gradient-to-r md:from-white md:via-white/90 md:to-transparent dark:md:from-bustantech-black dark:md:via-bustantech-black/90 dark:md:to-transparent z-10"></div>
-
-          <div className="relative max-w-2xl space-y-6 z-20">
+          {/* Overlay corporatif premium : Dégradé doux */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-gray-dark/80 dark:to-transparent z-10"></div>
+ 
+          <div className="relative max-w-xl space-y-3 sm:space-y-6 z-20">
             <motion.div 
-              initial={{ y: 20, opacity: 0 }}
+              initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex items-center gap-3 text-bustantech-gold font-bold tracking-[0.2em] text-sm"
+              transition={{ delay: 0.2 }}
+              className="flex items-center gap-2 sm:gap-3 text-brand-blue font-bold tracking-[0.25em] text-[10px] sm:text-xs uppercase"
             >
-              <span className="w-10 h-[2px] bg-bustantech-gold"></span>
+              <span className="w-6 sm:w-8 h-[2px] bg-brand-blue"></span>
               {slides[current].category}
             </motion.div>
 
             <motion.h1 
-              initial={{ y: 30, opacity: 0 }}
+              initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-luxury font-bold text-white md:text-bustantech-black dark:text-white leading-tight"
+              transition={{ delay: 0.3 }}
+              className="text-2xl sm:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white leading-tight tracking-tight"
             >
               {slides[current].title}
             </motion.h1>
 
             <motion.p 
-              initial={{ y: 20, opacity: 0 }}
+              initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="text-base sm:text-lg md:text-xl text-gray-200 md:text-gray-700 dark:text-gray-300 max-w-xl"
+              transition={{ delay: 0.4 }}
+              className="text-xs sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-lg font-normal leading-relaxed"
             >
               {slides[current].subtitle}
             </motion.p>
 
-            <motion.button
-              onClick={() => navigate(slides[current].route)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="group flex items-center justify-center sm:justify-start gap-3 bg-bustantech-gold text-white w-full sm:w-auto px-8 py-4 rounded-full font-bold shadow-xl hover:bg-bustantech-gold-dark transition-all"
+            <motion.div
+              initial={{ y: 15, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="pt-1 sm:pt-2"
             >
-              DÉCOUVRIR LA COLLECTION
-              <ArrowRight className="group-hover:translate-x-2 transition-transform" />
-            </motion.button>
+              <button
+                onClick={() => navigate(slides[current].route)}
+                className="group flex items-center justify-center gap-2 sm:gap-3 bg-brand-blue text-white hover:bg-brand-blue-dark px-5 py-2.5 sm:px-8 sm:py-3.5 rounded-lg font-bold text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 shadow-md shadow-brand-blue/15 hover:shadow-lg hover:shadow-brand-blue/30"
+              >
+                Découvrir la collection
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </motion.div>
           </div>
         </motion.div>
       </AnimatePresence>
 
       {/* Indicateurs de Slide */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+      <div className="absolute bottom-5 sm:bottom-8 left-4 sm:left-12 lg:left-24 flex gap-2 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrent(index)}
             aria-label={`Aller à la diapositive ${index + 1}`}
             aria-current={current === index ? 'true' : 'false'}
-            className={`h-1 transition-all duration-500 ${current === index ? 'w-12 bg-bustantech-gold' : 'w-4 bg-gray-300 dark:bg-gray-700'}`}
+            className={`h-1.5 transition-all duration-300 ${current === index ? 'w-8 sm:w-10 bg-brand-blue rounded-full' : 'w-1.5 sm:w-2 bg-gray-300 dark:bg-zinc-700 hover:bg-gray-400 rounded-full'}`}
           />
         ))}
       </div>

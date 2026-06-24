@@ -12,24 +12,24 @@ const Maintenance = () => {
                 description="Notre site est actuellement en maintenance pour mise à jour. Nous serons de retour très bientôt !"
                 noindex={true}
             />
-            <div className="min-h-screen bg-white dark:bg-bustantech-black flex flex-col items-center justify-center p-6 text-center">
+            <div className="min-h-screen bg-white dark:bg-brand-gray-dark flex flex-col items-center justify-center p-6 text-center">
             <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="max-w-2xl"
             >
                 <div className="mb-8 relative inline-block">
-                    <div className="absolute inset-0 bg-bustantech-gold blur-3xl opacity-20 rounded-full animate-pulse"></div>
+                    <div className="absolute inset-0 bg-brand-blue blur-3xl opacity-20 rounded-full animate-pulse"></div>
                     <motion.div 
                         animate={{ rotate: [0, 5, -5, 0] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        className="relative z-10 p-6 bg-bustantech-sky dark:bg-zinc-900 rounded-full border border-bustantech-gold/30"
+                        className="relative z-10 p-6 bg-sky-50 dark:bg-zinc-900 rounded-lg border border-brand-blue/30"
                     >
-                        <HardHat size={80} className="text-bustantech-gold" />
+                        <HardHat size={80} className="text-brand-blue" />
                     </motion.div>
                 </div>
                 
-                <h1 className="text-4xl md:text-6xl font-luxury font-bold dark:text-white mb-6 uppercase tracking-widest">
+                <h1 className="text-4xl md:text-5xl font-sans font-black dark:text-white mb-6 uppercase tracking-tight">
                     Maintenance en Cours
                 </h1>
                 
@@ -38,13 +38,13 @@ const Maintenance = () => {
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                    <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-gray-800">
-                        <Clock className="text-bustantech-gold mx-auto mb-3" size={24} />
+                    <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-150 dark:border-zinc-800">
+                        <Clock className="text-brand-blue mx-auto mb-3" size={24} />
                         <h3 className="font-bold dark:text-white uppercase tracking-wider text-xs mb-1">Retour Prévu</h3>
                         <p className="text-sm text-gray-500">D'ici peu de temps</p>
                     </div>
-                    <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-gray-800">
-                        <Phone className="text-bustantech-gold mx-auto mb-3" size={24} />
+                    <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-150 dark:border-zinc-800">
+                        <Phone className="text-brand-blue mx-auto mb-3" size={24} />
                         <h3 className="font-bold dark:text-white uppercase tracking-wider text-xs mb-1">Besoin d'aide ?</h3>
                         <p className="text-sm text-gray-500">+221 77 413 36 45</p>
                     </div>

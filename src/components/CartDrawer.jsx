@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trash2, MessageCircle, Loader2, CheckCircle2, ShoppingBag, ArrowRight } from 'lucide-react';
+import { X, Trash2, MessageCircle, Loader2, CheckCircle2, ShoppingBasket, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 import { apiFetch } from './api';
@@ -177,7 +177,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="cart-drawer-title"
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-bustantech-black z-[70] shadow-2xl p-4 sm:p-6 flex flex-col overflow-hidden"
+            className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-brand-gray-dark z-[70] shadow-2xl p-4 sm:p-6 flex flex-col overflow-hidden"
           >
             {/* OVERLAY DE SUCCÈS */}
             <AnimatePresence>
@@ -186,7 +186,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-[80] bg-white dark:bg-bustantech-black flex flex-col items-center justify-center text-center p-6"
+                  className="absolute inset-0 z-[80] bg-white dark:bg-brand-gray-dark flex flex-col items-center justify-center text-center p-6"
                 >
                   <motion.div
                     initial={{ scale: 0.5, rotate: -20 }}
@@ -195,12 +195,12 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   >
                     <CheckCircle2 size={100} className="text-green-500 mb-6" />
                   </motion.div>
-                  <h3 className="text-2xl font-luxury font-bold dark:text-white mb-2">Commande Transmise !</h3>
+                  <h3 className="text-2xl font-sans font-black dark:text-white mb-2">Commande Transmise !</h3>
                   <p className="text-gray-500 dark:text-gray-400">Confirmation en cours sur WhatsApp...</p>
                   <div className="mt-8 flex gap-2">
-                    <div className="w-2 h-2 bg-bustantech-gold rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-                    <div className="w-2 h-2 bg-bustantech-gold rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-bustantech-gold rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                   </div>
                 </motion.div>
               )}
@@ -210,11 +210,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   animate={{ x: 0 }}
                   exit={{ x: '100%' }}
                   transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                  className="absolute inset-0 z-[90] bg-white dark:bg-bustantech-black flex flex-col h-full"
+                  className="absolute inset-0 z-[90] bg-white dark:bg-brand-gray-dark flex flex-col h-full"
                 >
-                  <div className="flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
+                  <div className="flex justify-between items-center p-4 border-b border-gray-150 dark:border-zinc-800 shrink-0">
                     <h3 className="text-xl font-bold dark:text-white">Récapitulatif</h3>
-                    <button onClick={() => setWaveSummaryData(null)} className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full dark:text-white transition-colors">
+                    <button onClick={() => setWaveSummaryData(null)} className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg dark:text-white transition-colors">
                       <X size={20} />
                     </button>
                   </div>
@@ -230,7 +230,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
                       <div className="pt-4 pb-2 border-b border-gray-100 dark:border-gray-700">
                         <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Numéro de commande</p>
-                        <p className="text-2xl md:text-3xl font-black text-bustantech-black dark:text-white tracking-wider">
+                        <p className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-wider">
                           {waveSummaryData.orderId !== "HORS-LIGNE" ? `N°${waveSummaryData.orderId}` : 'HORS-LIGNE'}
                         </p>
                       </div>
@@ -263,15 +263,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
                       <div className="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
                         <span className="font-bold text-gray-800 dark:text-gray-200">Total à payer</span>
-                        <span className="text-xl font-black text-[#1cc6ff]">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
+                        <span className="text-xl font-black text-brand-blue">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-bustantech-black shrink-0 space-y-3">
+                  <div className="p-4 border-t border-gray-150 dark:border-zinc-800 bg-white dark:bg-brand-gray-dark shrink-0 space-y-3">
                     <button
                       onClick={handleContinueToWave}
-                      className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-4 rounded-full font-bold flex items-center justify-center gap-3 transition-all text-lg shadow-lg shadow-[#1cc6ff]/20"
+                      className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-3.5 rounded-lg font-bold flex items-center justify-center gap-3 transition-all text-base shadow-lg shadow-[#1cc6ff]/20"
                     >
                       CONTINUER VERS WAVE
                     </button>
@@ -282,8 +282,8 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className="flex justify-between items-center border-b border-bustantech-gold/20 pb-4 shrink-0">
-              <h2 id="cart-drawer-title" className="text-2xl font-luxury font-bold dark:text-white">Votre Panier</h2>
+            <div className="flex justify-between items-center border-b border-gray-150 dark:border-zinc-800 pb-4 shrink-0">
+              <h2 id="cart-drawer-title" className="text-xl font-sans font-black dark:text-white uppercase tracking-wider">Votre Panier</h2>
               <div className="flex items-center gap-2">
                 {cart.length > 0 && (
                   <button
@@ -306,34 +306,34 @@ const CartDrawer = ({ isOpen, onClose }) => {
               {cart.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center px-4 mt-12">
                   <div className="w-24 h-24 bg-gray-50 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6 text-gray-300 dark:text-gray-600">
-                    <ShoppingBag size={48} strokeWidth={1} />
+                    <ShoppingBasket size={48} strokeWidth={1} />
                   </div>
-                  <h3 className="text-xl font-luxury font-bold dark:text-white mb-2">Votre panier est vide</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 max-w-[250px] mx-auto">
+                  <h3 className="text-lg font-sans font-bold dark:text-white mb-2">Votre panier est vide</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs mb-8 max-w-[250px] mx-auto leading-relaxed">
                     Découvrez nos collections d'iPhones, de parfums de luxe et notre sélection de café.
                   </p>
                   <button 
                     onClick={() => { onClose(); navigate('/shop'); }}
-                    className="flex items-center justify-center w-full gap-2 bg-bustantech-black dark:bg-bustantech-gold text-white dark:text-black px-8 py-4 rounded-full font-bold hover:opacity-90 transition-all shadow-lg"
+                    className="flex items-center justify-center w-full gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-50 text-white dark:text-gray-900 px-8 py-3.5 rounded-lg font-bold transition-all shadow-sm text-xs tracking-wider uppercase"
                   >
                     Explorer la Boutique
-                    <ArrowRight size={18} />
+                    <ArrowRight size={16} />
                   </button>
                 </div>
               ) : (
                 <div className="space-y-6">
                   {cart.map((item) => (
-                    <div key={item.id} className="flex gap-4 border-b border-gray-50 dark:border-gray-800 pb-4">
+                    <div key={item.id} className="flex gap-4 border-b border-gray-150 dark:border-zinc-800 pb-4">
                       <div className="flex-1">
                         <h4 className="font-bold dark:text-white text-sm">{item.name}</h4>
-                        <p className="text-xs text-bustantech-gold uppercase tracking-tighter">{item.variant}</p>
+                        <p className="text-xs text-brand-blue uppercase tracking-tighter">{item.variant}</p>
                         <div className="flex justify-between items-center mt-2">
-                          <div className="flex items-center gap-2 border border-gray-200 dark:border-gray-700 rounded-2xl">
+                          <div className="flex items-center gap-2 border border-gray-200 dark:border-zinc-800 rounded-lg">
                             <button aria-label="Diminuer la quantité" onClick={() => updateQuantity(item.id, -1)} className="px-2 py-1 md:px-3 md:py-1 hover:bg-gray-100 dark:hover:bg-zinc-800 dark:text-gray-300 transition-colors">-</button>
                             <span className="text-sm font-medium dark:text-gray-300 w-4 text-center">{item.quantity}</span>
                             <button aria-label="Augmenter la quantité" onClick={() => updateQuantity(item.id, 1)} className="px-2 py-1 md:px-3 md:py-1 hover:bg-gray-100 dark:hover:bg-zinc-800 dark:text-gray-300 transition-colors">+</button>
                           </div>
-                          <span className="font-bold text-bustantech-gold">{new Intl.NumberFormat('fr-FR').format(item.price * item.quantity)} FCFA</span>
+                          <span className="font-bold text-brand-blue">{new Intl.NumberFormat('fr-FR').format(item.price * item.quantity)} FCFA</span>
                         </div>
                       </div>
                       <button aria-label={`Supprimer ${item.name} du panier`} onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 transition-colors p-2 self-start border border-transparent rounded-full">
@@ -350,16 +350,16 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   {/* FORMULAIRE CLIENT */}
                   <div className="space-y-4 pt-2">
                     <div>
-                      <label htmlFor="customerName" className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom Complet</label>
-                      <input id="customerName" type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Ex: Pape Moussa" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 text-base md:text-sm dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <label htmlFor="customerName" className="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom Complet</label>
+                      <input id="customerName" type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Ex: Pape Moussa" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-base md:text-sm dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                     <div>
-                      <label htmlFor="customerPhone" className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Numéro de Téléphone</label>
-                      <input id="customerPhone" type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="Ex: 77 123 45 67" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 text-base md:text-sm dark:text-white focus:border-bustantech-gold outline-none transition-colors" />
+                      <label htmlFor="customerPhone" className="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Numéro de Téléphone</label>
+                      <input id="customerPhone" type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="Ex: 77 123 45 67" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-base md:text-sm dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                     <div>
-                      <label htmlFor="deliveryZone" className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Zone de Livraison</label>
-                      <select id="deliveryZone" value={deliveryZone} onChange={(e) => setDeliveryZone(e.target.value)} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 text-base md:text-sm dark:text-white focus:border-bustantech-gold outline-none transition-colors cursor-pointer">
+                      <label htmlFor="deliveryZone" className="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Zone de Livraison</label>
+                      <select id="deliveryZone" value={deliveryZone} onChange={(e) => setDeliveryZone(e.target.value)} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-base md:text-sm dark:text-white focus:border-brand-blue outline-none transition-colors cursor-pointer text-gray-700 dark:text-gray-300">
                         {Object.entries(DELIVERY_ZONES).map(([key, zone]) => (
                           <option key={key} value={key}>
                             {zone.name} {zone.cost > 0 ? `(+${new Intl.NumberFormat('fr-FR').format(zone.cost)} FCFA)` : '(Gratuit)'}
@@ -380,9 +380,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
                       <span>Frais de livraison</span>
                       <span>{shippingCost > 0 ? `+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA` : 'Offerts'}</span>
                     </div>
-                    <div className="flex justify-between items-center text-xl font-bold dark:text-white pt-2 border-t border-gray-100 dark:border-gray-800">
+                    <div className="flex justify-between items-center text-base font-bold dark:text-white pt-2 border-t border-gray-150 dark:border-zinc-800">
                       <span>Total TTC</span>
-                      <span className="text-bustantech-gold">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
+                      <span className="text-brand-blue">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
                     </div>
                   </div>
                 </div>
@@ -391,20 +391,20 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
             {/* BOUTON COMMANDER - FIXE EN BAS */}
             {cart.length > 0 && (
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-800 mt-auto shrink-0 space-y-3">
+              <div className="pt-4 border-t border-gray-150 dark:border-zinc-800 mt-auto shrink-0 space-y-3">
                 <button
                   onClick={() => handleOrderSubmit('wave')}
                   disabled={isSubmitting}
-                  className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-3.5 rounded-full font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-3 rounded-lg font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs tracking-wider uppercase"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 size={22} className="animate-spin" />
+                      <Loader2 size={18} className="animate-spin" />
                       ENREGISTREMENT...
                     </>
                   ) : (
                     <>
-                      <img src="/Wave.svg" alt="Wave" className="w-6 h-6 object-contain" />
+                      <img src="/Wave.svg" alt="Wave" className="w-5 h-5 object-contain" />
                       PAYER AVEC WAVE
                     </>
                   )}
@@ -413,21 +413,21 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 <button
                   onClick={() => handleOrderSubmit('whatsapp')}
                   disabled={isSubmitting}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3.5 rounded-full font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white py-3 rounded-lg font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs tracking-wider uppercase"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 size={22} className="animate-spin" />
+                      <Loader2 size={18} className="animate-spin" />
                       ENREGISTREMENT...
                     </>
                   ) : (
                     <>
-                      <img src="/WhatsApp.svg" alt="WhatsApp" className="w-6 h-6 object-contain" />
+                      <img src="/WhatsApp.svg" alt="WhatsApp" className="w-5 h-5 object-contain" />
                       COMMANDER SUR WHATSAPP
                     </>
                   )}
                 </button>
-                <p className="text-[10px] text-center text-gray-400 uppercase tracking-widest pb-1">Paiement 100% sécurisé</p>
+                <p className="text-[9px] text-center text-gray-400 uppercase tracking-widest pb-1">Paiement 100% sécurisé</p>
               </div>
             )}
           </motion.div>

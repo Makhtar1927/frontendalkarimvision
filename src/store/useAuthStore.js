@@ -22,13 +22,13 @@ const checkInitialAuth = () => {
     return { token: null, isAuthenticated: false };
   }
   
-  const token = localStorage.getItem('bustantech_token');
+  const token = localStorage.getItem('alkarimvision_token');
   if (!token) return { token: null, isAuthenticated: false };
   
   const payload = decodeJWT(token);
   // Si le token est invalide ou expiré (payload.exp est en secondes)
   if (!payload || payload.exp * 1000 < Date.now()) {
-    localStorage.removeItem('bustantech_token');
+    localStorage.removeItem('alkarimvision_token');
     return { token: null, isAuthenticated: false };
   }
   return { token, isAuthenticated: true };
@@ -45,13 +45,13 @@ export const useAuthStore = create((set, get) => ({
   login: (token) => {
     // On sauvegarde le token et on met à jour l'état avec l'utilisateur décodé
     const user = decodeJWT(token);
-    localStorage.setItem('bustantech_token', token);
+    localStorage.setItem('alkarimvision_token', token);
     set({ token, isAuthenticated: true, user });
   },
   
   logout: () => {
     // On supprime le token et on remet l'état à zéro
-    localStorage.removeItem('bustantech_token');
+    localStorage.removeItem('alkarimvision_token');
     set({ token: null, isAuthenticated: false, user: null });
   },
 }));
