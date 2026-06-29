@@ -130,7 +130,7 @@ const ProductCard = ({ product }) => {
         {!isVariantOutOfStock && (
           <button
             onClick={handleAddToCart}
-            className="absolute bottom-2 right-2 w-8 h-8 sm:w-10 sm:h-10 bg-slate-900/95 dark:bg-zinc-800 backdrop-blur-md text-white rounded-full flex items-center justify-center shadow-lg hover:bg-brand-blue hover:scale-110 transition-all z-20 group/cartbtn"
+            className="absolute bottom-2 right-2 w-8 h-8 sm:w-10 sm:h-10 bg-brand-blue hover:bg-brand-blue-dark backdrop-blur-md text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all z-20 group/cartbtn"
             aria-label="Ajouter au panier"
           >
             <ShoppingCart className="w-4 h-4 sm:w-[18px] sm:h-[18px] group-hover/cartbtn:animate-bounce" strokeWidth={2.5} />
@@ -205,7 +205,7 @@ const ProductCard = ({ product }) => {
                 {/* Add to Cart */}
                 <button
                   onClick={handleAddToCart}
-                  className="bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-brand-blue dark:hover:bg-brand-blue dark:hover:text-white transition-all active:scale-95 shadow-md shadow-slate-900/10 flex items-center gap-1.5"
+                  className="bg-brand-blue hover:bg-brand-blue-dark text-white px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-md shadow-brand-blue/20 flex items-center gap-1.5"
                 >
                   <ShoppingCart size={10} strokeWidth={2.5} />
                   Ajouter
