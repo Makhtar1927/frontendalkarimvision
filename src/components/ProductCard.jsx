@@ -138,7 +138,7 @@ const ProductCard = ({ product }) => {
 
         {/* Variant Pills */}
         {validVariants.length > 1 && (
-          <div className="flex flex-wrap gap-1 mb-2.5" onClick={e => e.stopPropagation()}>
+          <div className="flex flex-wrap gap-1 mb-2" onClick={e => e.stopPropagation()}>
             {validVariants.map((variant) => {
               const isSelected = selectedVariant?.sku === variant.sku;
               const isOutOfStock = Number(variant.stock_quantity) <= 0;
@@ -147,12 +147,12 @@ const ProductCard = ({ product }) => {
                   key={variant.id || variant.sku}
                   disabled={isOutOfStock}
                   onClick={() => setSelectedVariant(variant)}
-                  className={`px-2 py-0.5 text-[9px] font-bold rounded uppercase tracking-wide border transition-all duration-200 ${
+                  className={`px-1.5 py-0.5 text-[8px] font-bold rounded-md uppercase tracking-tight border transition-all duration-200 ${
                     isOutOfStock
-                      ? 'bg-slate-50 dark:bg-zinc-800 text-slate-300 dark:text-zinc-600 border-slate-100 dark:border-zinc-700 line-through cursor-not-allowed opacity-60'
+                      ? 'bg-slate-50 dark:bg-zinc-800/50 text-slate-300 dark:text-zinc-600 border-slate-100 dark:border-zinc-800 line-through cursor-not-allowed opacity-50'
                       : isSelected
                         ? 'bg-brand-blue text-white border-brand-blue shadow-sm'
-                        : 'bg-white dark:bg-zinc-900 text-slate-500 dark:text-zinc-400 border-slate-200 dark:border-zinc-700 hover:border-brand-blue/50 hover:text-brand-blue'
+                        : 'bg-white dark:bg-zinc-900 text-slate-500 dark:text-zinc-400 border-slate-250 dark:border-zinc-800 hover:border-brand-blue/45'
                   }`}
                 >
                   {variant.attribute_value}
