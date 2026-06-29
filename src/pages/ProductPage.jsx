@@ -467,6 +467,25 @@ const ProductPage = () => {
               </button>
             </div>
 
+            {/* Modes de paiement acceptés */}
+            <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest shrink-0">
+                Payer avec
+              </span>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-lg px-2.5 py-1.5">
+                  <img src="/Wave.svg" alt="Wave" className="h-4 w-auto object-contain" />
+                </div>
+                <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-lg px-2.5 py-1.5">
+                  <img src="/WhatsApp.svg" alt="WhatsApp" className="h-4 w-4 object-contain" />
+                  <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400">WhatsApp</span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-lg px-2.5 py-1.5">
+                  <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400">💵 Cash</span>
+                </div>
+              </div>
+            </div>
+
             {/* Éléments de réassurance */}
             <div className="grid grid-cols-2 gap-3 mt-8 pt-6 border-t border-gray-150 dark:border-zinc-800 text-[11px]">
               <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-zinc-900/40 rounded-lg border border-gray-100 dark:border-zinc-800">
