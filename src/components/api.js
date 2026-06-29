@@ -257,49 +257,69 @@ const handleMockRequest = async (endpoint, options) => {
     };
   };
 
-  // 1. GET /products
-  if (endpoint.startsWith('/products') && (options.method === 'GET' || !options.method)) {
-    // stats: GET /products/stats
-    if (endpoint.includes('/stats')) {
-      const stats = {
-        graph: [
-          { date: '06/15', total: 185000 },
-          { date: '06/16', total: 240000 },
-          { date: '06/17', total: 150000 },
-          { date: '06/18', total: 320000 },
-          { date: '06/19', total: 280000 },
-          { date: '06/20', total: 420000 },
-          { date: '06/21', total: 390000 }
-        ],
-        categorySales: [
-          { name: 'Lunettes', value: 45 },
-          { name: 'Parfums', value: 30 },
-          { name: 'Montres', value: 20 },
-          { name: 'Divers', value: 5 }
-        ],
-        kpi: {
-          revenusMois: 1985000,
-          commandesMois: orders.length
-        }
-      };
-      return getCleanJson(stats);
-    }
-    
-    // GET /products/:id
-    const idMatch = endpoint.match(/\/products\/([^\/\?]+)$/);
-    if (idMatch) {
-      const id = idMatch[1];
-      const prod = products.find(p => p.id === id);
-      if (!prod) {
-        return {
-          ok: false,
-          status: 404,
-          json: async () => ({ error: "Produit introuvable" })
-        };
+  // 1. GET /products/stats
+  if (endpoint.startsWith('/products/stats') && (options.method === 'GET' || !options.method)) {
+    const stats = {
+      graph: [
+        { date: '06/15', total: 185000 },
+        { date: '06/16', total: 240000 },
+        { date: '06/17', total: 150000 },
+        { date: '06/18', total: 320000 },
+        { date: '06/19', total: 280000 },
+        { date: '06/20', total: 420000 },
+        { date: '06/21', total: 390000 }
+      ],
+      categorySales: [
+        { name: 'Lunettes', value: 45 },
+        { name: 'Parfums', value: 30 },
+        { name: 'Montres', value: 20 },
+        { name: 'Divers', value: 5 }
+      ],
+      kpi: {
+        revenusMois: 1985000,
+        commandesMois: orders.length
       }
-      return getCleanJson(prod);
-    }
+    };
+    return getCleanJson(stats);
+  }
 
+  // GET /products/:id/reviews
+  const reviewsMatch = endpoint.match(/\/products\/([^\/\?]+)\/reviews$/);
+  if (reviewsMatch && (options.method === 'GET' || !options.method)) {
+    return getCleanJson([]);
+  }
+
+  // POST /products/:id/reviews
+  if (reviewsMatch && options.method === 'POST') {
+    const body = JSON.parse(options.body);
+    const newReview = {
+      id: Date.now(),
+      product_id: reviewsMatch[1],
+      customer_name: body.customer_name,
+      rating: body.rating,
+      comment: body.comment,
+      created_at: new Date().toISOString()
+    };
+    return getCleanJson(newReview);
+  }
+
+  // GET /products/:id
+  const idMatch = endpoint.match(/\/products\/([^\/\?]+)$/);
+  if (idMatch && (options.method === 'GET' || !options.method)) {
+    const id = idMatch[1];
+    const prod = products.find(p => p.id === id);
+    if (!prod) {
+      return {
+        ok: false,
+        status: 404,
+        json: async () => ({ error: "Produit introuvable" })
+      };
+    }
+    return getCleanJson(prod);
+  }
+
+  // GET /products
+  if ((endpoint === '/products' || endpoint.startsWith('/products?')) && (options.method === 'GET' || !options.method)) {
     return getCleanJson({ products });
   }
 

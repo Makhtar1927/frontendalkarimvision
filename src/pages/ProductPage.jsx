@@ -134,9 +134,16 @@ const ProductPage = () => {
   const getMediaUrls = () => {
     if (!currentProduct) return [];
     if (currentProduct.media_urls && currentProduct.media_urls.length > 0) {
-        return typeof currentProduct.media_urls === 'string' 
-            ? JSON.parse(currentProduct.media_urls) 
-            : currentProduct.media_urls;
+        if (typeof currentProduct.media_urls === 'string') {
+            try {
+                const parsed = JSON.parse(currentProduct.media_urls);
+                if (Array.isArray(parsed)) return parsed;
+                return [currentProduct.media_urls];
+            } catch (e) {
+                return [currentProduct.media_urls];
+            }
+        }
+        return currentProduct.media_urls;
     }
     if (currentProduct.image_url) {
         return [currentProduct.image_url];
