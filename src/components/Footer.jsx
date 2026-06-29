@@ -10,7 +10,7 @@ const Footer = () => {
   const [settings, setSettings] = useState({
     store_name: 'Al Karim Vision',
     contact_phone: '221784379462',
-    contact_email: 'contact@boustantech.com',
+    contact_email: 'contact@alkarimvision.com',
     contact_address: 'Touba Darou Khoudoss, Niary Etage',
     maps_link: 'https://www.google.com/maps?q=14.8605356,-15.8835194&z=17&hl=fr',
     whatsapp_number: '221784379462'
@@ -63,8 +63,21 @@ const Footer = () => {
     }, 5000);
   };
 
+  // Helper formatting for contact number
+  const formatPhoneNumber = (num) => {
+    if (!num) return '';
+    const cleanNum = num.replace(/\D/g, '');
+    if (cleanNum.startsWith('221')) {
+      const main = cleanNum.slice(3);
+      if (main.length === 9) {
+        return `+221 ${main.slice(0, 2)} ${main.slice(2, 5)} ${main.slice(5, 7)} ${main.slice(7, 9)}`;
+      }
+    }
+    return `+${cleanNum}`;
+  };
+
   return (
-    <footer className="bg-white dark:bg-brand-gray-dark border-t border-gray-150 dark:border-zinc-800 pt-16 pb-8">
+    <footer className="bg-white dark:bg-brand-gray-dark border-t border-gray-155 dark:border-zinc-800 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           
@@ -74,7 +87,7 @@ const Footer = () => {
               AL KARIM<span className="text-gray-900 dark:text-white"> VISION</span>
             </h2>
             <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-6 text-sm leading-relaxed">
-              L'alliance parfaite entre l'innovation technologique, le luxe de la haute parfumerie et l'art du café de spécialité.
+              L'alliance parfaite entre l'optique de prestige, la haute parfumerie et l'horlogerie d'exception à Touba.
             </p>
             
             <div>
@@ -121,9 +134,18 @@ const Footer = () => {
             <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Contact</h3>
             <ul className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
               <li>
-                <a href={`tel:${settings.contact_phone}`} className="hover:text-brand-blue transition-colors flex items-center gap-2">
-                  <Phone size={14} className="text-brand-blue" /> {settings.contact_phone}
-                </a>
+                <div className="flex flex-col gap-2">
+                  <a href={`tel:${settings.contact_phone}`} className="hover:text-brand-blue transition-colors flex items-center gap-2">
+                    <Phone size={14} className="text-brand-blue" />
+                    <span>{formatPhoneNumber(settings.contact_phone)}</span>
+                  </a>
+                  {/* Si c'est le numéro par défaut 221784379462, on affiche aussi le second numéro */}
+                  {settings.contact_phone?.includes('784379462') && (
+                    <a href="tel:+221765662711" className="hover:text-brand-blue transition-colors flex items-center gap-2 pl-5">
+                      <span>+221 76 566 27 11</span>
+                    </a>
+                  )}
+                </div>
               </li>
               <li>
                 <a href={`mailto:${settings.contact_email}`} className="hover:text-brand-blue transition-colors flex items-center gap-2">
