@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trash2, MessageCircle, Loader2, CheckCircle2, ShoppingBasket, ArrowRight } from 'lucide-react';
+import { X, Trash2, MessageCircle, Loader2, CheckCircle2, ShoppingCart, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 import { apiFetch } from './api';
@@ -306,7 +306,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
               {cart.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center px-4 mt-12">
                   <div className="w-24 h-24 bg-gray-50 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6 text-gray-300 dark:text-gray-600">
-                    <ShoppingBasket size={48} strokeWidth={1} />
+                    <ShoppingCart size={48} strokeWidth={1} />
                   </div>
                   <h3 className="text-lg font-sans font-bold dark:text-white mb-2">Votre panier est vide</h3>
                   <p className="text-gray-500 dark:text-gray-400 text-xs mb-8 max-w-[250px] mx-auto leading-relaxed">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBasket, Moon, Sun, Search, Menu, X, Smartphone, Wind, Coffee, ShieldAlert, LogOut, PackageSearch, Loader2, Laptop, Headphones, HardHat, Store, Glasses, Watch } from 'lucide-react';
+import { ShoppingCart, Moon, Sun, Search, Menu, X, Smartphone, Wind, Coffee, ShieldAlert, LogOut, PackageSearch, Loader2, Laptop, Headphones, HardHat, Store, Glasses, Watch } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
@@ -176,7 +176,7 @@ const Navbar = () => {
 
             <div className="hidden md:block relative cursor-pointer group" role="button" tabIndex={0} aria-label="Ouvrir le panier" onClick={toggleCart} onKeyDown={(e) => e.key === 'Enter' && toggleCart()}>
               <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 group-hover:bg-brand-blue group-hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
-                <ShoppingBasket aria-hidden="true" size={18} className="sm:w-5 sm:h-5" />
+                <ShoppingCart aria-hidden="true" size={18} className="sm:w-5 sm:h-5" />
               </div>
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white dark:border-brand-gray-dark">
@@ -223,7 +223,7 @@ const Navbar = () => {
               <span className="text-[10px] font-bold tracking-widest uppercase">Chercher</span>
             </button>
             <button onClick={() => { toggleCart(); setIsMenuOpen(false); }} className="hidden md:flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-gray-600 hover:text-brand-blue dark:text-gray-400 transition-all relative">
-              <ShoppingBasket size={22} className="mb-2" />
+              <ShoppingCart size={22} className="mb-2" />
               {itemCount > 0 && <span className="absolute top-2 right-2 bg-brand-blue text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{itemCount}</span>}
               <span className="text-[10px] font-bold tracking-widest uppercase">Panier</span>
             </button>

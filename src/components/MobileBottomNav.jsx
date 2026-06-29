@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Store, ShoppingBasket } from 'lucide-react';
+import { Home, Store, ShoppingCart } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 
@@ -37,7 +37,7 @@ const MobileBottomNav = () => {
           className="flex flex-col items-center justify-center w-full h-full space-y-1 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors relative"
         >
           <div className="relative">
-            <ShoppingBasket size={22} />
+            <ShoppingCart size={22} />
             {itemCount > 0 && (
               <span className="absolute -top-1.5 -right-2 bg-brand-blue text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white dark:border-brand-gray-dark">
                 {itemCount}
