@@ -113,88 +113,90 @@ const Shop = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
           {/* BARRE D'OUTILS ET FILTRES */}
-          <div className="flex flex-col lg:flex-row justify-between items-center bg-white dark:bg-brand-card-dark p-4 rounded-xl shadow-sm border border-gray-150 dark:border-zinc-800 gap-4 mb-10">
-            <div className="relative w-full md:w-1/3">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input 
-                type="text" 
-                placeholder="Rechercher un produit..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
-              />
-            </div>
+          <div className="bg-white dark:bg-brand-card-dark rounded-xl border border-gray-100 dark:border-zinc-800 shadow-sm mb-8 overflow-hidden">
 
-            {/* FILTRE PAR PRIX (Min / Max) */}
-            <div className="flex items-center justify-center gap-2 w-full lg:w-auto">
-              <input 
-                type="number" 
-                placeholder="Prix min"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
-              />
-              <span className="text-gray-400 font-bold">-</span>
-              <input 
-                type="number" 
-                placeholder="Prix max"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="w-1/2 lg:w-32 py-2 px-3 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
-              />
-            </div>
-
-            {/* FILTRE PAR CATÉGORIE */}
-            <div className="flex items-center gap-3 w-full lg:w-auto relative">
-              <Filter size={18} className="absolute left-3 text-gray-400 pointer-events-none" />
-              <select 
-                className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 pl-10 pr-4 rounded-lg focus:outline-none focus:border-brand-blue appearance-none cursor-pointer"
-                value={selectedCategory}
-                onChange={(e) => handleCategoryChange(e.target.value)}
-              >
-                <option value="">Toutes les catégories</option>
-                {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-
-            {/* FILTRE PAR SOUS-CATÉGORIES */}
-            {(selectedCategory === 'glasses' || selectedCategory === 'perfume') && (
-              <div className="flex items-center gap-3 w-full lg:w-auto relative">
-                <Filter size={18} className="absolute left-3 text-gray-400 pointer-events-none" />
-                <select 
-                  className="w-full lg:w-48 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 pl-10 pr-4 rounded-lg focus:outline-none focus:border-brand-blue appearance-none cursor-pointer"
-                  value={selectedSubcategory}
-                  onChange={(e) => setSelectedSubcategory(e.target.value)}
-                >
-                  <option value="">Toutes les sous-catégories</option>
-                  {selectedCategory === 'glasses' ? (
-                    <>
-                      <option value="noir_fume">Noir Fumé</option>
-                      <option value="photogray">Photogray</option>
-                    </>
-                  ) : (
-                    <>
-                      <option value="avec_alcool">Avec Alcool</option>
-                      <option value="sans_alcool">Sans Alcool</option>
-                    </>
-                  )}
-                </select>
+            {/* Ligne 1 : Recherche + Tri */}
+            <div className="flex items-center gap-3 p-3 border-b border-gray-100 dark:border-zinc-800">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                <input 
+                  type="text" 
+                  placeholder="Rechercher un produit, une marque..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white transition-colors"
+                />
               </div>
-            )}
-
-            {/* TRI */}
-            <div className="flex items-center gap-3 w-full lg:w-auto">
-              <SlidersHorizontal size={18} className="text-gray-400" />
               <select 
-                className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 px-4 text-sm rounded-lg focus:outline-none focus:border-brand-blue flex-1 cursor-pointer"
+                className="shrink-0 text-xs bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white py-2 px-3 rounded-lg focus:outline-none focus:border-brand-blue cursor-pointer"
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
               >
-                <option value="asc">Prix : Croissant</option>
-                <option value="desc">Prix : Décroissant</option>
+                <option value="asc">Prix ↑</option>
+                <option value="desc">Prix ↓</option>
               </select>
+            </div>
+
+            {/* Ligne 2 : Filtres catégories en pills */}
+            <div className="flex items-center gap-2 px-3 py-2.5 overflow-x-auto scrollbar-hide">
+              <button
+                onClick={() => handleCategoryChange('')}
+                className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all ${selectedCategory === '' ? 'bg-brand-blue text-white' : 'bg-gray-50 dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 hover:border-brand-blue/40 hover:text-brand-blue'}`}
+              >
+                Tout
+              </button>
+              {CATEGORIES.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => handleCategoryChange(c.id)}
+                  className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all ${selectedCategory === c.id ? 'bg-brand-blue text-white' : 'bg-gray-50 dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 hover:border-brand-blue/40 hover:text-brand-blue'}`}
+                >
+                  {c.name}
+                </button>
+              ))}
+
+              {/* Sous-catégories si disponibles */}
+              {(selectedCategory === 'glasses' || selectedCategory === 'perfume') && (
+                <>
+                  <span className="w-px h-5 bg-gray-200 dark:bg-zinc-700 shrink-0" />
+                  {selectedCategory === 'glasses' ? (
+                    <>
+                      {[{ v: '', l: 'Toutes' }, { v: 'noir_fume', l: 'Noir Fumé' }, { v: 'photogray', l: 'Photogray' }].map(o => (
+                        <button key={o.v} onClick={() => setSelectedSubcategory(o.v)}
+                          className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all ${selectedSubcategory === o.v ? 'bg-gray-800 dark:bg-zinc-200 text-white dark:text-zinc-900' : 'bg-gray-50 dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 hover:border-gray-400'}`}>
+                          {o.l}
+                        </button>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {[{ v: '', l: 'Tous' }, { v: 'avec_alcool', l: 'Avec Alcool' }, { v: 'sans_alcool', l: 'Sans Alcool' }].map(o => (
+                        <button key={o.v} onClick={() => setSelectedSubcategory(o.v)}
+                          className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all ${selectedSubcategory === o.v ? 'bg-gray-800 dark:bg-zinc-200 text-white dark:text-zinc-900' : 'bg-gray-50 dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 hover:border-gray-400'}`}>
+                          {o.l}
+                        </button>
+                      ))}
+                    </>
+                  )}
+                </>
+              )}
+
+              {/* Filtre prix compact */}
+              <span className="w-px h-5 bg-gray-200 dark:bg-zinc-700 shrink-0" />
+              <input 
+                type="number" placeholder="Min" value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                className="shrink-0 w-20 py-1.5 px-2 text-xs bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white"
+              />
+              <span className="text-gray-400 text-xs shrink-0">—</span>
+              <input 
+                type="number" placeholder="Max" value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                className="shrink-0 w-20 py-1.5 px-2 text-xs bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white"
+              />
+              <span className="text-[9px] text-gray-400 shrink-0 uppercase font-bold">FCFA</span>
             </div>
           </div>
 

@@ -31,7 +31,7 @@ const ContactLocation = () => {
                 </div>
                 <div>
                   <h4 className="font-bold dark:text-white text-sm">Adresse</h4>
-                  <p className="text-gray-500 text-xs">Pikine Saf Bar, Dakar, Sénégal</p>
+                  <p className="text-gray-500 text-xs">Touba Darou Khoudoss, Niary Tally, Dakar</p>
                 </div>
               </div>
 

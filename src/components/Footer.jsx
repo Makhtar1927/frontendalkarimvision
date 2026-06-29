@@ -11,7 +11,7 @@ const Footer = () => {
     store_name: 'Al Karim Vision',
     contact_phone: '221774133645',
     contact_email: 'contact@boustantech.com',
-    contact_address: 'Pikine Saf Bar, Dakar',
+    contact_address: 'Touba Darou Khoudoss, Niary Tally',
     maps_link: 'https://maps.app.goo.gl/tUo6M6r6uXyS1JbZ8',
     whatsapp_number: '221774133645'
   });
