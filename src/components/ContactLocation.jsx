@@ -31,7 +31,7 @@ const ContactLocation = () => {
                 </div>
                 <div>
                   <h4 className="font-bold dark:text-white text-sm">Adresse</h4>
-                  <p className="text-gray-500 text-xs">Touba Darou Khoudoss, Niary Tally, Dakar</p>
+                  <p className="text-gray-500 text-xs">Touba Darou Khoudoss, Niary Etage</p>
                 </div>
               </div>
 
@@ -41,7 +41,7 @@ const ContactLocation = () => {
                 </div>
                 <div>
                   <h4 className="font-bold dark:text-white text-sm">Horaires</h4>
-                  <p className="text-gray-500 text-xs">Lun - Sam : 09h - 19h<br/>Dimanche : Fermé</p>
+                  <p className="text-gray-500 text-xs">Sam - Jeu : 09h - 21h<br/>Vendredi : Fermé</p>
                 </div>
               </div>
 
@@ -51,7 +51,7 @@ const ContactLocation = () => {
                 </div>
                 <div>
                   <h4 className="font-bold dark:text-white text-sm">Contact Direct</h4>
-                  <p className="text-gray-500 text-xs">+221 77 413 36 45</p>
+                  <p className="text-gray-500 text-xs">+221 78 437 94 62<br/>+221 76 566 27 11</p>
                 </div>
               </div>
 
@@ -67,7 +67,7 @@ const ContactLocation = () => {
             </div>
 
             <a 
-              href="https://wa.me/221774133645" 
+              href="https://wa.me/221784379462" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center justify-center w-full sm:w-auto gap-3 bg-green-600 hover:bg-green-700 text-white px-6 py-3.5 md:px-8 rounded-lg font-bold transition-all shadow-md text-xs tracking-wider uppercase"
@@ -85,7 +85,7 @@ const ContactLocation = () => {
             className="relative h-[300px] md:h-[450px] w-full rounded-xl overflow-hidden border-4 border-white dark:border-brand-gray-dark shadow-2xl"
           >
             <iframe 
-              src="https://maps.google.com/maps?q=14.765917,-17.394389&hl=fr&z=16&output=embed" 
+              src="https://maps.google.com/maps?q=14.8605356,-15.8835194&hl=fr&z=17&output=embed" 
               width="100%" 
               height="100%" 
               title="Carte Google Maps indiquant l'emplacement du Al Karim Vision Experience Center"

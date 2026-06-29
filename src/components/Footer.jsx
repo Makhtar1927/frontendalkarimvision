@@ -9,11 +9,11 @@ const Footer = () => {
   const [message, setMessage] = useState('');
   const [settings, setSettings] = useState({
     store_name: 'Al Karim Vision',
-    contact_phone: '221774133645',
+    contact_phone: '221784379462',
     contact_email: 'contact@boustantech.com',
-    contact_address: 'Touba Darou Khoudoss, Niary Tally',
-    maps_link: 'https://maps.app.goo.gl/tUo6M6r6uXyS1JbZ8',
-    whatsapp_number: '221774133645'
+    contact_address: 'Touba Darou Khoudoss, Niary Etage',
+    maps_link: 'https://www.google.com/maps?q=14.8605356,-15.8835194&z=17&hl=fr',
+    whatsapp_number: '221784379462'
   });
 
   useEffect(() => {

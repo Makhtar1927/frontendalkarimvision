@@ -11,7 +11,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
   // États pour les réglages dynamiques
   const [settings, setSettings] = useState({
-    whatsapp_number: "221774133645",
+    whatsapp_number: "221784379462",
     delivery_cost_dakar: 2000,
     delivery_cost_suburbs: 3000,
     delivery_cost_regions: 5000

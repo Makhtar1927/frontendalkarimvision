@@ -14,28 +14,28 @@ const Home = () => {
     "logo": "https://boustanetech-store.vercel.app/logo.png",
     "image": "https://boustanetech-store.vercel.app/logo.png",
     "description": "Al Karim Vision - Votre opticien de prestige, haute parfumerie et horlogerie d'exception à Dakar.",
-    "telephone": "+221774133645",
+    "telephone": "+221784379462",
     "priceRange": "$$$",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Touba Darou Khoudoss, Niary Tally",
-      "addressLocality": "Dakar",
+      "streetAddress": "Touba Darou Khoudoss, Niary Etage",
+      "addressLocality": "Touba",
       "addressCountry": "SN"
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": "14.7578",
-      "longitude": "-17.3944"
+      "latitude": "14.8605356",
+      "longitude": "-15.8835194"
     },
     "openingHoursSpecification": {
       "@type": "OpeningHoursSpecification",
       "dayOfWeek": [
+        "Saturday",
+        "Sunday",
         "Monday",
         "Tuesday",
         "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
+        "Thursday"
       ],
       "opens": "09:00",
       "closes": "21:00"
