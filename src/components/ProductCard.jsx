@@ -12,7 +12,7 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   
   // Filtrer les variantes invalides
-  const validVariants = product.variants?.filter(v => v && v.id) || [];
+  const validVariants = product.variants?.filter(v => v && v.id || v.sku) || [];
   const [selectedVariant, setSelectedVariant] = useState(validVariants[0] || null);
   
   // Calcul du prix
@@ -56,26 +56,26 @@ const ProductCard = ({ product }) => {
       tabIndex={0}
       onClick={() => navigate(`/product/${product.id}`)}
       onKeyDown={(e) => e.key === 'Enter' && navigate(`/product/${product.id}`)}
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -6 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group flex flex-col h-full bg-white dark:bg-zinc-900/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-[0_12px_24px_-10px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.5)] transition-all duration-300 border border-zinc-150 dark:border-zinc-800/80 cursor-pointer"
+      className="group flex flex-col h-full bg-white dark:bg-zinc-900/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.45)] transition-all duration-300 border border-zinc-150/80 dark:border-zinc-800/80 hover:border-brand-blue/35 dark:hover:border-brand-blue/50 cursor-pointer"
     >
-      {/* IMAGE CONTAINER (Carré parfait) */}
-      <div className="relative aspect-square overflow-hidden bg-zinc-50 dark:bg-zinc-950/40">
+      {/* 1. IMAGE AREA - EDGE TO EDGE FOR MAX VISIBILITY */}
+      <div className="relative aspect-square overflow-hidden bg-zinc-50 dark:bg-zinc-950/40 rounded-t-2xl">
         <img 
           src={imageUrl} 
           alt={product.name}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover transition-transform duration-700 ease-out scale-100 group-hover:scale-[1.03]"
+          className="w-full h-full object-cover transition-transform duration-700 ease-out scale-100 group-hover:scale-[1.04]"
           onError={(e) => { e.target.src = 'https://placehold.co/400x400/png?text=Image+Indisponible'; }}
         />
         
-        {/* BADGES */}
+        {/* Floating Badges (Top-Left) */}
         <div className="absolute top-3 left-3 flex flex-col items-start gap-1.5 z-10">
           {(product.is_on_sale || discountPercentage > 0) && (
-            <span className="bg-red-500/90 dark:bg-red-600/90 backdrop-blur-sm text-white text-[9px] font-black tracking-wider px-2.5 py-0.5 rounded-full uppercase shadow-sm">
+            <span className="bg-red-500/90 dark:bg-red-600/90 backdrop-blur-md text-white text-[9px] font-black tracking-wider px-2.5 py-0.5 rounded-full uppercase shadow-sm">
               {discountPercentage > 0 ? `-${discountPercentage}%` : 'Promo'}
             </span>
           )}
@@ -86,7 +86,7 @@ const ProductCard = ({ product }) => {
           )}
         </div>
 
-        {/* LECTURE VIDÉO AU SURVOL */}
+        {/* Video Overlay on Hover */}
         {isVideo && isHovered && (
           <motion.video
             initial={{ opacity: 0 }}
@@ -102,8 +102,9 @@ const ProductCard = ({ product }) => {
           />
         )}
 
+        {/* Out of Stock Overlay */}
         {isGloballyOutOfStock && (
-          <div className="absolute inset-0 bg-zinc-950/60 backdrop-blur-[2px] flex items-center justify-center z-15">
+          <div className="absolute inset-0 bg-zinc-950/50 backdrop-blur-[2px] flex items-center justify-center z-15">
             <span className="text-white font-extrabold tracking-widest text-[9px] border border-white/20 px-3 py-1 rounded-full bg-black/40">
               RUPTURE
             </span>
@@ -111,118 +112,123 @@ const ProductCard = ({ product }) => {
         )}
       </div>
 
-      {/* CONTENU INFO PRODUIT */}
+      {/* 2. INFORMATION AREA */}
       <div className="p-4 flex-1 flex flex-col justify-between space-y-3.5">
+        
+        {/* Main Details */}
         <div className="space-y-2">
-          {/* MARQUE & ÉTOILES */}
-          <div className="flex justify-between items-center text-[10px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase gap-1">
-            <span className="truncate max-w-[65%]">{product.brand || 'Al Karim'}</span>
-            <div className="flex items-center gap-1 shrink-0 bg-zinc-50 dark:bg-zinc-800/40 px-2 py-0.5 rounded-full">
-              <Star 
-                size={10} 
-                fill={averageRating > 0 ? "#eab308" : "none"} 
-                className={averageRating > 0 ? "text-yellow-500" : "text-zinc-300 dark:text-zinc-600"} 
-              /> 
-              <span className={averageRating === 0 ? "text-zinc-400" : "text-zinc-700 dark:text-zinc-300 font-extrabold text-[9px]"}>
-                {averageRating > 0 ? averageRating.toFixed(1) : '5.0'}
-              </span>
+          {/* Brand & Star Rating */}
+          <div className="flex justify-between items-center text-[10px] font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+            <span>{product.brand || 'Al Karim'}</span>
+            <div className="flex items-center gap-1 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-500 px-2 py-0.5 rounded-full text-[9px] font-black shrink-0">
+              <Star size={9} fill="currentColor" />
+              <span>{averageRating > 0 ? averageRating.toFixed(1) : '5.0'}</span>
             </div>
           </div>
 
-          {/* NOM DU PRODUIT */}
-          <h3 className="font-sans text-xs sm:text-sm font-semibold text-zinc-800 dark:text-zinc-100 line-clamp-2 leading-snug h-8 sm:h-10 overflow-hidden transition-colors group-hover:text-brand-blue">
+          {/* Product Name */}
+          <h3 className="font-sans text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-50 line-clamp-2 leading-snug h-8 sm:h-10 transition-colors duration-200 group-hover:text-brand-blue">
             {product.name}
           </h3>
 
-          {/* DESCRIPTION CLAMPÉE */}
+          {/* Description Snippet */}
           {product.description && (
-            <p className="text-[10px] text-zinc-400 dark:text-zinc-500 line-clamp-1 italic leading-normal">
+            <p className="text-[10px] text-zinc-400 dark:text-zinc-500 line-clamp-1 italic font-light">
               {product.description}
             </p>
           )}
 
-          {/* BADGE DE GARANTIE/CONFIANCE */}
-          <div className="flex items-center gap-1.5 text-[8px] sm:text-[9px] text-emerald-600 dark:text-emerald-500 font-bold tracking-wide uppercase bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-full w-fit">
-            <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+          {/* Trust Element (Warranty Badge) */}
+          <div className="flex items-center gap-1.5 text-[8px] sm:text-[9px] text-emerald-600 dark:text-emerald-500 font-bold tracking-wide uppercase bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-0.5 rounded-full w-fit">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span>Garantie Al Karim Vision</span>
           </div>
         </div>
 
+        {/* 3. INTERACTIONS AND PRIMARY ACTION (Variant Selection + Prices + Buttons) */}
         <div>
-          {/* SÉLECTEUR MULTI-VARIANTES */}
+          {/* Variant Selector (Modern Pills) */}
           {validVariants.length > 1 ? (
-            <div className="mb-3" onClick={e => e.stopPropagation()}>
-              <select
-                value={selectedVariant?.sku || ''}
-                onChange={(e) => {
-                  const variant = validVariants.find(v => v.sku === e.target.value);
-                  setSelectedVariant(variant);
-                }}
-                className="w-full text-[10px] p-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-brand-blue/30 focus:border-brand-blue transition-all cursor-pointer"
-              >
-                {validVariants.map((variant) => (
-                  <option key={variant.id || variant.sku} value={variant.sku} disabled={Number(variant.stock_quantity) <= 0}>
-                    {variant.attribute_value} {parseFloat(variant.price_modifier) > 0 ? `(+${new Intl.NumberFormat('fr-FR').format(variant.price_modifier)} F)` : ''} {Number(variant.stock_quantity) <= 0 ? '(Rup)' : ''}
-                  </option>
-                ))}
-              </select>
+            <div className="flex flex-wrap gap-1 mb-3" onClick={e => e.stopPropagation()}>
+              {validVariants.map((variant) => {
+                const isSelected = selectedVariant?.sku === variant.sku;
+                const isOutOfStock = Number(variant.stock_quantity) <= 0;
+                return (
+                  <button
+                    key={variant.id || variant.sku}
+                    disabled={isOutOfStock}
+                    onClick={() => setSelectedVariant(variant)}
+                    className={`px-2 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider transition-all duration-200 ${
+                      isOutOfStock
+                        ? 'bg-zinc-150 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-650 line-through cursor-not-allowed opacity-50'
+                        : isSelected
+                          ? 'bg-brand-blue text-white shadow-sm ring-1 ring-brand-blue font-black'
+                          : 'bg-zinc-50 dark:bg-zinc-900/60 text-zinc-500 dark:text-zinc-400 border border-zinc-200/60 dark:border-zinc-800/80 hover:border-brand-blue/30 dark:hover:border-brand-blue/40 hover:text-brand-blue'
+                    }`}
+                  >
+                    {variant.attribute_value}
+                  </button>
+                );
+              })}
             </div>
-          ) : validVariants.length === 1 ? (
+          ) : validVariants.length === 1 && validVariants[0].attribute_value !== 'Standard' ? (
             <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-2 truncate italic">{validVariants[0].attribute_value}</p>
           ) : (
-            <div className="h-[12px] mb-2" />
+            <div className="h-[4px]" />
           )}
 
-          {/* PRIX */}
-          <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-1.5 mb-3.5">
-            <span className="text-sm sm:text-base font-black text-brand-blue whitespace-nowrap">
-              {new Intl.NumberFormat('fr-FR').format(displayPrice)} FCFA
-            </span>
-            {compareAtPrice > basePrice && (
-              <span className="text-[10px] sm:text-xs font-semibold text-zinc-400 dark:text-zinc-500 line-through whitespace-nowrap">
-                {new Intl.NumberFormat('fr-FR').format(compareAtPrice + (selectedVariant?.price_modifier ? parseFloat(selectedVariant.price_modifier) : 0))} FCFA
-              </span>
-            )}
-          </div>
-
-          {/* ACTION BUTTONS (Sleek shadcn style) */}
-          <div className="flex gap-2">
-            <button 
-              disabled={isVariantOutOfStock}
-              onClick={handleAddToCart}
-              className={`py-2 sm:py-2.5 px-3 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98] ${
-                isVariantOutOfStock
-                  ? 'w-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 cursor-not-allowed border border-transparent'
-                  : 'flex-1 bg-zinc-950 hover:bg-zinc-900 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-950 hover:shadow-sm'
-              }`}
-            >
-              {isVariantOutOfStock ? (
-                <>
-                  <AlertCircle size={12} />
-                  Rupture
-                </>
-              ) : (
-                <>
-                  <ShoppingCart size={12} />
-                  Ajouter
-                </>
+          {/* Divider and Price + Action Footer (Keurgui Store logic) */}
+          <div className="mt-auto pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-2">
+            <div className="flex flex-col min-w-0">
+              {compareAtPrice > basePrice && (
+                <span className="text-zinc-400 dark:text-zinc-500 text-[9px] sm:text-[10px] line-through font-medium leading-none mb-0.5">
+                  {new Intl.NumberFormat('fr-FR').format(compareAtPrice + (selectedVariant?.price_modifier ? parseFloat(selectedVariant.price_modifier) : 0))} FCFA
+                </span>
               )}
-            </button>
+              <span className="text-brand-blue font-black text-xs sm:text-base leading-none tracking-tight whitespace-nowrap">
+                {new Intl.NumberFormat('fr-FR').format(displayPrice)}
+                <span className="text-[8px] sm:text-[10px] ml-0.5 font-bold">FCFA</span>
+              </span>
+            </div>
 
-            {!isVariantOutOfStock && (
-              <a
-                href={`https://wa.me/221774133645?text=Bonjour%20Al%20Karim%20Vision,%20je%20souhaite%20commander%20le%20produit%20*${encodeURIComponent(product.name)}*%20${selectedVariant ? `(Variante%20:%20*${encodeURIComponent(selectedVariant.attribute_value)}*)` : ''}%20au%20prix%20de%20*${encodeURIComponent(new Intl.NumberFormat('fr-FR').format(displayPrice))}%20FCFA*.%20Voici%20le%20lien%20du%20produit%20:%20${encodeURIComponent(window.location.origin + '/product/' + product.id)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 hover:bg-emerald-100 dark:hover:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center transition-all duration-300 hover:shadow-sm shrink-0 active:scale-[0.98]"
-                title="Commander sur WhatsApp"
+            {/* Actions: Add to Cart and WhatsApp side by side */}
+            <div className="flex items-center gap-1.5 shrink-0" onClick={e => e.stopPropagation()}>
+              <button 
+                disabled={isVariantOutOfStock}
+                onClick={handleAddToCart}
+                className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-[0.95] ${
+                  isVariantOutOfStock
+                    ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 cursor-not-allowed border border-transparent'
+                    : 'bg-brand-blue hover:bg-brand-blue-dark text-white shadow-md shadow-brand-blue/10 hover:shadow-brand-blue/20'
+                }`}
               >
-                <svg className="w-4.5 h-4.5 fill-current text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.456L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.968C16.592 1.97 14.121.945 11.5.944c-5.439 0-9.865 4.371-9.87 9.799-.002 1.802.48 3.562 1.396 5.12L2.03 21.8l6.088-1.597-.03.02a9.87 9.87 0 0 1-1.441.931zm10.742-7.51c-.262-.13-1.547-.757-1.785-.841-.237-.084-.41-.127-.582.13-.172.257-.667.841-.818 1.013-.15.17-.3.195-.562.066-.262-.13-1.11-.407-2.113-1.296-.782-.693-1.309-1.55-1.463-1.807-.154-.257-.016-.397.115-.526.118-.115.262-.303.393-.455.13-.152.174-.257.262-.429.088-.172.044-.323-.022-.452-.066-.13-.582-1.393-.797-1.91-.21-.508-.44-.44-.582-.448-.135-.008-.29-.01-.445-.01-.156 0-.41.058-.625.292-.215.234-.82.796-.82 1.94 0 1.144.835 2.25.952 2.408.117.156 1.643 2.493 3.98 3.498.556.24 1.002.383 1.336.488.558.177 1.066.152 1.468.093.447-.066 1.547-.627 1.767-1.233.22-.607.22-1.127.155-1.234-.066-.108-.242-.172-.504-.303z"/>
-                </svg>
-              </a>
-            )}
+                {isVariantOutOfStock ? (
+                  <>
+                    <AlertCircle size={11} />
+                    Rupture
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart size={11} />
+                    Ajouter
+                  </>
+                )}
+              </button>
+
+              {!isVariantOutOfStock && (
+                <a
+                  href={`https://wa.me/221774133645?text=Bonjour%20Al%20Karim%20Vision,%20je%20souhaite%20commander%20le%20produit%20*${encodeURIComponent(product.name)}*%20${selectedVariant ? `(Variante%20:%20*${encodeURIComponent(selectedVariant.attribute_value)}*)` : ''}%20au%20prix%20de%20*${encodeURIComponent(new Intl.NumberFormat('fr-FR').format(displayPrice))}%20FCFA*.%20Voici%20le%20lien%20du%20produit%20:%20${encodeURIComponent(window.location.origin + '/product/' + product.id)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-md transition-all duration-300 hover:scale-[1.03] shrink-0 active:scale-[0.95]"
+                  title="Commander sur WhatsApp"
+                >
+                  <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 16 16">
+                    <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.949h.004c4.368 0 7.927-3.558 7.93-7.926a7.9 7.9 0 0 0-2.327-5.607M7.994 14.522a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.69-3.686c-.202-.1-1.198-.591-1.385-.658-.188-.066-.325-.1-.462.1-.137.2-.53.658-.65.79-.12.132-.241.147-.443.048-.201-.1-.85-.313-1.619-.998-.598-.533-1.002-1.192-1.12-1.392-.118-.2-.012-.307.088-.407.09-.09.201-.233.302-.349.102-.117.137-.2.203-.332.066-.133.033-.25-.017-.35-.05-.1-.462-1.114-.633-1.527-.166-.399-.333-.344-.457-.35-.12-.006-.257-.007-.394-.007-.137 0-.361.051-.55.257-.188.2-.719.702-.719 1.71 0 1.009.734 1.986.837 2.12.102.133 1.442 2.202 3.493 3.08.488.209.87.333 1.168.428.49.155.936.133 1.29.08.395-.058 1.198-.49 1.368-.962.17-.473.17-.878.12-.962-.05-.084-.188-.133-.39-.232"/>
+                  </svg>
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -238,7 +244,7 @@ const ProductCard = ({ product }) => {
               aria-live="assertive"
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", stiffness: 350, damping: 26 }}
-              className="fixed bottom-6 right-6 z-[9999] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/80 p-4 rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)] flex items-center gap-4 cursor-default max-w-sm"
+              className="fixed bottom-6 right-6 z-[9999] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-brand-blue/20 dark:border-brand-blue/35 p-4 rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)] flex items-center gap-4 cursor-default max-w-sm"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative w-12 h-12 flex-shrink-0 rounded-xl overflow-hidden border border-zinc-150 dark:border-zinc-800 bg-zinc-50">
