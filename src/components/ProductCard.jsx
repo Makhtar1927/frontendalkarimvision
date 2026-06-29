@@ -60,7 +60,7 @@ const ProductCard = ({ product }) => {
       className="group relative flex flex-col bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-200 dark:hover:border-brand-blue/40 transition-all duration-300 h-full cursor-pointer"
     >
       {/* 1. IMAGE AREA — EDGE TO EDGE */}
-      <div className="relative aspect-square bg-slate-50 dark:bg-zinc-950 w-full flex items-center justify-center p-2 sm:p-4 overflow-hidden group-hover:bg-slate-100/50 dark:group-hover:bg-zinc-900 transition-colors">
+      <div className="relative aspect-square bg-slate-50 dark:bg-zinc-950 w-full flex items-center justify-center overflow-hidden group-hover:bg-slate-100/50 dark:group-hover:bg-zinc-900 transition-colors">
         
         {/* Clickable image */}
         <div className={`block w-full h-full ${isGloballyOutOfStock ? 'opacity-50 grayscale' : ''}`}>
@@ -71,7 +71,7 @@ const ProductCard = ({ product }) => {
               transition={{ duration: 0.3 }}
               src={product.image_url}
               autoPlay loop muted playsInline
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           ) : (
@@ -80,7 +80,7 @@ const ProductCard = ({ product }) => {
               alt={product.name}
               loading="lazy"
               decoding="async"
-              className="object-contain w-full h-full group-hover:scale-105 transition-transform duration-500"
+              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
               onError={(e) => { e.target.src = 'https://placehold.co/400x400/png?text=Indisponible'; }}
             />
           )}
