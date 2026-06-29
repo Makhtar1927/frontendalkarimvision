@@ -5,7 +5,7 @@ import { useCartStore } from '../store/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import SEO from '../components/SEO';
-import { ChevronRight, ChevronLeft, ShoppingBasket, Star, Loader2, CheckCircle2, MessageCircle, Truck, CreditCard, ShieldCheck, Clock } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ShoppingCart, Star, Loader2, CheckCircle2, Truck, CreditCard, ShieldCheck, Clock } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { apiFetch } from '../components/api';
 
@@ -451,9 +451,9 @@ const ProductPage = () => {
               <button
                 onClick={handleAddToCart}
                 disabled={isVariantOutOfStock}
-                className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-50 text-white dark:text-gray-900 py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="w-full bg-brand-blue hover:bg-brand-blue-dark text-white py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
-                <ShoppingBasket size={18} />
+                <ShoppingCart size={18} />
                 {isVariantOutOfStock ? 'Indisponible' : 'Ajouter au Panier'}
               </button>
 
@@ -462,7 +462,7 @@ const ProductPage = () => {
                 disabled={isVariantOutOfStock}
                 className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
-                <MessageCircle size={18} />
+                <img src="/WhatsApp.svg" alt="WhatsApp" className="w-5 h-5 object-contain" />
                 {isVariantOutOfStock ? 'Indisponible' : 'Commander via WhatsApp'}
               </button>
             </div>
@@ -620,7 +620,7 @@ const ProductPage = () => {
 
               {/* Icône de confirmation */}
               <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
-                <CheckCircle2 size={18} className="animate-pulse" />
+                <CheckCircle2 size={18} />
               </div>
             </motion.div>
           )}
@@ -742,19 +742,19 @@ const ProductPage = () => {
               <button 
                 onClick={handleAddToCart}
                 disabled={isVariantOutOfStock}
-                className="p-3 bg-gray-900 text-white rounded-lg font-bold disabled:opacity-50"
+                className="p-3 bg-brand-blue hover:bg-brand-blue-dark text-white rounded-lg font-bold disabled:opacity-50 transition-colors"
                 aria-label="Ajouter au Panier"
               >
-                <ShoppingBasket size={18} />
+                <ShoppingCart size={18} />
               </button>
               
               <button 
                 onClick={handleQuickWhatsAppBuy}
                 disabled={isVariantOutOfStock}
-                className="p-3 bg-[#25D366] text-white rounded-lg font-bold disabled:opacity-50"
+                className="p-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-lg font-bold disabled:opacity-50 flex items-center justify-center transition-colors"
                 aria-label="Achat WhatsApp"
               >
-                <MessageCircle size={18} />
+                <img src="/WhatsApp.svg" alt="WhatsApp" className="w-[18px] h-[18px] object-contain" />
               </button>
             </div>
           </motion.div>
