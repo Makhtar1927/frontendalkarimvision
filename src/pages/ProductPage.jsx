@@ -5,7 +5,7 @@ import { useCartStore } from '../store/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import SEO from '../components/SEO';
-import { ChevronRight, ChevronLeft, ShoppingBasket, Star, Loader2, CheckCircle2, MessageCircle, Truck, CreditCard, ShieldCheck, Clock } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ShoppingCart, Star, Loader2, CheckCircle2, Truck, CreditCard, ShieldCheck, Clock, X } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { apiFetch } from '../components/api';
 
@@ -30,9 +30,27 @@ const ProductPage = () => {
   // RÉGLAGES DYNAMIQUES ET STICKY BAR
   const [settings, setSettings] = useState({
     whatsapp_number: "221774133645",
-    store_name: "Al Karim Vision"
+    store_name: "Al Karim Vision",
+    delivery_cost_dakar: 2000,
+    delivery_cost_suburbs: 3000,
+    delivery_cost_regions: 5000
   });
   const [showStickyBar, setShowStickyBar] = useState(false);
+
+  // ÉTATS ACHAT RAPIDE WAVE
+  const [isWaveModalOpen, setIsWaveModalOpen] = useState(false);
+  const [waveName, setWaveName] = useState('');
+  const [wavePhone, setWavePhone] = useState('');
+  const [waveDeliveryZone, setWaveDeliveryZone] = useState('dakar');
+  const [isWaveSubmitting, setIsWaveSubmitting] = useState(false);
+  const [waveError, setWaveError] = useState('');
+
+  const DELIVERY_ZONES = {
+    'dakar': { name: 'Dakar', cost: Number(settings.delivery_cost_dakar) || 2000 },
+    'suburbs': { name: 'Banlieue / Hors Dakar', cost: Number(settings.delivery_cost_suburbs) || 3000 },
+    'regions': { name: 'Régions (Sénégal)', cost: Number(settings.delivery_cost_regions) || 5000 },
+    'store': { name: 'Retrait en Magasin', cost: 0 }
+  };
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -205,6 +223,68 @@ const ProductPage = () => {
 
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${settings.whatsapp_number || '221774133645'}?text=${encoded}`, '_blank');
+  };
+
+  // Soumission achat rapide Wave
+  const handleQuickWaveBuySubmit = async (e) => {
+    e.preventDefault();
+    if (!waveName || !wavePhone) {
+      setWaveError('Veuillez renseigner votre nom et votre numéro de téléphone.');
+      return;
+    }
+    setWaveError('');
+    setIsWaveSubmitting(true);
+
+    const shippingCost = DELIVERY_ZONES[waveDeliveryZone].cost;
+    const finalTotal = displayPrice + shippingCost;
+
+    let variantId = selectedVariant?.id || selectedVariant?.sku || null;
+
+    const orderData = {
+      customer_name: waveName,
+      customer_phone: wavePhone,
+      customer_address: DELIVERY_ZONES[waveDeliveryZone].name,
+      payment_method: 'Wave',
+      total_amount: finalTotal,
+      items: [
+        {
+          id: currentProduct.id,
+          variant_id: variantId,
+          quantity: 1,
+          price: displayPrice
+        }
+      ]
+    };
+
+    try {
+      const response = await apiFetch('/orders', {
+        method: 'POST',
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.error || result.message || 'La création de la commande a échoué.');
+      }
+
+      setIsWaveModalOpen(false);
+      // Clean fields
+      setWaveName('');
+      setWavePhone('');
+      window.location.href = `https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/?amount=${finalTotal}`;
+    } catch (error) {
+      console.error(error);
+      if (error.message.includes("Serveur injoignable") || error.message.includes("démonstration")) {
+        setIsWaveModalOpen(false);
+        setWaveName('');
+        setWavePhone('');
+        window.location.href = `https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/?amount=${finalTotal}`;
+      } else {
+        setWaveError(error.message || "Une erreur est survenue. Veuillez réessayer.");
+      }
+    } finally {
+      setIsWaveSubmitting(false);
+    }
   };
 
   // Soumission d'un nouvel avis
@@ -448,23 +528,61 @@ const ProductPage = () => {
               </div>
             </div>
             <div className="flex flex-col gap-3">
+              {/* Bouton Payer avec Wave */}
               <button
-                onClick={handleAddToCart}
+                onClick={() => setIsWaveModalOpen(true)}
                 disabled={isVariantOutOfStock}
-                className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-50 text-white dark:text-gray-900 py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="w-full bg-[#1da1f2] hover:bg-[#1a90da] text-white py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-[0.98]"
               >
-                <ShoppingBasket size={18} />
-                {isVariantOutOfStock ? 'Indisponible' : 'Ajouter au Panier'}
+                <img src="/Wave.svg" alt="Wave" className="h-5 w-auto object-contain" />
+                {isVariantOutOfStock ? 'Indisponible' : 'Payer avec Wave'}
               </button>
 
-              <button
-                onClick={handleQuickWhatsAppBuy}
-                disabled={isVariantOutOfStock}
-                className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-              >
-                <MessageCircle size={18} />
-                {isVariantOutOfStock ? 'Indisponible' : 'Commander via WhatsApp'}
-              </button>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Ajouter au panier */}
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isVariantOutOfStock}
+                  className="bg-white dark:bg-zinc-900 hover:bg-gray-50 border border-gray-200 dark:border-zinc-800 text-gray-800 dark:text-white py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-[0.98]"
+                >
+                  <ShoppingCart size={16} className="text-brand-blue" />
+                  Panier
+                </button>
+
+                {/* Commander via WhatsApp */}
+                <button
+                  onClick={handleQuickWhatsAppBuy}
+                  disabled={isVariantOutOfStock}
+                  className="bg-[#25D366] hover:bg-[#20ba59] text-white py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-[0.98]"
+                >
+                  <img src="/WhatsApp.svg" alt="WhatsApp" className="w-4 h-4 object-contain" />
+                  WhatsApp
+                </button>
+              </div>
+            </div>
+
+            {/* Modes de paiement acceptés */}
+            <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-zinc-800">
+              <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest shrink-0">
+                Payer avec
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsWaveModalOpen(true)}
+                  disabled={isVariantOutOfStock}
+                  className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 hover:border-brand-blue dark:hover:border-brand-blue rounded-lg px-2.5 py-1.5 transition-all cursor-pointer active:scale-95 disabled:opacity-55 disabled:cursor-not-allowed"
+                >
+                  <img src="/Wave.svg" alt="Wave" className="h-4 w-auto object-contain" />
+                </button>
+                <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-lg px-2.5 py-1.5">
+                  <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400">Cash livraison</span>
+                </div>
+              </div>
+              <span className="text-[10px] text-gray-300 dark:text-zinc-600 hidden sm:block">·</span>
+              <span className="text-[10px] text-gray-400 dark:text-zinc-500 hidden sm:flex items-center gap-1 shrink-0">
+                Finaliser via
+                <img src="/WhatsApp.svg" alt="WhatsApp" className="h-3.5 w-3.5 object-contain inline ml-0.5" />
+              </span>
             </div>
 
             {/* Éléments de réassurance */}
@@ -620,9 +738,152 @@ const ProductPage = () => {
 
               {/* Icône de confirmation */}
               <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
-                <CheckCircle2 size={18} className="animate-pulse" />
+                <CheckCircle2 size={18} />
               </div>
             </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+
+      {/* MODAL ACHAT RAPIDE WAVE */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {isWaveModalOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsWaveModalOpen(false)}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              />
+
+              {/* Modal Body */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-zinc-800 p-6 z-10 overflow-hidden"
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setIsWaveModalOpen(false)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                >
+                  <X size={20} />
+                </button>
+
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-[#1da1f2]/10 flex items-center justify-center">
+                    <img src="/Wave.svg" alt="Wave Logo" className="h-5 w-auto" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">Payer avec Wave</h3>
+                    <p className="text-xs text-gray-500">Paiement sécurisé instantané via Wave</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleQuickWaveBuySubmit} className="space-y-4">
+                  {waveError && (
+                    <p className="text-xs font-bold text-red-500 bg-red-50 dark:bg-red-500/10 p-2.5 rounded-lg">
+                      {waveError}
+                    </p>
+                  )}
+
+                  {/* Product Summary inside Modal */}
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-zinc-950 rounded-xl border border-gray-100 dark:border-zinc-800">
+                    <img
+                      src={mediaUrls[0]?.match(/\.(mp4|mov|webm)$/i) ? mediaUrls[0].replace(/\.(mp4|mov|webm)$/i, '.jpg') : (mediaUrls[0] || 'https://via.placeholder.com/100')}
+                      alt={currentProduct.name}
+                      className="w-12 h-12 object-cover rounded-lg border border-gray-205 dark:border-zinc-800 bg-white"
+                      onError={(e) => { e.target.src = 'https://placehold.co/100x100/png?text=Image'; }}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-xs font-bold text-gray-800 dark:text-white truncate">{currentProduct.name}</h4>
+                      {selectedVariant && (
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">{selectedVariant.attribute_value}</p>
+                      )}
+                      <p className="text-xs font-black text-brand-blue">{new Intl.NumberFormat('fr-FR').format(displayPrice)} FCFA</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-gray-400 mb-1 font-bold uppercase tracking-wider">Votre nom complet</label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="Ex: Moussa Ndiaye"
+                      value={waveName}
+                      onChange={e => setWaveName(e.target.value)}
+                      className="w-full p-3 text-sm bg-gray-50 dark:bg-zinc-950 border border-gray-205 dark:border-zinc-800 rounded-xl dark:text-white focus:outline-none focus:border-brand-blue"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-gray-400 mb-1 font-bold uppercase tracking-wider">Numéro de téléphone</label>
+                    <input
+                      required
+                      type="tel"
+                      placeholder="Ex: 77 123 45 67"
+                      value={wavePhone}
+                      onChange={e => setWavePhone(e.target.value)}
+                      className="w-full p-3 text-sm bg-gray-50 dark:bg-zinc-950 border border-gray-205 dark:border-zinc-800 rounded-xl dark:text-white focus:outline-none focus:border-brand-blue"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-gray-400 mb-1 font-bold uppercase tracking-wider">Zone de livraison</label>
+                    <select
+                      value={waveDeliveryZone}
+                      onChange={e => setWaveDeliveryZone(e.target.value)}
+                      className="w-full p-3 text-sm bg-gray-50 dark:bg-zinc-950 border border-gray-205 dark:border-zinc-800 rounded-xl dark:text-white focus:outline-none focus:border-brand-blue cursor-pointer"
+                    >
+                      {Object.entries(DELIVERY_ZONES).map(([key, zone]) => (
+                        <option key={key} value={key}>
+                          {zone.name} ({zone.cost === 0 ? 'Gratuit' : `+${new Intl.NumberFormat('fr-FR').format(zone.cost)} FCFA`})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Summary Totals */}
+                  <div className="pt-3 border-t border-gray-100 dark:border-zinc-800 text-xs space-y-1.5 text-gray-500 font-sans">
+                    <div className="flex justify-between">
+                      <span>Sous-total</span>
+                      <span className="font-bold text-gray-800 dark:text-gray-200">{new Intl.NumberFormat('fr-FR').format(displayPrice)} FCFA</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Livraison ({DELIVERY_ZONES[waveDeliveryZone].name})</span>
+                      <span className="font-bold text-gray-800 dark:text-gray-200">{new Intl.NumberFormat('fr-FR').format(DELIVERY_ZONES[waveDeliveryZone].cost)} FCFA</span>
+                    </div>
+                    <div className="flex justify-between text-sm pt-1.5 border-t border-dashed border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-white font-black">
+                      <span>Total à payer</span>
+                      <span className="text-brand-blue">{new Intl.NumberFormat('fr-FR').format(displayPrice + DELIVERY_ZONES[waveDeliveryZone].cost)} FCFA</span>
+                    </div>
+                  </div>
+
+                  <button
+                    disabled={isWaveSubmitting}
+                    type="submit"
+                    className="w-full bg-[#1da1f2] hover:bg-[#1a90da] text-white font-black py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-widest text-[11px] mt-2"
+                  >
+                    {isWaveSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Traitement...
+                      </>
+                    ) : (
+                      <>
+                        <img src="/Wave.svg" alt="Wave" className="h-4 w-auto object-contain" />
+                        Payer avec Wave
+                      </>
+                    )}
+                  </button>
+                </form>
+              </motion.div>
+            </div>
           )}
         </AnimatePresence>,
         document.body
@@ -742,19 +1003,28 @@ const ProductPage = () => {
               <button 
                 onClick={handleAddToCart}
                 disabled={isVariantOutOfStock}
-                className="p-3 bg-gray-900 text-white rounded-lg font-bold disabled:opacity-50"
+                className="p-3 bg-brand-blue hover:bg-brand-blue-dark text-white rounded-lg font-bold disabled:opacity-50 transition-colors"
                 aria-label="Ajouter au Panier"
               >
-                <ShoppingBasket size={18} />
+                <ShoppingCart size={18} />
+              </button>
+
+              <button 
+                onClick={() => setIsWaveModalOpen(true)}
+                disabled={isVariantOutOfStock}
+                className="p-3 bg-[#1da1f2] hover:bg-[#1a90da] text-white rounded-lg font-bold disabled:opacity-50 flex items-center justify-center transition-colors"
+                aria-label="Achat Wave"
+              >
+                <img src="/Wave.svg" alt="Wave" className="w-[18px] h-[18px] object-contain" />
               </button>
               
               <button 
                 onClick={handleQuickWhatsAppBuy}
                 disabled={isVariantOutOfStock}
-                className="p-3 bg-[#25D366] text-white rounded-lg font-bold disabled:opacity-50"
+                className="p-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-lg font-bold disabled:opacity-50 flex items-center justify-center transition-colors"
                 aria-label="Achat WhatsApp"
               >
-                <MessageCircle size={18} />
+                <img src="/WhatsApp.svg" alt="WhatsApp" className="w-[18px] h-[18px] object-contain" />
               </button>
             </div>
           </motion.div>
