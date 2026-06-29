@@ -195,12 +195,10 @@ const ProductCard = ({ product }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105 shrink-0 active:scale-95"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105 shrink-0 active:scale-95"
                   title="Commander sur WhatsApp"
                 >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 16 16">
-                    <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.949h.004c4.368 0 7.927-3.558 7.93-7.926a7.9 7.9 0 0 0-2.327-5.607M7.994 14.522a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.69-3.686c-.202-.1-1.198-.591-1.385-.658-.188-.066-.325-.1-.462.1-.137.2-.53.658-.65.79-.12.132-.241.147-.443.048-.201-.1-.85-.313-1.619-.998-.598-.533-1.002-1.192-1.12-1.392-.118-.2-.012-.307.088-.407.09-.09.201-.233.302-.349.102-.117.137-.2.203-.332.066-.133.033-.25-.017-.35-.05-.1-.462-1.114-.633-1.527-.166-.399-.333-.344-.457-.35-.12-.006-.257-.007-.394-.007-.137 0-.361.051-.55.257-.188.2-.719.702-.719 1.71 0 1.009.734 1.986.837 2.12.102.133 1.442 2.202 3.493 3.08.488.209.87.333 1.168.428.49.155.936.133 1.29.08.395-.058 1.198-.49 1.368-.962.17-.473.17-.878.12-.962-.05-.084-.188-.133-.39-.232"/>
-                  </svg>
+                  <img src="/WhatsApp.svg" alt="WhatsApp" className="w-4 h-4 object-contain" />
                 </a>
               </>
             ) : (
