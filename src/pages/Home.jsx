@@ -1,6 +1,5 @@
 import Hero from '../components/Hero';
 import CategoryStrip from '../components/CategoryStrip';
-import CategoryGrids from '../components/CategoryGrids';
 import ProductGrid from '../components/ProductGrid';
 import ContactLocation from '../components/ContactLocation';
 import SEO from '../components/SEO';
@@ -56,7 +55,6 @@ const Home = () => {
       />
       <Hero />
       <CategoryStrip />
-      <CategoryGrids />
       <ProductGrid />
       <ContactLocation />
     </>

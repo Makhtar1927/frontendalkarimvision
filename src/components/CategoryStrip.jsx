@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const CATEGORIES = [
@@ -13,26 +12,59 @@ const CATEGORIES = [
 const CategoryStrip = () => {
   const navigate = useNavigate();
 
+  // Create two identical lists for seamless loop translation
+  const firstList = [...CATEGORIES];
+  const secondList = [...CATEGORIES];
+
   return (
-    <section className="bg-white dark:bg-brand-gray-dark border-b border-gray-100 dark:border-zinc-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide py-4 md:justify-center shrink-0">
-          {CATEGORIES.map((cat, i) => {
-            return (
-              <motion.button
-                key={cat.id}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
-                onClick={() => navigate(cat.route)}
-                className="px-5 py-2.5 rounded-full border border-gray-200 dark:border-zinc-800 hover:border-brand-blue dark:hover:border-brand-blue bg-gray-50/50 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-brand-blue dark:hover:text-brand-blue shadow-xs hover:shadow-md transition-all duration-300 active:scale-95 shrink-0 cursor-pointer text-[10px] sm:text-xs font-black uppercase tracking-widest"
-              >
-                {cat.name}
-              </motion.button>
-            );
-          })}
+    <section className="bg-white dark:bg-brand-gray-dark border-b border-gray-100 dark:border-zinc-900 py-3 overflow-hidden select-none relative">
+      {/* Edge Gradients for Soft Fading effect */}
+      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white dark:from-brand-gray-dark to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white dark:from-brand-gray-dark to-transparent z-10 pointer-events-none" />
+
+      {/* Styled Ticker Container */}
+      <div className="w-full flex overflow-hidden">
+        <div className="flex gap-4 whitespace-nowrap animate-marquee">
+          
+          {/* First loop of categories */}
+          {firstList.map((cat) => (
+            <button
+              key={`first-${cat.id}`}
+              onClick={() => navigate(cat.route)}
+              className="px-6 py-2.5 rounded-full border border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 text-gray-700 dark:text-zinc-350 hover:text-brand-blue dark:hover:text-brand-blue shadow-xs hover:shadow-md transition-all duration-300 active:scale-95 cursor-pointer text-[10px] sm:text-xs font-black uppercase tracking-widest inline-block"
+            >
+              {cat.name}
+            </button>
+          ))}
+
+          {/* Second loop of categories (exact duplicate for seamless wrap) */}
+          {secondList.map((cat) => (
+            <button
+              key={`second-${cat.id}`}
+              onClick={() => navigate(cat.route)}
+              className="px-6 py-2.5 rounded-full border border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 text-gray-700 dark:text-zinc-350 hover:text-brand-blue dark:hover:text-brand-blue shadow-xs hover:shadow-md transition-all duration-300 active:scale-95 cursor-pointer text-[10px] sm:text-xs font-black uppercase tracking-widest inline-block"
+            >
+              {cat.name}
+            </button>
+          ))}
+
         </div>
       </div>
+
+      {/* Embedded CSS for smooth infinite hardware-accelerated marquee */}
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          display: flex;
+          animation: marquee 25s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   );
 };
