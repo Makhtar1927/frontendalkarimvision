@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo.jpg'],
+      includeAssets: ['logo.png'],
       manifest: {
         name: 'Al Karim Vision',
         short_name: 'Al Karim Vision',
@@ -17,9 +17,9 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: 'logo.jpg',
+            src: 'logo.png',
             sizes: '512x512',
-            type: 'image/jpeg',
+            type: 'image/png',
             purpose: 'any maskable'
           }
         ]

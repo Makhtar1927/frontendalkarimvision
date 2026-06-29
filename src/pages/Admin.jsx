@@ -715,7 +715,7 @@ const Admin = () => {
             <div class="logo">
               <div style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
                  <div>AL KARIM<span> VISION</span></div>
-                 <img src="${window.location.origin}/logo.jpg" alt="Al Karim Vision Logo" style="height: 50px; width: auto; border-radius: 6px;" />
+                 <img src="${window.location.origin}/logo.png" alt="Al Karim Vision Logo" style="height: 50px; width: auto; border-radius: 6px;" />
               </div>
             </div>
             <div class="invoice-details">
