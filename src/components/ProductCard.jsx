@@ -126,16 +126,7 @@ const ProductCard = ({ product }) => {
           />
         </button>
 
-        {/* Quick Add to Cart — floating on image */}
-        {!isVariantOutOfStock && (
-          <button
-            onClick={handleAddToCart}
-            className="absolute bottom-2 right-2 w-8 h-8 sm:w-10 sm:h-10 bg-brand-blue hover:bg-brand-blue-dark backdrop-blur-md text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all z-20 group/cartbtn"
-            aria-label="Ajouter au panier"
-          >
-            <ShoppingCart className="w-4 h-4 sm:w-[18px] sm:h-[18px] group-hover/cartbtn:animate-bounce" strokeWidth={2.5} />
-          </button>
-        )}
+
       </div>
 
       {/* 2. INFORMATION AREA */}
