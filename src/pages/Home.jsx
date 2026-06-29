@@ -19,7 +19,7 @@ const Home = () => {
     "priceRange": "$$$",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Pikine Saf Bar",
+      "streetAddress": "Touba Darou Khoudoss, Niary Tally",
       "addressLocality": "Dakar",
       "addressCountry": "SN"
     },
