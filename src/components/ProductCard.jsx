@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Star, CheckCircle2, AlertCircle, Heart } from 'lucide-react';
+import { ShoppingCart, Star, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCartStore();
   const [showToast, setShowToast] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   
@@ -113,18 +112,6 @@ const ProductCard = ({ product }) => {
             </>
           )}
         </div>
-
-        {/* Wishlist — Top Right */}
-        <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsWishlisted(w => !w); }}
-          className={`absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 bg-white/90 dark:bg-zinc-800/90 rounded-full flex items-center justify-center z-20 shadow-sm border transition-all ${isWishlisted ? 'text-red-500 border-red-200' : 'text-slate-400 dark:text-zinc-400 border-slate-100 dark:border-zinc-700 hover:text-red-500'}`}
-        >
-          <Heart
-            className="w-3.5 h-3.5 sm:w-4 sm:h-4"
-            fill={isWishlisted ? 'currentColor' : 'none'}
-            strokeWidth={2}
-          />
-        </button>
 
 
       </div>
