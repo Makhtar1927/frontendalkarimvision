@@ -477,13 +477,14 @@ const ProductPage = () => {
                   <img src="/Wave.svg" alt="Wave" className="h-4 w-auto object-contain" />
                 </div>
                 <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-lg px-2.5 py-1.5">
-                  <img src="/WhatsApp.svg" alt="WhatsApp" className="h-4 w-4 object-contain" />
-                  <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400">WhatsApp</span>
-                </div>
-                <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-lg px-2.5 py-1.5">
-                  <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400">💵 Cash</span>
+                  <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400">Cash livraison</span>
                 </div>
               </div>
+              <span className="text-[10px] text-gray-300 dark:text-zinc-600 hidden sm:block">·</span>
+              <span className="text-[10px] text-gray-400 dark:text-zinc-500 hidden sm:flex items-center gap-1 shrink-0">
+                Finaliser via
+                <img src="/WhatsApp.svg" alt="WhatsApp" className="h-3.5 w-3.5 object-contain inline ml-0.5" />
+              </span>
             </div>
 
             {/* Éléments de réassurance */}
