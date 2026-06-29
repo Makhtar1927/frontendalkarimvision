@@ -528,14 +528,14 @@ const ProductPage = () => {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              {/* Bouton Achat Express Wave */}
+              {/* Bouton Payer avec Wave */}
               <button
                 onClick={() => setIsWaveModalOpen(true)}
                 disabled={isVariantOutOfStock}
                 className="w-full bg-[#1da1f2] hover:bg-[#1a90da] text-white py-3.5 rounded-lg font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-[0.98]"
               >
                 <img src="/Wave.svg" alt="Wave" className="h-5 w-auto object-contain" />
-                {isVariantOutOfStock ? 'Indisponible' : 'Achat Express Wave'}
+                {isVariantOutOfStock ? 'Indisponible' : 'Payer avec Wave'}
               </button>
 
               <div className="grid grid-cols-2 gap-3">
@@ -780,7 +780,7 @@ const ProductPage = () => {
                     <img src="/Wave.svg" alt="Wave Logo" className="h-5 w-auto" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">Achat Express Wave</h3>
+                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">Payer avec Wave</h3>
                     <p className="text-xs text-gray-500">Paiement sécurisé instantané via Wave</p>
                   </div>
                 </div>
