@@ -865,46 +865,80 @@ const Admin = () => {
       {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, x: '-100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '-100%' }}
-            className="md:hidden fixed inset-0 bg-white dark:bg-brand-gray-dark z-[55] pt-20 px-6 flex flex-col"
-          >
-            <nav className="flex-1 space-y-2 mt-4">
-              {visibleTabs.map(tab => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }}
-                    className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-medium transition-colors ${
-                      isActive ? 'bg-brand-blue/10 text-brand-blue border-l-4 border-brand-blue' : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                  >
-                    <Icon size={24} />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
-            <div className="py-8 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-blue text-white flex items-center justify-center font-bold">{userName.charAt(0)}</div>
-                <div>
-                  <p className="font-bold dark:text-white">{userName}</p>
-                  <p className="text-xs text-gray-500 uppercase">{userRole}</p>
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="md:hidden fixed inset-0 bg-black/60 z-50 backdrop-blur-xs"
+            />
+            {/* Drawer */}
+            <motion.div 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="md:hidden fixed top-0 left-0 bottom-0 w-[280px] bg-white dark:bg-zinc-900 border-r border-gray-150 dark:border-zinc-800 z-55 flex flex-col shadow-2xl pt-5"
+            >
+              {/* Header inside drawer */}
+              <div className="px-5 pb-5 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Shield className="text-brand-blue" size={20} />
+                  <div>
+                    <h2 className="text-sm font-bold text-brand-blue tracking-wider leading-none">AL KARIM</h2>
+                    <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Admin Panel</span>
+                  </div>
                 </div>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 text-gray-500 dark:text-gray-400">
+                  <X size={20} />
+                </button>
               </div>
-              <button 
-                onClick={() => { useAuthStore.getState().logout(); window.location.href = '/'; }}
-                className="p-3 text-red-500 bg-red-50 dark:bg-red-900/10 rounded-full"
-              >
-                <LogOut size={20} />
-              </button>
-            </div>
-          </motion.div>
+
+              {/* Navigation links */}
+              <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+                {visibleTabs.map(tab => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }}
+                      className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                        isActive 
+                          ? 'bg-brand-blue text-white shadow-md shadow-brand-blue/15' 
+                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800'
+                      }`}
+                    >
+                      <Icon size={18} />
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* Profile & Logout inside drawer */}
+              <div className="p-4 border-t border-gray-150 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-950/20">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold text-sm border border-brand-blue/15">
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold dark:text-white truncate">{userName}</p>
+                    <p className="text-[9px] text-gray-400 uppercase tracking-wider truncate">{userRole === 'admin' ? 'Admin' : 'Modérateur'}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => { useAuthStore.getState().logout(); window.location.href = '/'; }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/20 text-red-650 dark:text-red-450 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+                >
+                  <LogOut size={14} />
+                  Déconnexion
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
@@ -1090,91 +1124,144 @@ const Admin = () => {
           </div>
         </div>
 
-        {/* TABLE MODERNE LUXURY */}
-        <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead>
-              <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
-                <th className="p-4 font-medium whitespace-nowrap">Produit</th>
-                <th className="p-4 font-medium whitespace-nowrap">Catégorie</th>
-                <th 
-                  className="p-4 font-medium cursor-pointer hover:text-brand-blue transition-colors select-none whitespace-nowrap"
-                  onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                >
-                  <div className="flex items-center gap-1">
-                    Prix
-                    {sortOrder === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                  </div>
-                </th>
-                <th className="p-4 text-right font-medium whitespace-nowrap">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {loading ? (
-                <tr><td colSpan="4" className="text-center py-10 text-gray-500">Chargement sécurisé de la base de données...</td></tr>
-              ) : paginatedProducts.map(product => (
-                <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
-                  <td className="p-4 flex items-center gap-4">
-                    <img src={product.image_url} alt={product.name} className="w-14 h-14 object-cover rounded-2xl border border-gray-100 dark:border-gray-800" />
-                    <div>
-                      <p className="font-bold dark:text-white">{product.name || 'Produit sans nom'}</p>
-                      <p className="text-xs text-brand-blue font-medium uppercase tracking-widest">{product.brand || 'Sans Marque'}</p>
+        {/* TABLE MODERNE LUXURY & CARD LIST RESPONSIVE */}
+        <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+          {/* Desktop Table (>= md) */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[700px]">
+              <thead>
+                <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
+                  <th className="p-4 font-medium whitespace-nowrap">Produit</th>
+                  <th className="p-4 font-medium whitespace-nowrap">Catégorie</th>
+                  <th 
+                    className="p-4 font-medium cursor-pointer hover:text-brand-blue transition-colors select-none whitespace-nowrap"
+                    onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Prix
+                      {sortOrder === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                     </div>
-                  </td>
-                  <td className="p-4 dark:text-gray-300 uppercase text-xs tracking-widest">
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl">
-                      {product.category === 'glasses' 
-                        ? 'Lunettes' 
-                        : product.category === 'perfume' 
-                        ? 'Parfum' 
-                        : product.category === 'watches' 
-                        ? 'Montre' 
-                        : product.category === 'other' 
-                        ? 'Divers' 
-                        : product.category}
-                    </span>
-                    {product.subcategory && (
-                      <span className="text-[10px] text-gray-400 block lowercase mt-1 font-semibold tracking-wider bg-gray-50 dark:bg-zinc-900 px-2 py-0.5 rounded-full w-fit">
-                        {product.subcategory === 'noir_fume' 
-                          ? 'noir fumé' 
-                          : product.subcategory === 'photogray' 
-                          ? 'photogray' 
-                          : product.subcategory === 'avec_alcool' 
-                          ? 'avec alcool' 
-                          : product.subcategory === 'sans_alcool' 
-                          ? 'sans alcool' 
-                          : product.subcategory}
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-4 font-bold dark:text-white">{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</td>
-                  <td className="p-4">
-                    <div className="flex justify-end gap-1">
-                      <button 
-                        title="Modifier" 
-                        onClick={() => handleOpenEdit(product)}
-                        className="p-2 text-gray-400 hover:text-brand-blue transition-colors"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      {userRole === 'admin' && (
-                        <button 
-                          title="Supprimer" 
-                          onClick={() => setProductToDelete(product)} 
-                          className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      )}
-                    </div>
-                  </td>
+                  </th>
+                  <th className="p-4 text-right font-medium whitespace-nowrap">Actions</th>
                 </tr>
-              ))}
-              {paginatedProducts.length === 0 && !loading && (
-                 <tr><td colSpan="4" className="text-center py-10 text-gray-500">Aucun produit trouvé.</td></tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                {loading ? (
+                  <tr><td colSpan="4" className="text-center py-10 text-gray-500">Chargement sécurisé de la base de données...</td></tr>
+                ) : paginatedProducts.map(product => (
+                  <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
+                    <td className="p-4 flex items-center gap-4">
+                      <img src={product.image_url} alt={product.name} className="w-14 h-14 object-cover rounded-2xl border border-gray-100 dark:border-gray-800 animate-fade-in" />
+                      <div>
+                        <p className="font-bold dark:text-white">{product.name || 'Produit sans nom'}</p>
+                        <p className="text-xs text-brand-blue font-medium uppercase tracking-widest">{product.brand || 'Sans Marque'}</p>
+                      </div>
+                    </td>
+                    <td className="p-4 dark:text-gray-300 uppercase text-xs tracking-widest">
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl">
+                        {product.category === 'glasses' 
+                          ? 'Lunettes' 
+                          : product.category === 'perfume' 
+                          ? 'Parfum' 
+                          : product.category === 'watches' 
+                          ? 'Montre' 
+                          : product.category === 'other' 
+                          ? 'Divers' 
+                          : product.category}
+                      </span>
+                      {product.subcategory && (
+                        <span className="text-[10px] text-gray-400 block lowercase mt-1 font-semibold tracking-wider bg-gray-50 dark:bg-zinc-900 px-2 py-0.5 rounded-full w-fit">
+                          {product.subcategory === 'noir_fume' 
+                            ? 'noir fumé' 
+                            : product.subcategory === 'photogray' 
+                            ? 'photogray' 
+                            : product.subcategory === 'avec_alcool' 
+                            ? 'avec alcool' 
+                            : product.subcategory === 'sans_alcool' 
+                            ? 'sans alcool' 
+                            : product.subcategory}
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4 font-bold dark:text-white">{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</td>
+                    <td className="p-4">
+                      <div className="flex justify-end gap-1">
+                        <button 
+                          title="Modifier" 
+                          onClick={() => handleOpenEdit(product)}
+                          className="p-2 text-gray-400 hover:text-brand-blue transition-colors"
+                        >
+                          <Edit size={18} />
+                        </button>
+                        {userRole === 'admin' && (
+                          <button 
+                            title="Supprimer" 
+                            onClick={() => setProductToDelete(product)} 
+                            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {paginatedProducts.length === 0 && !loading && (
+                   <tr><td colSpan="4" className="text-center py-10 text-gray-500">Aucun produit trouvé.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card List (< md) */}
+          <div className="block md:hidden divide-y divide-gray-100 dark:divide-zinc-800">
+            {loading ? (
+              <div className="text-center py-10 text-gray-500 text-sm">Chargement sécurisé...</div>
+            ) : paginatedProducts.map(product => (
+              <div key={product.id} className="p-4 flex gap-4 hover:bg-gray-50/50 dark:hover:bg-zinc-900/30 transition-colors">
+                <img src={product.image_url} alt={product.name} className="w-16 h-16 object-cover rounded-xl border border-gray-150 dark:border-zinc-800 shrink-0" />
+                <div className="flex-1 min-w-0 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-start justify-between gap-1">
+                      <h4 className="font-bold text-sm dark:text-white truncate">{product.name || 'Produit sans nom'}</h4>
+                      <div className="flex gap-1 shrink-0">
+                        <button 
+                          title="Modifier" 
+                          onClick={() => handleOpenEdit(product)}
+                          className="p-1.5 text-gray-450 hover:text-brand-blue"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        {userRole === 'admin' && (
+                          <button 
+                            title="Supprimer" 
+                            onClick={() => setProductToDelete(product)} 
+                            className="p-1.5 text-gray-455 hover:text-red-500"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-brand-blue font-bold uppercase tracking-wider mt-0.5">{product.brand || 'Sans Marque'}</p>
+                  </div>
+                  
+                  <div className="flex items-end justify-between gap-2 mt-2">
+                    <span className="font-black text-xs text-gray-800 dark:text-gray-205">
+                      {new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA
+                    </span>
+                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-zinc-800 rounded-md text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      {product.category === 'glasses' ? 'Lunettes' : product.category === 'perfume' ? 'Parfum' : product.category === 'watches' ? 'Montre' : 'Divers'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {paginatedProducts.length === 0 && !loading && (
+               <div className="text-center py-10 text-gray-500 text-sm">Aucun produit trouvé.</div>
+            )}
+          </div>
+        </div>
           
           {/* CONTRÔLES DE PAGINATION */}
           {totalPages > 1 && (
@@ -1200,7 +1287,6 @@ const Admin = () => {
               </div>
             </div>
           )}
-        </div>
         </div>
         )}
 
@@ -1248,106 +1334,216 @@ const Admin = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
-                <thead>
-                  <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
-                    <th className="p-4 font-medium whitespace-nowrap">N° Commande</th>
-                    <th className="p-4 font-medium whitespace-nowrap">Client</th>
-                    <th className="p-4 font-medium whitespace-nowrap">Date</th>
-                    <th className="p-4 font-medium whitespace-nowrap">Montant Total</th>
-                    <th className="p-4 font-medium text-right whitespace-nowrap">Statut</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                  {/* Filtrer les commandes par statut et par mois */}
-                  {orders?.filter(order => {
-                    const matchStatus = statusFilter === 'all' || order.status === statusFilter;
-                    const orderMonth = MONTHS[new Date(order.created_at).getMonth()];
-                    const matchMonth = monthFilter === 'all' || orderMonth === monthFilter;
-                    return matchStatus && matchMonth;
-                  }).length === 0 ? (
-                    <tr><td colSpan="5" className="text-center py-10 text-gray-500">Aucune commande trouvée.</td></tr>
-                  ) : orders?.map(order => (
-                    <React.Fragment key={order.id}>
-                    <tr onClick={() => toggleOrderDetails(order.id)} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors cursor-pointer group">
-                      <td className="p-4 font-bold dark:text-white flex items-center gap-3">
-                        {expandedOrderId === order.id ? <ChevronUp size={16} className="text-brand-blue" /> : <ChevronDown size={16} className="text-gray-400 group-hover:text-brand-blue transition-colors" />}
-                        # {order.id.toString().padStart(4, '0')}
-                      </td>
-                      <td className="p-4">
-                        <p className="font-bold dark:text-white">{order.customer_name}</p>
-                        <p className="text-xs text-gray-500">{order.customer_phone}</p>
-                      </td>
-                      <td className="p-4 dark:text-gray-300">
-                        {new Date(order.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' })}
-                      </td>
-                      <td className="p-4 font-bold text-brand-blue">
-                        {new Intl.NumberFormat('fr-FR').format(order.total_amount)} FCFA
-                      </td>
-                      <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+            {/* ORDERS TABLE & CARD LIST RESPONSIVE */}
+            <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+              {/* Desktop Table (>= md) */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[800px]">
+                  <thead>
+                    <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
+                      <th className="p-4 font-medium whitespace-nowrap">N° Commande</th>
+                      <th className="p-4 font-medium whitespace-nowrap">Client</th>
+                      <th className="p-4 font-medium whitespace-nowrap">Date</th>
+                      <th className="p-4 font-medium whitespace-nowrap">Montant Total</th>
+                      <th className="p-4 font-medium text-right whitespace-nowrap">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                    {orders?.filter(order => {
+                      const matchStatus = statusFilter === 'all' || order.status === statusFilter;
+                      const orderMonth = MONTHS[new Date(order.created_at).getMonth()];
+                      const matchMonth = monthFilter === 'all' || orderMonth === monthFilter;
+                      return matchStatus && matchMonth;
+                    }).length === 0 ? (
+                      <tr><td colSpan="5" className="text-center py-10 text-gray-500">Aucune commande trouvée.</td></tr>
+                    ) : orders?.filter(order => {
+                      const matchStatus = statusFilter === 'all' || order.status === statusFilter;
+                      const orderMonth = MONTHS[new Date(order.created_at).getMonth()];
+                      const matchMonth = monthFilter === 'all' || orderMonth === monthFilter;
+                      return matchStatus && matchMonth;
+                    }).map(order => (
+                      <React.Fragment key={order.id}>
+                      <tr onClick={() => toggleOrderDetails(order.id)} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors cursor-pointer group">
+                        <td className="p-4 font-bold dark:text-white flex items-center gap-3">
+                          {expandedOrderId === order.id ? <ChevronUp size={16} className="text-brand-blue" /> : <ChevronDown size={16} className="text-gray-400 group-hover:text-brand-blue transition-colors" />}
+                          # {order.id.toString().padStart(4, '0')}
+                        </td>
+                        <td className="p-4">
+                          <p className="font-bold dark:text-white">{order.customer_name}</p>
+                          <p className="text-xs text-gray-500">{order.customer_phone}</p>
+                        </td>
+                        <td className="p-4 dark:text-gray-300">
+                          {new Date(order.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' })}
+                        </td>
+                        <td className="p-4 font-bold text-brand-blue">
+                          {new Intl.NumberFormat('fr-FR').format(order.total_amount)} FCFA
+                        </td>
+                        <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                          <select
+                            value={order.status}
+                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                            className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest outline-none cursor-pointer border-none text-center text-right text-right-align appearance-none ${
+                              order.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30' : 
+                              order.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-900/30' : 
+                              order.status === 'shipped' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30' : 'bg-gray-100 text-gray-700 dark:bg-zinc-800'
+                            }`}
+                          >
+                            <option value="pending" className="bg-white text-black dark:bg-zinc-900 dark:text-white">EN ATTENTE</option>
+                            <option value="paid" className="bg-white text-black dark:bg-zinc-900 dark:text-white">PAYÉ</option>
+                            <option value="shipped" className="bg-white text-black dark:bg-zinc-900 dark:text-white">LIVRÉ</option>
+                          </select>
+                        </td>
+                      </tr>
+                      {expandedOrderId === order.id && (
+                        <tr className="bg-gray-50/50 dark:bg-zinc-900/30">
+                          <td colSpan="5" className="p-6 border-b border-gray-100 dark:border-gray-800">
+                            <div className="flex justify-between items-center mb-4">
+                              <h4 className="font-bold text-sm dark:text-white uppercase tracking-widest text-brand-blue flex items-center gap-2">
+                                <ShoppingBag size={16} /> Détails de la commande
+                              </h4>
+                              <button 
+                                onClick={() => printInvoice(order)}
+                                className="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-white px-4 py-2 rounded-full font-bold flex items-center gap-2 transition-colors"
+                              >
+                                <Printer size={14} /> Imprimer Facture
+                              </button>
+                            </div>
+                            <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+                              <table className="w-full text-left text-sm">
+                                <thead className="bg-gray-100 dark:bg-zinc-900 text-gray-500 dark:text-gray-400">
+                                  <tr>
+                                    <th className="p-3 font-medium">Article</th>
+                                    <th className="p-3 font-medium text-center">Quantité</th>
+                                    <th className="p-3 font-medium text-right">Prix Unitaire</th>
+                                    <th className="p-3 font-medium text-right">Sous-total</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                                  {order.items?.map((item, idx) => (
+                                    <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50">
+                                      <td className="p-3">
+                                        <p className="font-bold dark:text-white">{item.product_name || <span className="text-gray-400 italic">Produit supprimé</span>}</p>
+                                        {item.variant && String(item.variant).trim().toLowerCase() !== 'null' && <p className="text-[10px] text-brand-blue uppercase tracking-widest mt-0.5">{item.variant}</p>}
+                                      </td>
+                                      <td className="p-3 text-center font-medium dark:text-gray-300">{item.quantity}</td>
+                                      <td className="p-3 text-right dark:text-gray-400">{new Intl.NumberFormat('fr-FR').format(item.unit_price)} FCFA</td>
+                                      <td className="p-3 text-right font-bold text-brand-blue">{new Intl.NumberFormat('fr-FR').format(item.unit_price * item.quantity)} FCFA</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Cards List (< md) */}
+              <div className="block md:hidden divide-y divide-gray-100 dark:divide-zinc-800">
+                {orders?.filter(order => {
+                  const matchStatus = statusFilter === 'all' || order.status === statusFilter;
+                  const orderMonth = MONTHS[new Date(order.created_at).getMonth()];
+                  const matchMonth = monthFilter === 'all' || orderMonth === monthFilter;
+                  return matchStatus && matchMonth;
+                }).length === 0 ? (
+                  <div className="text-center py-10 text-gray-500 text-sm">Aucune commande trouvée.</div>
+                ) : orders?.filter(order => {
+                  const matchStatus = statusFilter === 'all' || order.status === statusFilter;
+                  const orderMonth = MONTHS[new Date(order.created_at).getMonth()];
+                  const matchMonth = monthFilter === 'all' || orderMonth === monthFilter;
+                  return matchStatus && matchMonth;
+                }).map(order => {
+                  const isExpanded = expandedOrderId === order.id;
+                  return (
+                    <div key={order.id} className="p-4 hover:bg-gray-50/50 dark:hover:bg-zinc-900/30 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className="font-bold text-sm dark:text-white">Commande #{order.id.toString().padStart(4, '0')}</span>
+                          <span className="text-[10px] text-gray-400 block mt-0.5">
+                            {new Date(order.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit' })}
+                          </span>
+                        </div>
                         <select
                           value={order.status}
                           onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                          className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest outline-none cursor-pointer border-none text-center text-right text-right-align appearance-none ${
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider outline-none cursor-pointer border-none text-center appearance-none ${
                             order.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30' : 
                             order.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-900/30' : 
                             order.status === 'shipped' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30' : 'bg-gray-100 text-gray-700 dark:bg-zinc-800'
                           }`}
                         >
-                          <option value="pending" className="bg-white text-black dark:bg-zinc-900 dark:text-white">EN ATTENTE</option>
-                          <option value="paid" className="bg-white text-black dark:bg-zinc-900 dark:text-white">PAYÉ</option>
-                          <option value="shipped" className="bg-white text-black dark:bg-zinc-900 dark:text-white">LIVRÉ</option>
+                          <option value="pending">EN ATTENTE</option>
+                          <option value="paid">PAYÉ</option>
+                          <option value="shipped">LIVRÉ</option>
                         </select>
-                      </td>
-                    </tr>
-                    {/* SOUS-LIGNE DES DÉTAILS DE LA COMMANDE */}
-                    {expandedOrderId === order.id && (
-                      <tr className="bg-gray-50/50 dark:bg-zinc-900/30">
-                        <td colSpan="5" className="p-6 border-b border-gray-100 dark:border-gray-800">
-                          <div className="flex justify-between items-center mb-4">
-                            <h4 className="font-bold text-sm dark:text-white uppercase tracking-widest text-brand-blue flex items-center gap-2">
-                              <ShoppingBag size={16} /> Détails de la commande
-                            </h4>
+                      </div>
+
+                      <div className="flex justify-between items-end mt-4">
+                        <div>
+                          <p className="font-bold text-xs text-gray-800 dark:text-gray-200">{order.customer_name}</p>
+                          <p className="text-[11px] text-gray-500">{order.customer_phone}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-black text-sm text-brand-blue">
+                            {new Intl.NumberFormat('fr-FR').format(order.total_amount)} FCFA
+                          </span>
+                          <button 
+                            onClick={() => toggleOrderDetails(order.id)}
+                            className="p-1 rounded-lg bg-gray-100 dark:bg-zinc-800 text-gray-500 hover:text-brand-blue"
+                          >
+                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Mobile Expanded Details */}
+                      {isExpanded && (
+                        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-zinc-800/80 space-y-4">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Articles commandés</span>
                             <button 
                               onClick={() => printInvoice(order)}
-                              className="text-xs bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-white px-4 py-2 rounded-full font-bold flex items-center gap-2 transition-colors"
+                              className="text-[10px] bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue px-3 py-1.5 rounded-full font-bold flex items-center gap-1.5 transition-colors"
                             >
-                              <Printer size={14} /> Imprimer Facture
+                              <Printer size={12} /> Facture
                             </button>
                           </div>
-                          <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
-                            <table className="w-full text-left text-sm">
-                              <thead className="bg-gray-100 dark:bg-zinc-900 text-gray-500 dark:text-gray-400">
-                                <tr>
-                                  <th className="p-3 font-medium">Article</th>
-                                  <th className="p-3 font-medium text-center">Quantité</th>
-                                  <th className="p-3 font-medium text-right">Prix Unitaire</th>
-                                  <th className="p-3 font-medium text-right">Sous-total</th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                                {order.items?.map((item, idx) => (
-                                  <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50">
-                                    <td className="p-3">
-                                      <p className="font-bold dark:text-white">{item.product_name || <span className="text-gray-400 italic">Produit supprimé</span>}</p>
-                                      {item.variant && String(item.variant).trim().toLowerCase() !== 'null' && <p className="text-[10px] text-brand-blue uppercase tracking-widest mt-0.5">{item.variant}</p>}
-                                    </td>
-                                    <td className="p-3 text-center font-medium dark:text-gray-300">{item.quantity}</td>
-                                    <td className="p-3 text-right dark:text-gray-400">{new Intl.NumberFormat('fr-FR').format(item.unit_price)} FCFA</td>
-                                    <td className="p-3 text-right font-bold text-brand-blue">{new Intl.NumberFormat('fr-FR').format(item.unit_price * item.quantity)} FCFA</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                          
+                          <div className="space-y-2 bg-gray-50/50 dark:bg-zinc-950/20 p-3 rounded-xl border border-gray-150 dark:border-zinc-800/50">
+                            {order.items?.map((item, idx) => (
+                              <div key={idx} className="flex justify-between items-center text-xs">
+                                <div className="min-w-0 flex-1 pr-2">
+                                  <p className="font-bold dark:text-white truncate">{item.product_name || 'Produit supprimé'}</p>
+                                  {item.variant && String(item.variant).trim().toLowerCase() !== 'null' && (
+                                    <span className="text-[8px] bg-brand-blue/10 text-brand-blue px-1.5 py-0.5 rounded uppercase font-bold tracking-tight mt-0.5 inline-block">
+                                      {item.variant}
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-gray-400 font-medium whitespace-nowrap shrink-0">x{item.quantity}</span>
+                                <span className="font-bold text-gray-755 dark:text-gray-300 ml-3 whitespace-nowrap shrink-0">
+                                  {new Intl.NumberFormat('fr-FR').format(item.unit_price * item.quantity)} FCFA
+                                </span>
+                              </div>
+                            ))}
                           </div>
-                        </td>
-                      </tr>
-                    )}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
+
+                          {order.customer_address && (
+                            <div className="text-[11px] text-gray-500 bg-gray-50/50 dark:bg-zinc-950/25 p-3 rounded-xl border border-gray-150 dark:border-zinc-800/40">
+                              <span className="font-bold text-gray-700 dark:text-gray-300 block mb-0.5">Adresse de livraison :</span>
+                              {order.customer_address}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
@@ -1360,52 +1556,94 @@ const Admin = () => {
               <p className="text-gray-500 mt-2">Gérez les avis et notes laissés par vos clients.</p>
             </div>
 
-            <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
-                <thead>
-                  <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
-                    <th className="p-4 font-medium whitespace-nowrap">Produit</th>
-                    <th className="p-4 font-medium whitespace-nowrap">Client</th>
-                    <th className="p-4 font-medium text-center whitespace-nowrap">Note</th>
-                    <th className="p-4 font-medium w-1/3 whitespace-nowrap">Commentaire</th>
-                    <th className="p-4 font-medium text-right whitespace-nowrap">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                  {isLoadingReviews ? (
-                    <tr><td colSpan="5" className="text-center py-10 text-gray-500">Chargement des avis en cours...</td></tr>
-                  ) : reviews.length === 0 ? (
-                    <tr><td colSpan="5" className="text-center py-10 text-gray-500">Aucun avis à modérer pour le moment.</td></tr>
-                  ) : reviews.map(review => (
-                    <tr key={review.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
-                      <td className="p-4 font-bold dark:text-white text-sm">{review.product_name}</td>
-                      <td className="p-4">
-                        <p className="font-bold dark:text-white text-sm">{review.customer_name}</p>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-widest">{new Date(review.created_at).toLocaleDateString('fr-FR')}</p>
-                      </td>
-                      <td className="p-4 text-center">
-                        <div className="flex justify-center gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} size={14} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-brand-blue' : 'text-gray-300 dark:text-gray-700'} />
-                          ))}
-                        </div>
-                      </td>
-                      <td className="p-4 text-sm text-gray-600 dark:text-gray-400 italic">"{review.comment}"</td>
-                      <td className="p-4 text-right">
-                        {userRole === 'admin' && (
-                          <button 
-                            onClick={() => handleDeleteReview(review.id)}
-                            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                            title="Supprimer cet avis"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        )}
-                      </td>
+            {/* REVIEWS TABLE & CARD LIST RESPONSIVE */}
+            <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+              {/* Desktop Table (>= md) */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[800px]">
+                  <thead>
+                    <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
+                      <th className="p-4 font-medium whitespace-nowrap">Produit</th>
+                      <th className="p-4 font-medium whitespace-nowrap">Client</th>
+                      <th className="p-4 font-medium text-center whitespace-nowrap">Note</th>
+                      <th className="p-4 font-medium w-1/3 whitespace-nowrap">Commentaire</th>
+                      <th className="p-4 font-medium text-right whitespace-nowrap">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                    {isLoadingReviews ? (
+                      <tr><td colSpan="5" className="text-center py-10 text-gray-500">Chargement des avis en cours...</td></tr>
+                    ) : reviews.length === 0 ? (
+                      <tr><td colSpan="5" className="text-center py-10 text-gray-500">Aucun avis à modérer pour le moment.</td></tr>
+                    ) : reviews.map(review => (
+                      <tr key={review.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
+                        <td className="p-4 font-bold dark:text-white text-sm">{review.product_name}</td>
+                        <td className="p-4">
+                          <p className="font-bold dark:text-white text-sm">{review.customer_name}</p>
+                          <p className="text-[10px] text-gray-500 uppercase tracking-widest">{new Date(review.created_at).toLocaleDateString('fr-FR')}</p>
+                        </td>
+                        <td className="p-4 text-center">
+                          <div className="flex justify-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} size={14} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-brand-blue' : 'text-gray-300 dark:text-gray-700'} />
+                            ))}
+                          </div>
+                        </td>
+                        <td className="p-4 text-sm text-gray-600 dark:text-gray-400 italic">"{review.comment}"</td>
+                        <td className="p-4 text-right">
+                          {userRole === 'admin' && (
+                            <button 
+                              onClick={() => handleDeleteReview(review.id)}
+                              className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                              title="Supprimer cet avis"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Cards List (< md) */}
+              <div className="block md:hidden divide-y divide-gray-100 dark:divide-zinc-800">
+                {isLoadingReviews ? (
+                  <div className="text-center py-10 text-gray-500 text-sm">Chargement des avis...</div>
+                ) : reviews.length === 0 ? (
+                  <div className="text-center py-10 text-gray-500 text-sm">Aucun avis à modérer.</div>
+                ) : reviews.map(review => (
+                  <div key={review.id} className="p-4 hover:bg-gray-55/30 dark:hover:bg-zinc-900/30 transition-colors space-y-2.5">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-bold text-xs text-brand-blue uppercase tracking-wider">{review.product_name}</h4>
+                        <p className="font-bold text-sm text-gray-800 dark:text-gray-150 mt-1">{review.customer_name}</p>
+                        <span className="text-[10px] text-gray-400 block mt-0.5">{new Date(review.created_at).toLocaleDateString('fr-FR')}</span>
+                      </div>
+                      {userRole === 'admin' && (
+                        <button 
+                          onClick={() => handleDeleteReview(review.id)}
+                          className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                          title="Supprimer cet avis"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+                    
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={12} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-brand-blue' : 'text-gray-300 dark:text-gray-700'} />
+                      ))}
+                    </div>
+
+                    <p className="text-xs text-gray-600 dark:text-gray-405 italic bg-gray-50/50 dark:bg-zinc-950/20 p-3 rounded-xl border border-gray-150 dark:border-zinc-800/40">
+                      "{review.comment}"
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -1604,102 +1842,186 @@ const Admin = () => {
             </div>
 
             {/* LISTE DES SLIDES */}
-            <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
-                <thead>
-                  <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
-                    <th className="p-4 font-medium whitespace-nowrap w-24">Vignette</th>
-                    <th className="p-4 font-medium whitespace-nowrap">Textes (Titre / Sous-titre)</th>
-                    <th className="p-4 font-medium whitespace-nowrap">Catégorie</th>
-                    <th className="p-4 font-medium whitespace-nowrap">Lien / Bouton</th>
-                    <th className="p-4 font-medium whitespace-nowrap text-center w-24">Ordre</th>
-                    <th className="p-4 font-medium whitespace-nowrap text-center w-28">Statut</th>
-                    <th className="p-4 font-medium whitespace-nowrap text-right w-24">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                  {isSlidesLoading ? (
-                    <tr><td colSpan="7" className="text-center py-10 text-gray-500">Chargement des diapositives...</td></tr>
-                  ) : slides.length === 0 ? (
-                    <tr><td colSpan="7" className="text-center py-10 text-gray-500">Aucune diapositive configurée. Cliquez sur "Ajouter une Diapo" pour commencer.</td></tr>
-                  ) : slides.map((slide, index) => (
-                    <tr key={slide.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
-                      <td className="p-4">
-                        <div className="w-20 h-12 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
-                          <img src={slide.image_url || slide.image} alt={slide.title} className="w-full h-full object-cover" />
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <p className="font-bold dark:text-white text-sm">{slide.title || 'Sans titre'}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-1">{slide.subtitle || 'Sans description'}</p>
-                      </td>
-                      <td className="p-4">
+            {/* LISTE DES SLIDES RESPONSIVE */}
+            <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+              {/* Desktop Table (>= md) */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[800px]">
+                  <thead>
+                    <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
+                      <th className="p-4 font-medium whitespace-nowrap w-24">Vignette</th>
+                      <th className="p-4 font-medium whitespace-nowrap">Textes (Titre / Sous-titre)</th>
+                      <th className="p-4 font-medium whitespace-nowrap">Catégorie</th>
+                      <th className="p-4 font-medium whitespace-nowrap">Lien / Bouton</th>
+                      <th className="p-4 font-medium whitespace-nowrap text-center w-24">Ordre</th>
+                      <th className="p-4 font-medium whitespace-nowrap text-center w-28">Statut</th>
+                      <th className="p-4 font-medium whitespace-nowrap text-right w-24">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                    {isSlidesLoading ? (
+                      <tr><td colSpan="7" className="text-center py-10 text-gray-500">Chargement des diapositives...</td></tr>
+                    ) : slides.length === 0 ? (
+                      <tr><td colSpan="7" className="text-center py-10 text-gray-500">Aucune diapositive configurée. Cliquez sur "Ajouter une Diapo" pour commencer.</td></tr>
+                    ) : slides.map((slide, index) => (
+                      <tr key={slide.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
+                        <td className="p-4">
+                          <div className="w-20 h-12 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+                            <img src={slide.image_url || slide.image} alt={slide.title} className="w-full h-full object-cover" />
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <p className="font-bold dark:text-white text-sm">{slide.title || 'Sans titre'}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-1">{slide.subtitle || 'Sans description'}</p>
+                        </td>
+                        <td className="p-4">
+                          {slide.category ? (
+                            <span className="px-2.5 py-0.5 bg-brand-blue/10 text-brand-blue text-[10px] font-bold rounded-full tracking-wider uppercase">
+                              {slide.category}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 text-xs">-</span>
+                          )}
+                        </td>
+                        <td className="p-4 text-sm">
+                          <p className="font-semibold text-gray-700 dark:text-gray-300">{slide.button_text || 'Découvrir'}</p>
+                          <p className="text-[10px] text-gray-400 font-mono truncate max-w-[150px]">{slide.link_url || slide.route || '/'}</p>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => handleMoveSlide(index, 'up')}
+                              disabled={index === 0}
+                              className="p-1 text-gray-400 hover:text-brand-blue disabled:opacity-30 rounded hover:bg-gray-100 dark:hover:bg-zinc-800"
+                              title="Monter"
+                            >
+                              <ChevronUp size={18} />
+                            </button>
+                            <span className="text-xs font-bold w-4 text-center dark:text-white">{index + 1}</span>
+                            <button
+                              onClick={() => handleMoveSlide(index, 'down')}
+                              disabled={index === slides.length - 1}
+                              className="p-1 text-gray-400 hover:text-brand-blue disabled:opacity-30 rounded hover:bg-gray-100 dark:hover:bg-zinc-800"
+                              title="Descendre"
+                            >
+                              <ChevronDown size={18} />
+                            </button>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex justify-center">
+                            <button
+                              onClick={() => handleToggleSlideActive(slide)}
+                              className={`w-12 h-6 rounded-full transition-colors relative ${slide.active ? 'bg-green-500' : 'bg-gray-200 dark:bg-zinc-800'}`}
+                              title={slide.active ? 'Désactiver le slide' : 'Activer le slide'}
+                            >
+                              <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${slide.active ? 'translate-x-6' : ''}`}></div>
+                            </button>
+                          </div>
+                        </td>
+                        <td className="p-4 text-right">
+                          <div className="flex justify-end gap-2">
+                            <button 
+                              onClick={() => handleOpenEditSlide(slide)}
+                              className="p-2 text-gray-400 hover:text-brand-blue hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-full transition-colors"
+                              title="Modifier"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteSlide(slide.id)}
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full transition-colors"
+                              title="Supprimer"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Cards List (< md) */}
+              <div className="block md:hidden divide-y divide-gray-100 dark:divide-zinc-800">
+                {isSlidesLoading ? (
+                  <div className="text-center py-10 text-gray-500 text-sm">Chargement des diapositives...</div>
+                ) : slides.length === 0 ? (
+                  <div className="text-center py-10 text-gray-500 text-sm">Aucune diapositive configurée.</div>
+                ) : slides.map((slide, index) => (
+                  <div key={slide.id} className="p-4 space-y-4 hover:bg-gray-50/50 dark:hover:bg-zinc-900/30 transition-colors">
+                    <div className="flex gap-3">
+                      <img src={slide.image_url || slide.image} alt={slide.title} className="w-20 h-12 object-cover rounded-lg border border-gray-205 dark:border-zinc-850 shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-sm dark:text-white truncate">{slide.title || 'Sans titre'}</h4>
+                        <p className="text-xs text-gray-400 truncate">{slide.subtitle || 'Sans description'}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <span className="text-[10px] text-gray-400 block mb-0.5">Catégorie :</span>
                         {slide.category ? (
-                          <span className="px-2.5 py-0.5 bg-brand-blue/10 text-brand-blue text-[10px] font-bold rounded-full tracking-wider uppercase">
+                          <span className="px-2 py-0.5 bg-brand-blue/10 text-brand-blue text-[9px] font-bold rounded uppercase">
                             {slide.category}
                           </span>
-                        ) : (
-                          <span className="text-gray-400 text-xs">-</span>
-                        )}
-                      </td>
-                      <td className="p-4 text-sm">
-                        <p className="font-semibold text-gray-700 dark:text-gray-300">{slide.button_text || 'Découvrir'}</p>
-                        <p className="text-[10px] text-gray-400 font-mono truncate max-w-[150px]">{slide.link_url || slide.route || '/'}</p>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center justify-center gap-1">
-                          <button
-                            onClick={() => handleMoveSlide(index, 'up')}
-                            disabled={index === 0}
-                            className="p-1 text-gray-400 hover:text-brand-blue disabled:opacity-30 rounded hover:bg-gray-100 dark:hover:bg-zinc-800"
-                            title="Monter"
-                          >
-                            <ChevronUp size={18} />
-                          </button>
-                          <span className="text-xs font-bold w-4 text-center dark:text-white">{index + 1}</span>
-                          <button
-                            onClick={() => handleMoveSlide(index, 'down')}
-                            disabled={index === slides.length - 1}
-                            className="p-1 text-gray-400 hover:text-brand-blue disabled:opacity-30 rounded hover:bg-gray-100 dark:hover:bg-zinc-800"
-                            title="Descendre"
-                          >
-                            <ChevronDown size={18} />
-                          </button>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex justify-center">
-                          <button
-                            onClick={() => handleToggleSlideActive(slide)}
-                            className={`w-12 h-6 rounded-full transition-colors relative ${slide.active ? 'bg-green-500' : 'bg-gray-200 dark:bg-zinc-800'}`}
-                            title={slide.active ? 'Désactiver le slide' : 'Activer le slide'}
-                          >
-                            <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${slide.active ? 'translate-x-6' : ''}`}></div>
-                          </button>
-                        </div>
-                      </td>
-                      <td className="p-4 text-right">
-                        <div className="flex justify-end gap-2">
+                        ) : '-'}
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-gray-400 block mb-0.5">Bouton / Lien :</span>
+                        <span className="font-bold">{slide.button_text || 'Découvrir'}</span>
+                        <span className="text-[9px] text-gray-400 block truncate max-w-[120px] font-mono mt-0.5">{slide.link_url || '/'}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-zinc-800/80">
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => handleMoveSlide(index, 'up')}
+                          disabled={index === 0}
+                          className="p-1.5 text-gray-400 hover:text-brand-blue disabled:opacity-30 rounded hover:bg-gray-100 dark:hover:bg-zinc-800"
+                        >
+                          <ChevronUp size={16} />
+                        </button>
+                        <span className="text-xs font-bold text-gray-700 dark:text-white w-4 text-center">{index + 1}</span>
+                        <button
+                          onClick={() => handleMoveSlide(index, 'down')}
+                          disabled={index === slides.length - 1}
+                          className="p-1.5 text-gray-400 hover:text-brand-blue disabled:opacity-30 rounded hover:bg-gray-100 dark:hover:bg-zinc-800"
+                        >
+                          <ChevronDown size={16} />
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        {/* Switch */}
+                        <button
+                          onClick={() => handleToggleSlideActive(slide)}
+                          className={`w-10 h-5.5 rounded-full transition-colors relative ${slide.active ? 'bg-green-500' : 'bg-gray-200 dark:bg-zinc-850'}`}
+                        >
+                          <div className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-white rounded-full transition-transform ${slide.active ? 'translate-x-4.5' : ''}`}></div>
+                        </button>
+                        
+                        <div className="flex gap-1">
                           <button 
                             onClick={() => handleOpenEditSlide(slide)}
-                            className="p-2 text-gray-400 hover:text-brand-blue hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-full transition-colors"
-                            title="Modifier"
+                            className="p-1.5 text-gray-400 hover:text-brand-blue"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
                             onClick={() => handleDeleteSlide(slide.id)}
-                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full transition-colors"
-                            title="Supprimer"
+                            className="p-1.5 text-gray-400 hover:text-red-500"
                           >
                             <Trash2 size={16} />
                           </button>
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -1711,32 +2033,40 @@ const Admin = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => { setIsModalOpen(false); setEditingId(null); }}>
           <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-brand-gray-dark w-full max-w-2xl max-h-[95vh] rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
-            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0">
+            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0 flex items-center justify-between">
               <h3 className="text-lg md:text-xl font-bold dark:text-white tracking-widest uppercase">{editingId ? 'Modifier le Produit' : 'Nouveau Produit Exclusif'}</h3>
+              <button 
+                type="button" 
+                onClick={() => { setIsModalOpen(false); setEditingId(null); }}
+                className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors"
+                title="Fermer"
+              >
+                <X size={20} />
+              </button>
             </div>
             <div className="p-4 sm:p-6 overflow-y-auto flex-1">
             <form id="productForm" onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom du Produit</label>
-                <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: iPhone 16 Pro Max" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: iPhone 16 Pro Max" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Marque</label>
-                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Apple" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Apple" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Prix Actuel</label>
-                  <input required value={formData.base_price} onChange={e => setFormData({...formData, base_price: e.target.value})} type="number" step="0.01" placeholder="0.00" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                  <input required value={formData.base_price} onChange={e => setFormData({...formData, base_price: e.target.value})} type="number" step="0.01" placeholder="0.00" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Ancien Prix</label>
-                  <input value={formData.compare_at_price} onChange={e => setFormData({...formData, compare_at_price: e.target.value})} type="number" step="0.01" placeholder="Ex: 120000" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                  <input value={formData.compare_at_price} onChange={e => setFormData({...formData, compare_at_price: e.target.value})} type="number" step="0.01" placeholder="Ex: 120000" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Catégorie</label>
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subcategory: ''})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors">
+                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subcategory: ''})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base">
                   <option value="glasses">Lunettes de Soleil & Vue</option>
                   <option value="perfume">Parfumerie de Niche</option>
                   <option value="watches">Montres de Prestige</option>
@@ -1751,7 +2081,7 @@ const Admin = () => {
                   <select 
                     value={formData.subcategory || ''} 
                     onChange={e => setFormData({...formData, subcategory: e.target.value})} 
-                    className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors"
+                    className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base"
                   >
                     <option value="">Aucune sous-catégorie</option>
                     {formData.category === 'glasses' ? (
@@ -1771,7 +2101,7 @@ const Admin = () => {
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Images & Vidéos (Glissez ou Cliquez)</label>
                 <div className="flex flex-col gap-3">
-                    <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-brand-blue file:text-white hover:file:bg-brand-blue-dark cursor-pointer" />
+                    <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand-blue file:text-white hover:file:bg-brand-blue-dark cursor-pointer" />
                     
                     {/* PREVIEW DES MÉDIAS */}
                     {(formData.existing_media.length > 0 || selectedFiles.length > 0) && (
@@ -1854,27 +2184,37 @@ const Admin = () => {
       {isEmployeeModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => setIsEmployeeModalOpen(false)}>
           <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-brand-gray-dark w-full max-w-md max-h-[95vh] rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
-            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0 flex items-center gap-3">
-              <Shield className="text-brand-blue" size={24} />
-              <h3 className="text-lg md:text-xl font-bold dark:text-white tracking-widest uppercase">Nouvel Accès Collaborateur</h3>
+            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Shield className="text-brand-blue" size={24} />
+                <h3 className="text-lg md:text-xl font-bold dark:text-white tracking-widest uppercase">Nouvel Accès Collaborateur</h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setIsEmployeeModalOpen(false)}
+                className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors"
+                title="Fermer"
+              >
+                <X size={20} />
+              </button>
             </div>
             <div className="p-4 sm:p-6 overflow-y-auto flex-1">
             <form id="employeeForm" onSubmit={handleEmployeeSubmit} className="space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom Complet</label>
-                <input required value={employeeForm.full_name} onChange={e => setEmployeeForm({...employeeForm, full_name: e.target.value})} type="text" placeholder="Ex: Jean Dupont" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                <input required value={employeeForm.full_name} onChange={e => setEmployeeForm({...employeeForm, full_name: e.target.value})} type="text" placeholder="Ex: Jean Dupont" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Email Professionnel</label>
-                <input required value={employeeForm.email} onChange={e => setEmployeeForm({...employeeForm, email: e.target.value})} type="email" placeholder="jean@alkarimvision.com" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                <input required value={employeeForm.email} onChange={e => setEmployeeForm({...employeeForm, email: e.target.value})} type="email" placeholder="jean@alkarimvision.com" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Mot de passe temporaire</label>
-                <input required value={employeeForm.password} onChange={e => setEmployeeForm({...employeeForm, password: e.target.value})} type="password" placeholder="••••••••" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                <input required value={employeeForm.password} onChange={e => setEmployeeForm({...employeeForm, password: e.target.value})} type="password" placeholder="••••••••" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Niveau d'accès (Rôle)</label>
-                <select value={employeeForm.role} onChange={e => setEmployeeForm({...employeeForm, role: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors cursor-pointer text-sm md:text-base">
+                <select value={employeeForm.role} onChange={e => setEmployeeForm({...employeeForm, role: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors cursor-pointer text-sm md:text-base">
                   <option value="moderator">Modérateur (Peut gérer les produits et commandes)</option>
                   <option value="admin">Administrateur (Accès total)</option>
                 </select>
@@ -1883,7 +2223,7 @@ const Admin = () => {
             </div>
             <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-zinc-900 flex justify-end gap-3">
               <button type="button" disabled={isUploading} onClick={() => setIsEmployeeModalOpen(false)} className="px-4 sm:px-6 py-3 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors uppercase tracking-wider disabled:opacity-50">Annuler</button>
-              <button form="employeeForm" type="submit" disabled={isUploading} className="px-6 sm:px-8 py-3 text-sm bg-brand-blue text-white font-bold rounded-full shadow-md hover:bg-brand-blue-dark transition-colors uppercase tracking-wider disabled:opacity-50">CRÉER LE COMPTE</button>
+              <button form="employeeForm" type="submit" disabled={isUploading} className="px-6 sm:px-8 py-3 text-sm bg-brand-blue text-white font-bold rounded-xl shadow-md hover:bg-brand-blue-dark transition-colors uppercase tracking-wider disabled:opacity-50">CRÉER LE COMPTE</button>
             </div>
           </div>
         </div>
@@ -1893,33 +2233,41 @@ const Admin = () => {
       {isSlideModalOpen && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => setIsSlideModalOpen(false)}>
           <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-brand-gray-dark w-full max-w-2xl max-h-[95vh] rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
-            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0">
+            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0 flex items-center justify-between">
               <h3 className="text-lg md:text-xl font-bold dark:text-white tracking-widest uppercase">{slideForm.id ? 'Modifier la Diapositive' : 'Nouvelle Diapositive Accueil'}</h3>
+              <button 
+                type="button" 
+                onClick={() => setIsSlideModalOpen(false)}
+                className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors"
+                title="Fermer"
+              >
+                <X size={20} />
+              </button>
             </div>
             <div className="p-4 sm:p-6 overflow-y-auto flex-1">
               <form id="slideForm" onSubmit={handleSlideSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Titre du Slide</label>
-                    <input required value={slideForm.title} onChange={e => setSlideForm({...slideForm, title: e.target.value})} type="text" placeholder="Ex: Clarté & Style Unique" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                    <input required value={slideForm.title} onChange={e => setSlideForm({...slideForm, title: e.target.value})} type="text" placeholder="Ex: Clarté & Style Unique" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Catégorie / Tag (Mini-entête)</label>
-                    <input value={slideForm.category} onChange={e => setSlideForm({...slideForm, category: e.target.value})} type="text" placeholder="Ex: LUNETTES" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                    <input value={slideForm.category} onChange={e => setSlideForm({...slideForm, category: e.target.value})} type="text" placeholder="Ex: LUNETTES" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Sous-titre / Description</label>
-                  <textarea value={slideForm.subtitle} onChange={e => setSlideForm({...slideForm, subtitle: e.target.value})} placeholder="Ex: Découvrez notre collection de lunettes de vue et de soleil." rows="2" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm resize-none" />
+                  <textarea value={slideForm.subtitle} onChange={e => setSlideForm({...slideForm, subtitle: e.target.value})} placeholder="Ex: Découvrez notre collection de lunettes de vue et de soleil." rows="2" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm resize-none" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Texte du Bouton</label>
-                    <input value={slideForm.button_text} onChange={e => setSlideForm({...slideForm, button_text: e.target.value})} type="text" placeholder="Ex: Découvrir la collection" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                    <input value={slideForm.button_text} onChange={e => setSlideForm({...slideForm, button_text: e.target.value})} type="text" placeholder="Ex: Découvrir la collection" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Lien de Redirection (Route/URL)</label>
-                    <select value={slideForm.link_url} onChange={e => setSlideForm({...slideForm, link_url: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer">
+                    <select value={slideForm.link_url} onChange={e => setSlideForm({...slideForm, link_url: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer">
                       <option value="">Sélectionner une destination...</option>
                       <option value="/category/glasses">Lunettes (/category/glasses)</option>
                       <option value="/category/perfume">Parfums (/category/perfume)</option>
@@ -1991,8 +2339,16 @@ const Admin = () => {
       {productToDelete && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => setProductToDelete(null)}>
           <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-brand-gray-dark w-full max-w-md rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-red-500/30 cursor-default">
-            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-red-50 dark:bg-red-950/20 shrink-0">
+            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-red-50 dark:bg-red-950/20 shrink-0 flex items-center justify-between">
               <h3 className="text-lg md:text-xl font-bold text-red-600 dark:text-red-500 tracking-widest uppercase">Confirmation de suppression</h3>
+              <button 
+                type="button" 
+                onClick={() => setProductToDelete(null)}
+                className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors"
+                title="Fermer"
+              >
+                <X size={20} />
+              </button>
             </div>
             <div className="p-4 sm:p-6 space-y-5 overflow-y-auto">
               <p className="text-gray-700 dark:text-gray-300">
@@ -2001,7 +2357,7 @@ const Admin = () => {
             </div>
             <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-zinc-900 flex justify-end gap-3">
               <button type="button" onClick={() => setProductToDelete(null)} className="px-4 sm:px-6 py-3 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors uppercase tracking-wider">Annuler</button>
-              <button type="button" onClick={handleDelete} className="px-6 sm:px-8 py-3 text-sm bg-red-500 text-white font-bold rounded-full shadow-md hover:bg-red-600 transition-colors uppercase tracking-wider flex items-center gap-2">
+              <button type="button" onClick={handleDelete} className="px-6 sm:px-8 py-3 text-sm bg-red-500 text-white font-bold rounded-xl shadow-md hover:bg-red-600 transition-colors uppercase tracking-wider flex items-center gap-2">
                   <Trash2 size={16} />
                   SUPPRIMER
                 </button>
