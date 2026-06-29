@@ -157,7 +157,7 @@ const Hero = () => {
                 initial={{ y: 15, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="pt-1 sm:pt-2"
+                className="pt-1 sm:pt-2 space-y-3 sm:space-y-4"
               >
                 <button
                   onClick={() => navigate(slideRoute)}
@@ -166,6 +166,24 @@ const Hero = () => {
                   {slideBtnText}
                   <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </button>
+
+                {/* Trust Badges */}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                  <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                    <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-[10px]">✓</span>
+                    Livraison Dakar 24h
+                  </div>
+                  <span className="w-px h-3 bg-gray-300 dark:bg-zinc-600 hidden sm:block" />
+                  <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                    <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-amber-500/15 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 text-[10px]">★</span>
+                    +500 clients satisfaits
+                  </div>
+                  <span className="w-px h-3 bg-gray-300 dark:bg-zinc-600 hidden sm:block" />
+                  <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                    <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-brand-blue/10 dark:bg-brand-blue/20 flex items-center justify-center text-brand-blue text-[10px]">🔒</span>
+                    Paiement Wave sécurisé
+                  </div>
+                </div>
               </motion.div>
             )}
           </div>
