@@ -489,26 +489,30 @@ const ProductPage = () => {
 
           {/* Sélecteur de variantes */}
           {currentProduct.variants && currentProduct.variants.length > 0 && (
-            <div className="my-4">
-              <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                {currentProduct.variants.length > 1 ? 'Choisissez une option' : 'Option disponible'}
-              </label>
-              <div className="flex flex-wrap gap-3">
-                {currentProduct.variants.map(variant => (
-                  <button
-                    key={variant.sku}
-                    onClick={() => setSelectedVariant(variant)}
-                    disabled={variant.stock_quantity === 0}
-                    className={`px-4 py-2 text-xs font-bold border rounded-lg uppercase tracking-wider transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
-                      selectedVariant?.sku === variant.sku
-                        ? 'bg-brand-blue text-white border-brand-blue shadow-sm'
-                        : 'bg-white dark:bg-brand-card-dark border-gray-200 dark:border-zinc-800 hover:border-brand-blue dark:text-white'
-                    }`}
-                  >
-                    {variant.attribute_value}
-                    {variant.stock_quantity === 0 && <span className="text-xs ml-2">(Rupture)</span>}
-                  </button>
-                ))}
+            <div className="my-6 py-4 border-t border-b border-gray-100 dark:border-zinc-800/80">
+              <span className="block text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3">
+                Option : <span className="text-brand-blue normal-case font-black ml-1">{selectedVariant?.attribute_value || 'Aucune'}</span>
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {currentProduct.variants.map(variant => {
+                  const isSelected = selectedVariant?.sku === variant.sku;
+                  const isOutOfStock = variant.stock_quantity === 0;
+                  return (
+                    <button
+                      key={variant.sku}
+                      onClick={() => setSelectedVariant(variant)}
+                      disabled={isOutOfStock}
+                      className={`px-3.5 py-2 text-xs font-bold rounded-lg uppercase tracking-wide border transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 ${
+                        isSelected
+                          ? 'bg-brand-blue text-white border-brand-blue shadow-sm'
+                          : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-750 dark:text-gray-300 hover:border-brand-blue/50'
+                      }`}
+                    >
+                      {variant.attribute_value}
+                      {isOutOfStock && <span className="text-[10px] opacity-75 font-normal ml-1.5">(Rupture)</span>}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
