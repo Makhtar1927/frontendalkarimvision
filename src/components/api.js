@@ -168,6 +168,53 @@ const INITIAL_SETTINGS = {
   tiktok_link: "https://tiktok.com/@alkarimvision"
 };
 
+const INITIAL_SLIDES = [
+  {
+    id: 'slide-1',
+    title: "Clarté & Style Unique",
+    subtitle: "Découvrez notre collection de lunettes de vue et de soleil.",
+    category: "LUNETTES",
+    image_url: "https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=1200&auto=format&fit=crop",
+    link_url: '/category/glasses',
+    button_text: "Découvrir la collection",
+    position: 0,
+    active: true
+  },
+  {
+    id: 'slide-2',
+    title: "L'Essence du Luxe",
+    subtitle: "Parfums rares et fragrances envoûtantes pour Elle & Lui.",
+    category: "PARFUMERIE",
+    image_url: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1200&auto=format&fit=crop",
+    link_url: '/category/perfume',
+    button_text: "Découvrir la collection",
+    position: 1,
+    active: true
+  },
+  {
+    id: 'slide-3',
+    title: "Horlogerie de Prestige",
+    subtitle: "Gardez le contrôle du temps avec nos montres d'exception.",
+    category: "MONTRES",
+    image_url: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1200&auto=format&fit=crop",
+    link_url: '/category/watches',
+    button_text: "Découvrir la collection",
+    position: 2,
+    active: true
+  },
+  {
+    id: 'slide-4',
+    title: "Sélection Exclusive",
+    subtitle: "Parcourez nos nouveautés, gadgets et articles divers.",
+    category: "DIVERS",
+    image_url: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1200&auto=format&fit=crop",
+    link_url: '/category/other',
+    button_text: "Découvrir la collection",
+    position: 3,
+    active: true
+  }
+];
+
 // LocalStorage helpers to simulate database persistence
 const getMockData = (key, initial) => {
   if (typeof window === 'undefined') return initial;
@@ -200,6 +247,7 @@ const handleMockRequest = async (endpoint, options) => {
   const products = getMockData('mock_products', INITIAL_PRODUCTS);
   const orders = getMockData('mock_orders', INITIAL_ORDERS);
   const settings = getMockData('mock_settings', INITIAL_SETTINGS);
+  const slides = getMockData('mock_slides', INITIAL_SLIDES);
 
   const getCleanJson = (data) => {
     return {
@@ -443,6 +491,119 @@ const handleMockRequest = async (endpoint, options) => {
     const updatedProducts = products.filter(p => p.id !== id);
     saveMockData('mock_products', updatedProducts);
     return getCleanJson({ message: "Produit supprimé avec succès" });
+  }
+
+  // 12. GET /slides
+  if (endpoint === '/slides' && (options.method === 'GET' || !options.method)) {
+    const activeSlides = slides.filter(s => s.active).sort((a, b) => a.position - b.position);
+    return getCleanJson(activeSlides);
+  }
+
+  // 13. GET /slides/all
+  if (endpoint === '/slides/all' && (options.method === 'GET' || !options.method)) {
+    return getCleanJson(slides.sort((a, b) => a.position - b.position));
+  }
+
+  // 14. POST /slides
+  if (endpoint === '/slides' && options.method === 'POST') {
+    const formData = options.body;
+    const title = formData.get('title');
+    const subtitle = formData.get('subtitle');
+    const category = formData.get('category');
+    const button_text = formData.get('button_text');
+    const link_url = formData.get('link_url');
+    const active = formData.get('active') === 'true';
+    const imageFile = formData.get('image');
+    
+    let image_url = 'https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=1200&auto=format&fit=crop';
+    if (imageFile && imageFile.name) {
+      image_url = URL.createObjectURL(imageFile);
+    } else if (formData.get('image_url')) {
+      image_url = formData.get('image_url');
+    }
+
+    const newSlide = {
+      id: 'mock-slide-' + Date.now().toString(),
+      title,
+      subtitle,
+      category,
+      button_text,
+      link_url,
+      active,
+      image_url,
+      position: slides.length
+    };
+
+    slides.push(newSlide);
+    saveMockData('mock_slides', slides);
+    return getCleanJson(newSlide);
+  }
+
+  // 15. PUT /slides/:id
+  if (endpoint.startsWith('/slides/') && options.method === 'PUT') {
+    const id = endpoint.split('/')[2];
+    const formData = options.body;
+    
+    const title = formData.get('title');
+    const subtitle = formData.get('subtitle');
+    const category = formData.get('category');
+    const button_text = formData.get('button_text');
+    const link_url = formData.get('link_url');
+    const active = formData.get('active') === 'true';
+    const position = formData.get('position');
+    const imageFile = formData.get('image');
+    const existingImageUrl = formData.get('image_url');
+
+    let image_url = null;
+    if (imageFile && imageFile.name) {
+      image_url = URL.createObjectURL(imageFile);
+    } else if (existingImageUrl) {
+      image_url = existingImageUrl;
+    }
+
+    const updatedSlides = slides.map(s => {
+      if (String(s.id) === String(id)) {
+        const u = {
+          ...s,
+          title: title !== null ? title : s.title,
+          subtitle: subtitle !== null ? subtitle : s.subtitle,
+          category: category !== null ? category : s.category,
+          button_text: button_text !== null ? button_text : s.button_text,
+          link_url: link_url !== null ? link_url : s.link_url,
+          active: active !== undefined ? active : s.active,
+        };
+        if (position !== null && position !== undefined) u.position = parseInt(position);
+        if (image_url) u.image_url = image_url;
+        return u;
+      }
+      return s;
+    });
+
+    saveMockData('mock_slides', updatedSlides);
+    const updatedSlide = updatedSlides.find(s => String(s.id) === String(id));
+    return getCleanJson(updatedSlide);
+  }
+
+  // 16. DELETE /slides/:id
+  if (endpoint.startsWith('/slides/') && options.method === 'DELETE') {
+    const id = endpoint.split('/')[2];
+    const updatedSlides = slides.filter(s => String(s.id) !== String(id));
+    saveMockData('mock_slides', updatedSlides);
+    return getCleanJson({ message: "Slide supprimé avec succès" });
+  }
+
+  // 17. PATCH /slides/positions
+  if (endpoint === '/slides/positions' && options.method === 'PATCH') {
+    const body = JSON.parse(options.body);
+    const updatedSlides = slides.map(s => {
+      const match = body.positions.find(p => String(p.id) === String(s.id));
+      if (match) {
+        return { ...s, position: parseInt(match.position) };
+      }
+      return s;
+    });
+    saveMockData('mock_slides', updatedSlides);
+    return getCleanJson({ message: "Positions triées avec succès" });
   }
 
   return {

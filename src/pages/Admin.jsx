@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '../store/useProductStore';
 import { useAuthStore } from '../store/useAuthStore';
-import { PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save } from 'lucide-react';
+import { PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { apiFetch } from '../components/api';
 import SEO from '../components/SEO';
@@ -14,6 +14,7 @@ const ADMIN_TABS = [
   { id: 'reviews', label: 'Avis Clients', icon: MessageSquare },
   { id: 'team', label: 'Équipe', icon: Users, adminOnly: true },
   { id: 'audit', label: 'Journal', icon: Activity, adminOnly: true },
+  { id: 'slides', label: 'Carrousel Accueil', icon: Image, adminOnly: true },
   { id: 'settings', label: 'Paramètres', icon: Settings }
 ];
 
@@ -86,6 +87,181 @@ const Admin = () => {
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // --- ÉTATS POUR LE CARROUSEL ACCUEIL (SLIDES) ---
+  const [slides, setSlides] = useState([]);
+  const [isSlidesLoading, setIsSlidesLoading] = useState(false);
+  const [isSlideModalOpen, setIsSlideModalOpen] = useState(false);
+  const [slideForm, setSlideForm] = useState({
+    id: null, title: '', subtitle: '', category: '', button_text: 'Découvrir la collection', link_url: '', active: true, image_url: ''
+  });
+  const [selectedSlideFile, setSelectedSlideFile] = useState(null);
+  const [isSavingSlide, setIsSavingSlide] = useState(false);
+
+  const fetchAdminSlides = async () => {
+    setIsSlidesLoading(true);
+    try {
+      const res = await apiFetch('/slides/all');
+      if (res.ok) {
+        setSlides(await res.json());
+      }
+    } catch (err) {
+      console.error("Erreur récupération slides admin:", err);
+    } finally {
+      setIsSlidesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'slides') {
+      fetchAdminSlides();
+    }
+  }, [activeTab]);
+
+  const handleOpenAddSlide = () => {
+    setSlideForm({
+      id: null, title: '', subtitle: '', category: '', button_text: 'Découvrir la collection', link_url: '', active: true, image_url: ''
+    });
+    setSelectedSlideFile(null);
+    setIsSlideModalOpen(true);
+  };
+
+  const handleOpenEditSlide = (slide) => {
+    setSlideForm({
+      id: slide.id,
+      title: slide.title || '',
+      subtitle: slide.subtitle || '',
+      category: slide.category || '',
+      button_text: slide.button_text || 'Découvrir la collection',
+      link_url: slide.link_url || '',
+      active: slide.active,
+      image_url: slide.image_url || ''
+    });
+    setSelectedSlideFile(null);
+    setIsSlideModalOpen(true);
+  };
+
+  const handleSlideSubmit = async (e) => {
+    e.preventDefault();
+    setIsSavingSlide(true);
+
+    const data = new FormData();
+    data.append('title', slideForm.title);
+    data.append('subtitle', slideForm.subtitle);
+    data.append('category', slideForm.category);
+    data.append('button_text', slideForm.button_text);
+    data.append('link_url', slideForm.link_url);
+    data.append('active', String(slideForm.active));
+
+    if (selectedSlideFile) {
+      data.append('image', selectedSlideFile);
+    } else if (slideForm.image_url) {
+      data.append('image_url', slideForm.image_url);
+    }
+
+    try {
+      let res;
+      if (slideForm.id) {
+        res = await apiFetch(`/slides/${slideForm.id}`, {
+          method: 'PUT',
+          body: data
+        });
+      } else {
+        res = await apiFetch('/slides', {
+          method: 'POST',
+          body: data
+        });
+      }
+
+      if (res.ok) {
+        showNotification(slideForm.id ? "Slide modifié avec succès !" : "Slide ajouté avec succès !");
+        setIsSlideModalOpen(false);
+        fetchAdminSlides();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Une erreur est survenue.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur de communication avec le serveur.");
+    } finally {
+      setIsSavingSlide(false);
+    }
+  };
+
+  const handleDeleteSlide = async (id) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer ce slide ? Cette action supprimera définitivement l'image de Cloudinary.")) return;
+    try {
+      const res = await apiFetch(`/slides/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        showNotification("Slide supprimé !");
+        fetchAdminSlides();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Erreur de suppression.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleMoveSlide = async (index, direction) => {
+    const newSlides = [...slides];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newSlides.length) return;
+
+    const temp = newSlides[index];
+    newSlides[index] = newSlides[targetIndex];
+    newSlides[targetIndex] = temp;
+
+    const updatedPositions = newSlides.map((s, idx) => ({
+      id: s.id,
+      position: idx
+    }));
+
+    setSlides(newSlides);
+
+    try {
+      const res = await apiFetch('/slides/positions', {
+        method: 'PATCH',
+        body: JSON.stringify({ positions: updatedPositions })
+      });
+      if (!res.ok) {
+        fetchAdminSlides();
+        showNotification("Erreur lors du réordonnancement.");
+      } else {
+        showNotification("Ordre mis à jour !");
+      }
+    } catch (err) {
+      console.error(err);
+      fetchAdminSlides();
+    }
+  };
+
+  const handleToggleSlideActive = async (slide) => {
+    try {
+      const data = new FormData();
+      data.append('active', String(!slide.active));
+
+      setSlides(slides.map(s => s.id === slide.id ? { ...s, active: !s.active } : s));
+
+      const res = await apiFetch(`/slides/${slide.id}`, {
+        method: 'PUT',
+        body: data
+      });
+      if (!res.ok) {
+        fetchAdminSlides();
+        showNotification("Erreur lors de la modification du statut.");
+      } else {
+        showNotification(!slide.active ? "Slide activé !" : "Slide désactivé !");
+      }
+    } catch (err) {
+      console.error(err);
+      fetchAdminSlides();
+    }
+  };
 
   // Récupération de l'utilisateur depuis le state du store (Référence stable)
   const user = useAuthStore(state => state.user);
@@ -1410,6 +1586,124 @@ const Admin = () => {
           </div>
         )}
 
+        {/* SECTION : CARROUSEL ACCUEIL */}
+        {activeTab === 'slides' && userRole === 'admin' && (
+          <div className="animate-in fade-in duration-300 space-y-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
+              <div>
+                <h1 className="text-3xl font-bold dark:text-white">Carrousel de la Page d'Accueil</h1>
+                <p className="text-gray-500 mt-2">Gérez les visuels, titres et redirections affichés à l'ouverture du site.</p>
+              </div>
+              <button 
+                onClick={handleOpenAddSlide}
+                className="w-full sm:w-auto bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-full font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-blue/20"
+              >
+                <Plus size={20} />
+                Ajouter une Diapo
+              </button>
+            </div>
+
+            {/* LISTE DES SLIDES */}
+            <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[800px]">
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
+                    <th className="p-4 font-medium whitespace-nowrap w-24">Vignette</th>
+                    <th className="p-4 font-medium whitespace-nowrap">Textes (Titre / Sous-titre)</th>
+                    <th className="p-4 font-medium whitespace-nowrap">Catégorie</th>
+                    <th className="p-4 font-medium whitespace-nowrap">Lien / Bouton</th>
+                    <th className="p-4 font-medium whitespace-nowrap text-center w-24">Ordre</th>
+                    <th className="p-4 font-medium whitespace-nowrap text-center w-28">Statut</th>
+                    <th className="p-4 font-medium whitespace-nowrap text-right w-24">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                  {isSlidesLoading ? (
+                    <tr><td colSpan="7" className="text-center py-10 text-gray-500">Chargement des diapositives...</td></tr>
+                  ) : slides.length === 0 ? (
+                    <tr><td colSpan="7" className="text-center py-10 text-gray-500">Aucune diapositive configurée. Cliquez sur "Ajouter une Diapo" pour commencer.</td></tr>
+                  ) : slides.map((slide, index) => (
+                    <tr key={slide.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
+                      <td className="p-4">
+                        <div className="w-20 h-12 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+                          <img src={slide.image_url || slide.image} alt={slide.title} className="w-full h-full object-cover" />
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <p className="font-bold dark:text-white text-sm">{slide.title || 'Sans titre'}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-1">{slide.subtitle || 'Sans description'}</p>
+                      </td>
+                      <td className="p-4">
+                        {slide.category ? (
+                          <span className="px-2.5 py-0.5 bg-brand-blue/10 text-brand-blue text-[10px] font-bold rounded-full tracking-wider uppercase">
+                            {slide.category}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs">-</span>
+                        )}
+                      </td>
+                      <td className="p-4 text-sm">
+                        <p className="font-semibold text-gray-700 dark:text-gray-300">{slide.button_text || 'Découvrir'}</p>
+                        <p className="text-[10px] text-gray-400 font-mono truncate max-w-[150px]">{slide.link_url || slide.route || '/'}</p>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            onClick={() => handleMoveSlide(index, 'up')}
+                            disabled={index === 0}
+                            className="p-1 text-gray-400 hover:text-brand-blue disabled:opacity-30 rounded hover:bg-gray-100 dark:hover:bg-zinc-800"
+                            title="Monter"
+                          >
+                            <ChevronUp size={18} />
+                          </button>
+                          <span className="text-xs font-bold w-4 text-center dark:text-white">{index + 1}</span>
+                          <button
+                            onClick={() => handleMoveSlide(index, 'down')}
+                            disabled={index === slides.length - 1}
+                            className="p-1 text-gray-400 hover:text-brand-blue disabled:opacity-30 rounded hover:bg-gray-100 dark:hover:bg-zinc-800"
+                            title="Descendre"
+                          >
+                            <ChevronDown size={18} />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => handleToggleSlideActive(slide)}
+                            className={`w-12 h-6 rounded-full transition-colors relative ${slide.active ? 'bg-green-500' : 'bg-gray-200 dark:bg-zinc-800'}`}
+                            title={slide.active ? 'Désactiver le slide' : 'Activer le slide'}
+                          >
+                            <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${slide.active ? 'translate-x-6' : ''}`}></div>
+                          </button>
+                        </div>
+                      </td>
+                      <td className="p-4 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button 
+                            onClick={() => handleOpenEditSlide(slide)}
+                            className="p-2 text-gray-400 hover:text-brand-blue hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-full transition-colors"
+                            title="Modifier"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteSlide(slide.id)}
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full transition-colors"
+                            title="Supprimer"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         </div>
       </main>
 
@@ -1590,6 +1884,104 @@ const Admin = () => {
             <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-zinc-900 flex justify-end gap-3">
               <button type="button" disabled={isUploading} onClick={() => setIsEmployeeModalOpen(false)} className="px-4 sm:px-6 py-3 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors uppercase tracking-wider disabled:opacity-50">Annuler</button>
               <button form="employeeForm" type="submit" disabled={isUploading} className="px-6 sm:px-8 py-3 text-sm bg-brand-blue text-white font-bold rounded-full shadow-md hover:bg-brand-blue-dark transition-colors uppercase tracking-wider disabled:opacity-50">CRÉER LE COMPTE</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL AJOUT / MODIFICATION SLIDE */}
+      {isSlideModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => setIsSlideModalOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-brand-gray-dark w-full max-w-2xl max-h-[95vh] rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
+            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0">
+              <h3 className="text-lg md:text-xl font-bold dark:text-white tracking-widest uppercase">{slideForm.id ? 'Modifier la Diapositive' : 'Nouvelle Diapositive Accueil'}</h3>
+            </div>
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+              <form id="slideForm" onSubmit={handleSlideSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Titre du Slide</label>
+                    <input required value={slideForm.title} onChange={e => setSlideForm({...slideForm, title: e.target.value})} type="text" placeholder="Ex: Clarté & Style Unique" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Catégorie / Tag (Mini-entête)</label>
+                    <input value={slideForm.category} onChange={e => setSlideForm({...slideForm, category: e.target.value})} type="text" placeholder="Ex: LUNETTES" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Sous-titre / Description</label>
+                  <textarea value={slideForm.subtitle} onChange={e => setSlideForm({...slideForm, subtitle: e.target.value})} placeholder="Ex: Découvrez notre collection de lunettes de vue et de soleil." rows="2" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm resize-none" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Texte du Bouton</label>
+                    <input value={slideForm.button_text} onChange={e => setSlideForm({...slideForm, button_text: e.target.value})} type="text" placeholder="Ex: Découvrir la collection" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Lien de Redirection (Route/URL)</label>
+                    <select value={slideForm.link_url} onChange={e => setSlideForm({...slideForm, link_url: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer">
+                      <option value="">Sélectionner une destination...</option>
+                      <option value="/category/glasses">Lunettes (/category/glasses)</option>
+                      <option value="/category/perfume">Parfums (/category/perfume)</option>
+                      <option value="/category/watches">Montres (/category/watches)</option>
+                      <option value="/category/other">Divers (/category/other)</option>
+                      <option value="/shop">Boutique (/shop)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Image du Carrousel</label>
+                  <div className="flex flex-col gap-3">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={e => {
+                        if (e.target.files && e.target.files[0]) {
+                          setSelectedSlideFile(e.target.files[0]);
+                        }
+                      }}
+                      required={!slideForm.id && !slideForm.image_url}
+                      className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-brand-blue file:text-white hover:file:bg-brand-blue-dark cursor-pointer text-sm" 
+                    />
+                    
+                    {/* Visualisation de l'image sélectionnée ou existante */}
+                    {(selectedSlideFile || slideForm.image_url) && (
+                      <div className="relative w-full h-40 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800">
+                        <img 
+                          src={selectedSlideFile ? URL.createObjectURL(selectedSlideFile) : slideForm.image_url} 
+                          alt="Prévisualisation" 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Diapositive Active</span>
+                  <button 
+                    type="button"
+                    onClick={() => setSlideForm({...slideForm, active: !slideForm.active})}
+                    className={`w-12 h-6 rounded-full transition-colors relative ${slideForm.active ? 'bg-green-500' : 'bg-gray-200 dark:bg-zinc-800'}`}
+                  >
+                    <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${slideForm.active ? 'translate-x-6' : ''}`}></div>
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-zinc-900 flex justify-end gap-3">
+              <button type="button" disabled={isSavingSlide} onClick={() => setIsSlideModalOpen(false)} className="px-4 sm:px-6 py-3 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors uppercase tracking-wider disabled:opacity-50">Annuler</button>
+              <button form="slideForm" type="submit" disabled={isSavingSlide} className="px-6 sm:px-8 py-3 text-sm bg-brand-blue text-white font-bold rounded-full shadow-md hover:bg-brand-blue-dark transition-colors uppercase tracking-wider disabled:opacity-50 flex items-center gap-2">
+                {isSavingSlide ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    SAUVEGARDE...
+                  </>
+                ) : (
+                  slideForm.id ? 'MODIFIER' : 'AJOUTER'
+                )}
+              </button>
             </div>
           </div>
         </div>
