@@ -616,7 +616,7 @@ const ProductPage = () => {
                 <Clock className="text-brand-blue" size={16} />
                 <div>
                   <h4 className="font-bold text-gray-800 dark:text-white">Service Client</h4>
-                  <p className="text-gray-500">Disponible 7j/7</p>
+                  <p className="text-gray-500">Sam - Jeu : 9h - 21h</p>
                 </div>
               </div>
             </div>

@@ -17,10 +17,9 @@ const ContactLocation = () => {
           >
             <div className="space-y-4">
               <h3 className="text-brand-blue font-bold tracking-widest text-xs">NOUS RENDRE VISITE</h3>
-              <h2 className="text-2xl md:text-3xl font-sans font-black dark:text-white uppercase tracking-tight">Al Karim Vision Experience Center</h2>
+              <h2 className="text-2xl md:text-3xl font-sans font-black dark:text-white uppercase tracking-tight">Showroom Al Karim Vision</h2>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Retrouvez tous nos univers Tech, Parfumerie et Café dans notre showroom. 
-                Essais de produits et dégustations de café offertes sur place.
+                Retrouvez toutes nos collections de lunettes, parfums et montres dans notre showroom à Touba.
               </p>
             </div>
 
@@ -88,7 +87,7 @@ const ContactLocation = () => {
               src="https://maps.google.com/maps?q=14.8605356,-15.8835194&hl=fr&z=17&output=embed" 
               width="100%" 
               height="100%" 
-              title="Carte Google Maps indiquant l'emplacement du Al Karim Vision Experience Center"
+              title="Carte Google Maps indiquant l'emplacement du Showroom Al Karim Vision"
               style={{ border: 0, filter: 'grayscale(0.5) contrast(1.1)' }} 
               allowFullScreen="" 
               loading="lazy"

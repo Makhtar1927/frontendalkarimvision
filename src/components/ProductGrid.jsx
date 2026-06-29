@@ -53,7 +53,7 @@ const ProductGrid = () => {
               Explorer les Collections
             </h2>
             <p className="text-xs sm:text-sm text-gray-500 max-w-md mx-auto">
-              Naviguez facilement à travers nos différents rayons de luxe pour trouver vos coups de cœur.
+              Parcourez nos nouveautés et collections disponibles.
             </p>
           </div>
 

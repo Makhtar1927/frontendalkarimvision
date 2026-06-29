@@ -34,7 +34,7 @@ const Maintenance = () => {
                 </h1>
                 
                 <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl mb-12 max-w-xl mx-auto leading-relaxed">
-                    Nous mettons à jour notre collection exclusive pour vous offrir la meilleure expérience technologique et sensorielle possible.
+                    Nous mettons à jour notre catalogue et notre site pour améliorer votre expérience d'achat.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
@@ -46,7 +46,7 @@ const Maintenance = () => {
                     <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-150 dark:border-zinc-800">
                         <Phone className="text-brand-blue mx-auto mb-3" size={24} />
                         <h3 className="font-bold dark:text-white uppercase tracking-wider text-xs mb-1">Besoin d'aide ?</h3>
-                        <p className="text-sm text-gray-500">+221 77 413 36 45</p>
+                        <p className="text-sm text-gray-500">+221 78 437 94 62</p>
                     </div>
                 </div>
 
