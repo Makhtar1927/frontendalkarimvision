@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '../store/useProductStore';
 import { useAuthStore } from '../store/useAuthStore';
-import { PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image } from 'lucide-react';
+import { PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image, ArrowLeft } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { apiFetch } from '../components/api';
 import SEO from '../components/SEO';
@@ -25,12 +25,14 @@ const PIE_COLORS = ['#0284c7', '#1e293b', '#0369a1', '#64748b', '#0ea5e9']; // B
 const Admin = () => {
   // --- ÉTAT DU STORE (Sélecteurs optimisés pour éviter les re-renders infinis) ---
   const products = useProductStore(state => state.products);
+  const categories = useProductStore(state => state.categories);
   const stats = useProductStore(state => state.stats);
   const orders = useProductStore(state => state.orders);
   const fetchAdminData = useProductStore(state => state.fetchAdminData);
   const addProduct = useProductStore(state => state.addProduct);
   const updateProduct = useProductStore(state => state.updateProduct);
   const deleteProduct = useProductStore(state => state.deleteProduct);
+  const addCategory = useProductStore(state => state.addCategory);
   const updateOrderStatus = useProductStore(state => state.updateOrderStatus);
   const loading = useProductStore(state => state.loading);
   const isFetching = useProductStore(state => state.isFetching);
@@ -41,7 +43,9 @@ const Admin = () => {
   const fetchStats = useProductStore(state => state.fetchStats);
   
   const hasCalledInitialFetch = React.useRef(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentView, setCurrentView] = useState('list'); // 'list', 'add-product', 'edit-product', 'add-category'
+  const [categoryFormData, setCategoryFormData] = useState({ name: '', description: '' });
+  const [isCategoryUploading, setIsCategoryUploading] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '', brand: '', category: 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: []
@@ -471,15 +475,15 @@ const Admin = () => {
     }
   };
 
-  // Fonction pour ouvrir la modale en mode "Ajout"
+  // Fonction pour ouvrir la page en mode "Ajout"
   const handleOpenAdd = () => {
     setEditingId(null);
-    setFormData({ name: '', brand: '', category: 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: [] });
+    setFormData({ name: categories && categories.length > 0 ? categories[0].name : 'glasses', brand: '', category: categories && categories.length > 0 ? categories[0].name : 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: [] });
     setSelectedFiles([]);
-    setIsModalOpen(true);
+    setCurrentView('add-product');
   };
 
-  // Fonction pour ouvrir la modale en mode "Modification"
+  // Fonction pour ouvrir la page en mode "Modification"
   const handleOpenEdit = (product) => {
     setEditingId(product.id);
     let existingMedia = [];
@@ -500,7 +504,7 @@ const Admin = () => {
       variants: product.variants || []
     });
     setSelectedFiles([]);
-    setIsModalOpen(true);
+    setCurrentView('edit-product');
   };
 
   const handleSubmit = async (e) => {
@@ -543,12 +547,32 @@ const Admin = () => {
     setIsUploading(false);
 
     if (success) {
-      setIsModalOpen(false);
+      setCurrentView('list');
       setFormData({ name: '', brand: '', category: 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: [] });
       setSelectedFiles([]); // On reset les fichiers
       setEditingId(null);
     } else {
       alert("Une erreur est survenue lors de la sauvegarde. Veuillez réessayer.");
+    }
+  };
+
+  const handleCategorySubmit = async (e) => {
+    e.preventDefault();
+    if (!categoryFormData.name) return;
+
+    setIsCategoryUploading(true);
+    const success = await addCategory({
+      name: categoryFormData.name,
+      description: categoryFormData.description
+    });
+    setIsCategoryUploading(false);
+
+    if (success) {
+      showNotification("Catalogue / Catégorie créé avec succès !");
+      setCurrentView('list');
+      setCategoryFormData({ name: '', description: '' });
+    } else {
+      alert("Une erreur est survenue lors de la création du catalogue.");
     }
   };
 
@@ -1106,19 +1130,30 @@ const Admin = () => {
         {/* SECTION : CATALOGUE */}
         {activeTab === 'catalog' && (
           <div className="animate-in fade-in duration-300">
-            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-8 gap-4">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold dark:text-white">Gestion du Catalogue</h1>
-                <p className="text-gray-500 mt-2 text-sm sm:text-base">Gérez vos lunettes de luxe, parfums de niche et montres de prestige.</p>
-              </div>
-              <button 
-                onClick={handleOpenAdd}
-                className="w-full sm:w-auto justify-center bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20"
-              >
-                <Plus size={20} />
-                Ajouter un produit
-              </button>
-            </div>
+            {currentView === 'list' ? (
+              <>
+                <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-8 gap-4">
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold dark:text-white">Gestion du Catalogue</h1>
+                    <p className="text-gray-500 mt-2 text-sm sm:text-base">Gérez vos lunettes de luxe, parfums de niche et montres de prestige.</p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <button 
+                      onClick={() => setCurrentView('add-category')}
+                      className="w-full sm:w-auto justify-center bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-800 dark:text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-md"
+                    >
+                      <Plus size={20} />
+                      Créer un Catalogue
+                    </button>
+                    <button 
+                      onClick={handleOpenAdd}
+                      className="w-full sm:w-auto justify-center bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20"
+                    >
+                      <Plus size={20} />
+                      Ajouter un produit
+                    </button>
+                  </div>
+                </div>
 
         {/* BARRE DE RECHERCHE */}
         <div className="mb-6">
@@ -1297,8 +1332,272 @@ const Admin = () => {
               </div>
             </div>
           )}
-        </div>
+          </>
+        ) : currentView === 'add-category' ? (
+          <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+              <button 
+                onClick={() => setCurrentView('list')}
+                className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-600 dark:text-gray-300 transition-colors"
+                title="Retour au catalogue"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold dark:text-white">
+                  Créer un nouveau Catalogue (Catégorie)
+                </h2>
+                <p className="text-xs text-gray-500 mt-1">Créez une nouvelle catégorie pour organiser vos produits.</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleCategorySubmit} className="space-y-6 max-w-2xl">
+              <div>
+                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Nom du Catalogue</label>
+                <input 
+                  required 
+                  value={categoryFormData.name} 
+                  onChange={e => setCategoryFormData({...categoryFormData, name: e.target.value})} 
+                  type="text" 
+                  placeholder="Ex: Maroquinerie, Bijoux..." 
+                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" 
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Description</label>
+                <textarea 
+                  value={categoryFormData.description} 
+                  onChange={e => setCategoryFormData({...categoryFormData, description: e.target.value})} 
+                  placeholder="Description succincte de ce catalogue d'articles..." 
+                  rows="4" 
+                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" 
+                />
+              </div>
+
+              <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setCurrentView('list')}
+                  className="px-6 py-3 border border-gray-200 dark:border-gray-850 text-gray-600 dark:text-gray-300 font-bold rounded-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-sm"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isCategoryUploading}
+                  className="px-8 py-3 bg-brand-blue hover:bg-brand-blue-dark text-white font-bold rounded-full shadow-md transition-all flex items-center gap-2 text-sm disabled:opacity-50"
+                >
+                  {isCategoryUploading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Création...
+                    </>
+                  ) : (
+                    'Créer le catalogue'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+              <button 
+                onClick={() => setCurrentView('list')}
+                className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-600 dark:text-gray-300 transition-colors"
+                title="Retour au catalogue"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold dark:text-white">
+                  {editingId ? 'Modifier le Produit' : 'Ajouter un nouveau Produit'}
+                </h2>
+                <p className="text-xs text-gray-500 mt-1">Remplissez les informations ci-dessous pour publier un article dans votre vitrine.</p>
+              </div>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Nom du Produit</label>
+                  <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: Ray-Ban Aviator Classic" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Marque</label>
+                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Ray-Ban" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Prix de Vente (FCFA)</label>
+                  <input required value={formData.base_price} onChange={e => setFormData({...formData, base_price: e.target.value})} type="number" step="0.01" placeholder="0.00" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Ancien Prix / Prix de comparaison (Optionnel)</label>
+                  <input value={formData.compare_at_price} onChange={e => setFormData({...formData, compare_at_price: e.target.value})} type="number" step="0.01" placeholder="Ex: 120000" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Catégorie</label>
+                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subcategory: ''})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer">
+                    {categories && categories.length > 0 ? (
+                      categories.map(cat => (
+                        <option key={cat.id} value={cat.name}>
+                          {cat.name === 'glasses' ? 'Lunettes de Soleil & Vue' :
+                           cat.name === 'perfume' ? 'Parfumerie de Niche' :
+                           cat.name === 'watches' ? 'Montres de Prestige' :
+                           cat.name === 'other' ? 'Divers & Accessoires' : cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="glasses">Lunettes de Soleil & Vue</option>
+                        <option value="perfume">Parfumerie de Niche</option>
+                        <option value="watches">Montres de Prestige</option>
+                        <option value="other">Divers & Accessoires</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+              </div>
+
+              {/* SOUS-CATÉGORIES POUR LUNETTES ET PARFUMS */}
+              {(formData.category === 'glasses' || formData.category === 'perfume') && (
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Sous-Catégorie</label>
+                  <select 
+                    value={formData.subcategory || ''} 
+                    onChange={e => setFormData({...formData, subcategory: e.target.value})} 
+                    className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer"
+                  >
+                    <option value="">Aucune sous-catégorie</option>
+                    {formData.category === 'glasses' ? (
+                      <>
+                        <option value="noir_fume">Noir Fumé</option>
+                        <option value="photogray">Photogray</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="avec_alcool">Avec Alcool</option>
+                        <option value="sans_alcool">Sans Alcool</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Images & Vidéos (Glissez ou Cliquez)</label>
+                <div className="flex flex-col gap-3">
+                  <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand-blue file:text-white hover:file:bg-brand-blue-dark cursor-pointer" />
+                  
+                  {(formData.existing_media.length > 0 || selectedFiles.length > 0) && (
+                    <div className="flex gap-2 flex-wrap mt-2 p-3 bg-gray-50 dark:bg-zinc-900/50 rounded-2xl border border-gray-100 dark:border-gray-800">
+                      {formData.existing_media.map((url, idx) => (
+                        <div key={`old-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                          {url.match(/\.(mp4|webm)$/i) ? (
+                            <video src={url} className="w-full h-full object-cover" />
+                          ) : (
+                            <img src={url} className="w-full h-full object-cover" />
+                          )}
+                          <button type="button" onClick={() => setFormData({...formData, existing_media: formData.existing_media.filter(u => u !== url)})} className="absolute inset-0 bg-black/60 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      ))}
+                      {selectedFiles.map((file, idx) => (
+                        <div key={`new-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-brand-blue/50 shadow-sm">
+                          <div className="absolute top-0 left-0 bg-brand-blue text-white text-[8px] font-bold px-1 rounded-br-sm z-10">NOUVEAU</div>
+                          {file.type.includes('video') ? (
+                            <video src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
+                          ) : (
+                            <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
+                          )}
+                          <button type="button" onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))} className="absolute inset-0 bg-black/60 flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* VARIANTES */}
+              <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h4 className="text-sm font-bold dark:text-white uppercase tracking-wider">Variantes du Produit (Optionnel)</h4>
+                    <p className="text-xs text-gray-500">Ajoutez des couleurs, tailles, contenances ou types de verres avec leur propre stock.</p>
+                  </div>
+                  <button 
+                    type="button" 
+                    onClick={handleAddVariant}
+                    className="px-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-zinc-800 text-xs font-bold rounded-xl dark:text-white transition-colors"
+                  >
+                    + Ajouter une Variante
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {(formData.variants || []).map((v, idx) => (
+                    <div key={idx} className="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-gray-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Valeur (ex: Cadran Bleu, 50ml)</label>
+                        <input required value={v.attribute_value} onChange={e => handleVariantChange(idx, 'attribute_value', e.target.value)} type="text" placeholder="Cadran Noir" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">SKU (Optionnel)</label>
+                        <input value={v.sku || ''} onChange={e => handleVariantChange(idx, 'sku', e.target.value)} type="text" placeholder="SKU-AUTO" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Modificateur de prix</label>
+                        <input value={v.price_modifier || 0} onChange={e => handleVariantChange(idx, 'price_modifier', parseFloat(e.target.value))} type="number" placeholder="0" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
+                      </div>
+                      <div className="flex gap-2 items-end">
+                        <div className="flex-1">
+                          <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Stock</label>
+                          <input value={v.stock_quantity || 0} onChange={e => handleVariantChange(idx, 'stock_quantity', parseInt(e.target.value))} type="number" placeholder="0" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
+                        </div>
+                        <button type="button" onClick={() => handleRemoveVariant(idx)} className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/20 text-red-650 hover:bg-red-100 transition-colors mb-0.5">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setCurrentView('list')}
+                  className="px-6 py-3 border border-gray-200 dark:border-gray-850 text-gray-600 dark:text-gray-300 font-bold rounded-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-sm"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isUploading}
+                  className="px-8 py-3 bg-brand-blue hover:bg-brand-blue-dark text-white font-bold rounded-full shadow-md transition-all flex items-center gap-2 text-sm disabled:opacity-50"
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Sauvegarde...
+                    </>
+                  ) : (
+                    editingId ? 'Mettre à jour le Produit' : 'Publier le Produit'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         )}
+      </div>
+      )}
 
         {/* SECTION : COMMANDES */}
         {activeTab === 'orders' && (
@@ -2039,156 +2338,7 @@ const Admin = () => {
         </div>
       </main>
 
-      {/* MODAL AJOUT */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-2 sm:p-4 cursor-pointer" onClick={() => { setIsModalOpen(false); setEditingId(null); }}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-brand-gray-dark w-full max-w-2xl max-h-[95vh] rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-800 cursor-default">
-            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900 shrink-0 flex items-center justify-between">
-              <h3 className="text-lg md:text-xl font-bold dark:text-white tracking-widest uppercase">{editingId ? 'Modifier le Produit' : 'Nouveau Produit Exclusif'}</h3>
-              <button 
-                type="button" 
-                onClick={() => { setIsModalOpen(false); setEditingId(null); }}
-                className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors"
-                title="Fermer"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-4 sm:p-6 overflow-y-auto flex-1">
-            <form id="productForm" onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom du Produit</label>
-                <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: Ray-Ban Aviator Classic" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Marque</label>
-                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Ray-Ban" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Prix Actuel</label>
-                  <input required value={formData.base_price} onChange={e => setFormData({...formData, base_price: e.target.value})} type="number" step="0.01" placeholder="0.00" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Ancien Prix</label>
-                  <input value={formData.compare_at_price} onChange={e => setFormData({...formData, compare_at_price: e.target.value})} type="number" step="0.01" placeholder="Ex: 120000" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Catégorie</label>
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subcategory: ''})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base">
-                  <option value="glasses">Lunettes de Soleil & Vue</option>
-                  <option value="perfume">Parfumerie de Niche</option>
-                  <option value="watches">Montres de Prestige</option>
-                  <option value="other">Divers & Accessoires</option>
-                </select>
-              </div>
-              
-              {/* NOUVEAU : SOUS-CATÉGORIES POUR LUNETTES ET PARFUMS */}
-              {(formData.category === 'glasses' || formData.category === 'perfume') && (
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Sous-Catégorie</label>
-                  <select 
-                    value={formData.subcategory || ''} 
-                    onChange={e => setFormData({...formData, subcategory: e.target.value})} 
-                    className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base"
-                  >
-                    <option value="">Aucune sous-catégorie</option>
-                    {formData.category === 'glasses' ? (
-                      <>
-                        <option value="noir_fume">Noir Fumé</option>
-                        <option value="photogray">Photogray</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="avec_alcool">Avec Alcool</option>
-                        <option value="sans_alcool">Sans Alcool</option>
-                      </>
-                    )}
-                  </select>
-                </div>
-              )}
-              <div>
-                <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Images & Vidéos (Glissez ou Cliquez)</label>
-                <div className="flex flex-col gap-3">
-                    <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand-blue file:text-white hover:file:bg-brand-blue-dark cursor-pointer" />
-                    
-                    {/* PREVIEW DES MÉDIAS */}
-                    {(formData.existing_media.length > 0 || selectedFiles.length > 0) && (
-                        <div className="flex gap-2 flex-wrap mt-2 p-3 bg-gray-50 dark:bg-zinc-900/50 rounded-2xl border border-gray-100 dark:border-gray-800">
-                            {/* Médias Existants (Edit) */}
-                            {formData.existing_media.map((url, idx) => (
-                                <div key={`old-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                                    {url.match(/\.(mp4|webm)$/i) ? (
-                                        <video src={url} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <img src={url} className="w-full h-full object-cover" />
-                                    )}
-                                    <button type="button" onClick={() => setFormData({...formData, existing_media: formData.existing_media.filter(u => u !== url)})} className="absolute inset-0 bg-black/60 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
-                            ))}
-                            {/* Nouveaux Médias (Files) */}
-                            {selectedFiles.map((file, idx) => (
-                                <div key={`new-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-brand-blue/50 shadow-sm">
-                                    <div className="absolute top-0 left-0 bg-brand-blue text-white text-[8px] font-bold px-1 rounded-br-sm z-10">NOUVEAU</div>
-                                    {file.type.includes('video') ? (
-                                        <video src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
-                                    )}
-                                    <button type="button" onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))} className="absolute inset-0 bg-black/60 flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-              </div>
 
-              {/* SECTION VARIANTES */}
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                <div className="flex justify-between items-center mb-4">
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Variantes (Options, Tailles, etc.)</label>
-                  <button type="button" onClick={handleAddVariant} className="text-xs bg-gray-100 dark:bg-zinc-800 text-brand-blue px-3 py-1 rounded-full font-bold hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors">+ Ajouter Option</button>
-                </div>
-                <div className="space-y-3 max-h-40 overflow-y-auto pr-2">
-                  {formData.variants?.map((variant, idx) => (
-                    <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2 bg-gray-50 dark:bg-zinc-900/50 p-3 sm:p-2 rounded-2xl border border-gray-200 dark:border-gray-800 relative">
-                      <div className="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:flex-1">
-                        <input placeholder="SKU" value={variant.sku} onChange={e => handleVariantChange(idx, 'sku', e.target.value)} className="w-full sm:w-1/4 text-sm sm:text-xs bg-transparent border-b border-gray-300 dark:border-gray-700 pb-1 dark:text-white outline-none focus:border-brand-blue" />
-                        <input placeholder="Nom/Taille" value={variant.attribute_value} onChange={e => handleVariantChange(idx, 'attribute_value', e.target.value)} className="w-full sm:w-1/4 text-sm sm:text-xs bg-transparent border-b border-gray-300 dark:border-gray-700 pb-1 dark:text-white outline-none focus:border-brand-blue" />
-                        <input type="number" placeholder="Stock" value={variant.stock_quantity} onChange={e => handleVariantChange(idx, 'stock_quantity', e.target.value)} className="w-full sm:w-1/4 text-sm sm:text-xs bg-transparent border-b border-gray-300 dark:border-gray-700 pb-1 dark:text-white outline-none focus:border-brand-blue" />
-                        <input type="number" placeholder="+ Prix" value={variant.price_modifier} onChange={e => handleVariantChange(idx, 'price_modifier', e.target.value)} className="w-full sm:w-1/4 text-sm sm:text-xs bg-transparent border-b border-gray-300 dark:border-gray-700 pb-1 dark:text-white outline-none focus:border-brand-blue" />
-                      </div>
-                      <button type="button" onClick={() => handleRemoveVariant(idx)} className="absolute top-1 right-1 sm:static text-gray-400 hover:text-red-500 p-1 bg-white dark:bg-zinc-800 sm:bg-transparent rounded-full shadow-sm sm:shadow-none"><X size={14} /></button>
-                    </div>
-                  ))}
-                  {(!formData.variants || formData.variants.length === 0) && (
-                    <p className="text-xs text-gray-500 italic">Aucune variante. Le produit sera vendu sans option de choix.</p>
-                  )}
-                </div>
-              </div>
-            </form>
-            </div>
-            <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-zinc-900 flex justify-end gap-3">
-              <button type="button" disabled={isUploading} onClick={() => { setIsModalOpen(false); setEditingId(null); }} className="px-4 sm:px-6 py-3 text-sm font-bold text-gray-500 hover:text-black dark:hover:text-white transition-colors uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed">Annuler</button>
-              <button form="productForm" type="submit" disabled={isUploading} className="px-6 sm:px-8 py-3 text-sm bg-brand-blue text-white font-bold rounded-full shadow-md hover:bg-brand-blue-dark transition-colors uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                  {isUploading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      ENVOI...
-                    </>
-                  ) : (
-                    editingId ? 'MODIFIER' : 'AJOUTER'
-                  )}
-                </button>
-              </div>
-          </div>
-        </div>
-      )}
 
       {/* MODAL AJOUT EMPLOYÉ */}
       {isEmployeeModalOpen && (
