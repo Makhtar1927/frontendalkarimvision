@@ -50,7 +50,10 @@ const ContactLocation = () => {
                 </div>
                 <div>
                   <h4 className="font-bold dark:text-white text-sm">Contact Direct</h4>
-                  <p className="text-gray-500 text-xs">+221 78 437 94 62<br/>+221 76 566 27 11</p>
+                  <div className="flex flex-col gap-1">
+                    <a href="tel:+221784379462" className="text-gray-500 text-xs hover:text-brand-blue transition-colors">+221 78 437 94 62</a>
+                    <a href="tel:+221765662711" className="text-gray-500 text-xs hover:text-brand-blue transition-colors">+221 76 566 27 11</a>
+                  </div>
                 </div>
               </div>
 
@@ -76,24 +79,41 @@ const ContactLocation = () => {
             </a>
           </motion.div>
 
-          {/* DROITE : CARTE INTERACTIVE (Embed Google Maps avec filtre de couleur) */}
+          {/* DROITE : PHOTO BOUTIQUE + CARTE INTERACTIVE */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="relative h-[300px] md:h-[450px] w-full rounded-xl overflow-hidden border-4 border-white dark:border-brand-gray-dark shadow-2xl"
+            className="space-y-4"
           >
-            <iframe 
-              src="https://maps.google.com/maps?q=14.8605356,-15.8835194&hl=fr&z=17&output=embed" 
-              width="100%" 
-              height="100%" 
-              title="Carte Google Maps indiquant l'emplacement du Showroom Al Karim Vision"
-              style={{ border: 0, filter: 'grayscale(0.5) contrast(1.1)' }} 
-              allowFullScreen="" 
-              loading="lazy"
-            ></iframe>
-            {/* Overlay décoratif bleu */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-brand-blue"></div>
+            {/* Photo réelle de la boutique */}
+            <div className="relative h-[220px] md:h-[280px] w-full rounded-xl overflow-hidden border-4 border-white dark:border-brand-gray-dark shadow-2xl">
+              <img
+                src="/boutique-interieur-2.jpg"
+                alt="Intérieur de la boutique Al Karim Vision — Touba, Sénégal"
+                className="w-full h-full object-cover object-center"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute bottom-3 left-3 text-white text-xs font-bold uppercase tracking-widest">
+                📍 Showroom Al Karim Vision — Touba
+              </div>
+            </div>
+
+            {/* Carte Google Maps */}
+            <div className="relative h-[200px] w-full rounded-xl overflow-hidden border-4 border-white dark:border-brand-gray-dark shadow-xl">
+              <iframe 
+                src="https://maps.google.com/maps?q=14.8605356,-15.8835194&hl=fr&z=17&output=embed" 
+                width="100%" 
+                height="100%" 
+                title="Carte Google Maps indiquant l'emplacement du Showroom Al Karim Vision"
+                style={{ border: 0, filter: 'grayscale(0.5) contrast(1.1)' }} 
+                allowFullScreen="" 
+                loading="lazy"
+              ></iframe>
+              {/* Overlay décoratif bleu */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-brand-blue"></div>
+            </div>
           </motion.div>
 
         </div>

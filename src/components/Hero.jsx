@@ -7,35 +7,35 @@ import { apiFetch } from './api';
 const STATIC_FALLBACK_SLIDES = [
   {
     id: 1,
+    title: "Bienvenue chez Al Karim Vision",
+    subtitle: "Lunettes de marque, montres et parfums de qualité — Showroom à Touba.",
+    category: "SHOWROOM",
+    image: "/boutique-showroom.jpg",
+    route: '/shop'
+  },
+  {
+    id: 2,
     title: "Clarté & Style Unique",
-    subtitle: "Découvrez notre collection de lunettes de vue et de soleil.",
+    subtitle: "Des centaines de montures Ray-Ban, Gucci, Tom Ford, Prada et bien plus.",
     category: "LUNETTES",
-    image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=1200&auto=format&fit=crop",
+    image: "/boutique-interieur-1.jpg",
     route: '/category/glasses'
   },
   {
     id: 3,
     title: "L'Essence du Luxe",
-    subtitle: "Parfums rares et fragrances envoûtantes pour Elle & Lui.",
+    subtitle: "Parfums authentiques avec et sans alcool, pour Elle & Lui.",
     category: "PARFUMERIE",
-    image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1200&auto=format&fit=crop",
+    image: "/boutique-interieur-2.jpg",
     route: '/category/perfume'
   },
   {
-    id: 5,
-    title: "Horlogerie de Prestige",
-    subtitle: "Gardez le contrôle du temps avec nos montres d'exception.",
-    category: "MONTRES",
-    image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1200&auto=format&fit=crop",
-    route: '/category/watches'
-  },
-  {
-    id: 2,
-    title: "Sélection Exclusive",
-    subtitle: "Parcourez nos nouveautés, gadgets et articles divers.",
-    category: "DIVERS",
-    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1200&auto=format&fit=crop",
-    route: '/category/other'
+    id: 4,
+    title: "Service Personnalisé",
+    subtitle: "Un accueil chaleureux et des conseils adaptés à vos besoins.",
+    category: "VOTRE BOUTIQUE",
+    image: "/boutique-owner.jpg",
+    route: '/shop'
   }
 ];
 
@@ -61,7 +61,6 @@ const Hero = () => {
       } catch (err) {
         console.error("Erreur chargement carrousel:", err);
       }
-      // Fallback si l'API échoue ou renvoie un tableau vide
       setSlides(STATIC_FALLBACK_SLIDES);
       setLoading(false);
     };
@@ -69,7 +68,7 @@ const Hero = () => {
     fetchSlides();
   }, []);
 
-  // Auto-play du slider toutes les 6 secondes (uniquement si nous avons des slides)
+  // Auto-play du slider toutes les 6 secondes
   useEffect(() => {
     if (slides.length <= 1) return;
     const timer = setInterval(() => {
@@ -94,7 +93,7 @@ const Hero = () => {
   const slideBtnText = currentSlide.button_text || "Découvrir la collection";
 
   return (
-    <div className="relative h-[45vh] sm:h-[60vh] w-full overflow-hidden bg-white dark:bg-brand-gray-dark border-b border-gray-100 dark:border-zinc-800/80">
+    <div className="relative h-[45vh] sm:h-[65vh] w-full overflow-hidden bg-white dark:bg-brand-gray-dark border-b border-gray-100 dark:border-zinc-800/80">
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -111,79 +110,97 @@ const Hero = () => {
               fetchPriority={current === 0 ? "high" : "auto"}
               loading={current === 0 ? "eager" : "lazy"}
               decoding="async"
-              className="absolute inset-0 w-full h-full object-cover object-center animate-pulse-slow"
+              className="absolute inset-0 w-full h-full object-cover object-center"
             />
           )}
-          {/* Overlay corporatif premium : Dégradé doux */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-gray-dark/80 dark:to-transparent z-10"></div>
+          {/* Overlay avec touche de bleu logo doux pour uniformité */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-brand-blue-light/60 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-blue/10 dark:to-transparent z-10"></div>
  
-          <div className="relative max-w-xl space-y-3 sm:space-y-6 z-20">
-            {currentSlide.category && (
-              <motion.div 
-                initial={{ y: 15, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center gap-2 sm:gap-3 text-brand-blue font-bold tracking-[0.25em] text-[10px] sm:text-xs uppercase"
-              >
-                <span className="w-6 sm:w-8 h-[2px] bg-brand-blue"></span>
-                {currentSlide.category}
-              </motion.div>
-            )}
-
-            {currentSlide.title && (
-              <motion.h1 
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="text-2xl sm:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white leading-tight tracking-tight"
-              >
-                {currentSlide.title}
-              </motion.h1>
-            )}
-
-            {currentSlide.subtitle && (
-              <motion.p 
-                initial={{ y: 15, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-xs sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-lg font-normal leading-relaxed"
-              >
-                {currentSlide.subtitle}
-              </motion.p>
-            )}
-
-            {slideRoute && (
-              <motion.div
-                initial={{ y: 15, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="pt-1 sm:pt-2"
-              >
-                <button
-                  onClick={() => navigate(slideRoute)}
-                  className="group flex items-center justify-center gap-2 sm:gap-3 bg-brand-blue text-white hover:bg-brand-blue-dark px-5 py-2.5 sm:px-8 sm:py-3.5 rounded-lg font-bold text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 shadow-md shadow-brand-blue/15 hover:shadow-lg hover:shadow-brand-blue/30"
+          <div className="relative z-20 px-4 w-full max-w-7xl mx-auto flex items-center">
+            <div className="max-w-xl space-y-3 sm:space-y-4">
+              {currentSlide.category && (
+                <motion.span 
+                  initial={{ y: 15, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold tracking-widest text-brand-blue bg-brand-blue/5 dark:bg-brand-blue/10 border border-brand-blue/20 uppercase backdrop-blur-md"
                 >
-                  {slideBtnText}
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-              </motion.div>
-            )}
+                  {currentSlide.category}
+                </motion.span>
+              )}
+
+              {currentSlide.title && (
+                <motion.h1 
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl sm:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white leading-tight tracking-tight uppercase"
+                >
+                  {currentSlide.title}
+                </motion.h1>
+              )}
+
+              {currentSlide.subtitle && (
+                <motion.p 
+                  initial={{ y: 15, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-xs sm:text-base md:text-lg text-gray-650 dark:text-gray-300 max-w-lg font-normal leading-relaxed"
+                >
+                  {currentSlide.subtitle}
+                </motion.p>
+              )}
+
+              {slideRoute && (
+                <motion.div
+                  initial={{ y: 15, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="pt-2 sm:pt-4"
+                >
+                  <button
+                    onClick={() => navigate(slideRoute)}
+                    className="group flex items-center justify-center gap-2 sm:gap-3 bg-brand-blue text-white hover:bg-brand-blue-dark px-5 py-2.5 sm:px-8 sm:py-3.5 rounded-lg font-bold text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 shadow-md shadow-brand-blue/15 hover:shadow-lg hover:shadow-brand-blue/30"
+                  >
+                    {slideBtnText}
+                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </motion.div>
+              )}
+            </div>
           </div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Indicateurs de Slide */}
+      {/* Barre de Progression Interactive & Moderne (Style Luxury) */}
       {slides.length > 1 && (
-        <div className="absolute bottom-5 sm:bottom-8 left-4 sm:left-12 lg:left-24 flex gap-2 z-20">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrent(index)}
-              aria-label={`Aller à la diapositive ${index + 1}`}
-              aria-current={current === index ? 'true' : 'false'}
-              className={`h-1.5 transition-all duration-300 ${current === index ? 'w-8 sm:w-10 bg-brand-blue rounded-full' : 'w-1.5 sm:w-2 bg-gray-300 dark:bg-zinc-700 hover:bg-gray-400 rounded-full'}`}
-            />
-          ))}
+        <div className="absolute bottom-5 sm:bottom-8 right-4 sm:right-12 lg:right-24 flex gap-4 z-20 items-center">
+          {slides.map((_, index) => {
+            const isActive = current === index;
+            return (
+              <button
+                key={index}
+                onClick={() => setCurrent(index)}
+                aria-label={`Aller à la diapositive ${index + 1}`}
+                className="group flex flex-col items-start gap-1 text-left focus:outline-none cursor-pointer"
+              >
+                <span className={`text-[9px] font-bold tracking-widest transition-colors duration-300 ${isActive ? 'text-brand-blue font-black' : 'text-gray-400 dark:text-zinc-500 group-hover:text-gray-650 dark:group-hover:text-zinc-300'}`}>
+                  0{index + 1}
+                </span>
+                <div className="w-12 sm:w-16 h-[2px] bg-gray-200 dark:bg-zinc-800 rounded-full overflow-hidden relative">
+                  {isActive && (
+                    <motion.div 
+                      key={`progress-${current}`}
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 6, ease: "linear" }}
+                      className="absolute inset-y-0 left-0 bg-brand-blue"
+                    />
+                  )}
+                </div>
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

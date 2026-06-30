@@ -48,9 +48,9 @@ const Home = () => {
   return (
     <>
       <SEO 
-        title="iPhones, Parfumerie & Café de Luxe à Dakar"
-        description="Découvrez l'excellence chez Al Karim Vision : iPhones d'origine garantis, parfumerie fine de niche et torréfaction de café d'exception à Dakar."
-        keywords="iPhone Dakar, iPhone original Sénégal, parfum de niche Dakar, café de spécialité, torréfaction prestige, Al Karim Vision, e-commerce Sénégal"
+        title="Optique, Parfumerie & Horlogerie de Prestige à Touba"
+        description="Découvrez l'excellence chez Al Karim Vision à Touba : Lunettes de vue et de soleil de marque, parfums authentiques et montres d'exception au meilleur prix."
+        keywords="optique Touba, lunettes de soleil Sénégal, parfum authentique Touba, montres de marque Sénégal, Al Karim Vision Touba, lunettes de vue Sénégal"
         schema={storeSchema}
       />
       <Hero />

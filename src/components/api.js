@@ -156,11 +156,11 @@ const INITIAL_SETTINGS = {
   id: 1,
   store_name: "Al Karim Vision",
   maintenance_mode: false,
-  contact_email: "alkarimvision@gmail.com",
-  contact_phone: "+221 77 654 32 10",
-  whatsapp_number: "221776543210",
-  contact_address: "Dakar, Sénégal",
-  maps_link: "https://maps.google.com",
+  contact_email: "amdydieng062@gmail.com",
+  contact_phone: "221765662711",
+  whatsapp_number: "221765662711",
+  contact_address: "Niari, Route de Ndiouga Kébé, Touba, Sénégal",
+  maps_link: "https://www.google.com/maps?q=14.8605356,-15.8835194&z=17&hl=fr",
   delivery_cost_dakar: 2000,
   delivery_cost_suburbs: 3000,
   delivery_cost_regions: 5000,
@@ -171,53 +171,67 @@ const INITIAL_SETTINGS = {
 const INITIAL_SLIDES = [
   {
     id: 'slide-1',
-    title: "Clarté & Style Unique",
-    subtitle: "Découvrez notre collection de lunettes de vue et de soleil.",
-    category: "LUNETTES",
-    image_url: "https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=1200&auto=format&fit=crop",
-    link_url: '/category/glasses',
-    button_text: "Découvrir la collection",
+    title: "Bienvenue chez Al Karim Vision",
+    subtitle: "Lunettes de marque, montres et parfums de qualité — Showroom à Touba.",
+    category: "SHOWROOM",
+    image_url: "/boutique-showroom.jpg",
+    link_url: '/shop',
+    button_text: "Explorer la boutique",
     position: 0,
     active: true
   },
   {
     id: 'slide-2',
-    title: "L'Essence du Luxe",
-    subtitle: "Parfums rares et fragrances envoûtantes pour Elle & Lui.",
-    category: "PARFUMERIE",
-    image_url: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1200&auto=format&fit=crop",
-    link_url: '/category/perfume',
-    button_text: "Découvrir la collection",
+    title: "Clarté & Style Unique",
+    subtitle: "Des centaines de montures Ray-Ban, Gucci, Tom Ford, Prada et bien plus.",
+    category: "LUNETTES",
+    image_url: "/boutique-interieur-1.jpg",
+    link_url: '/category/glasses',
+    button_text: "Découvrir les lunettes",
     position: 1,
     active: true
   },
   {
     id: 'slide-3',
-    title: "Horlogerie de Prestige",
-    subtitle: "Gardez le contrôle du temps avec nos montres d'exception.",
-    category: "MONTRES",
-    image_url: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1200&auto=format&fit=crop",
-    link_url: '/category/watches',
-    button_text: "Découvrir la collection",
+    title: "L'Essence du Luxe",
+    subtitle: "Parfums authentiques avec et sans alcool, pour Elle & Lui.",
+    category: "PARFUMERIE",
+    image_url: "/boutique-interieur-2.jpg",
+    link_url: '/category/perfume',
+    button_text: "Voir les parfums",
     position: 2,
     active: true
   },
   {
     id: 'slide-4',
-    title: "Sélection Exclusive",
-    subtitle: "Parcourez nos nouveautés, gadgets et articles divers.",
-    category: "DIVERS",
-    image_url: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1200&auto=format&fit=crop",
-    link_url: '/category/other',
-    button_text: "Découvrir la collection",
+    title: "Service Personnalisé",
+    subtitle: "Un accueil chaleureux et des conseils adaptés à vos besoins.",
+    category: "VOTRE BOUTIQUE",
+    image_url: "/boutique-owner.jpg",
+    link_url: '/shop',
+    button_text: "Nous contacter",
     position: 3,
     active: true
   }
 ];
 
+// Version du cache mock — incrémenter ici pour forcer la réinitialisation du localStorage
+const MOCK_DATA_VERSION = '2';
+
 // LocalStorage helpers to simulate database persistence
 const getMockData = (key, initial) => {
   if (typeof window === 'undefined') return initial;
+  
+  // Vérifier si la version du cache est à jour
+  const storedVersion = localStorage.getItem('mock_data_version');
+  if (storedVersion !== MOCK_DATA_VERSION) {
+    // Nouvelle version détectée : on réinitialise toutes les données mock
+    localStorage.clear();
+    localStorage.setItem('mock_data_version', MOCK_DATA_VERSION);
+    localStorage.setItem(key, JSON.stringify(initial));
+    return initial;
+  }
+  
   const data = localStorage.getItem(key);
   if (!data) {
     localStorage.setItem(key, JSON.stringify(initial));
@@ -326,7 +340,7 @@ const handleMockRequest = async (endpoint, options) => {
   // 2. POST /auth/login
   if (endpoint === '/auth/login' && options.method === 'POST') {
     const body = JSON.parse(options.body);
-    if (body.email === 'alkarimvision@gmail.com' && body.password === 'alkarim') {
+    if (body.email === 'amdydieng062@gmail.com' && body.password === 'alkarim') {
       const payloadObj = {
         id: 1,
         role: 'admin',
@@ -337,7 +351,7 @@ const handleMockRequest = async (endpoint, options) => {
       return getCleanJson({
         message: "Connexion réussie",
         token: token,
-        admin: { name: 'Admin Al Karim', email: 'alkarimvision@gmail.com' }
+        admin: { name: 'Admin Al Karim', email: 'amdydieng062@gmail.com' }
       });
     } else {
       return {

@@ -84,30 +84,41 @@ const Shop = () => {
         {/* BANNIÈRE HERO DE LA BOUTIQUE */}
         <div className="relative h-[40vh] md:h-[50vh] w-full flex items-center overflow-hidden">
           <img 
-            src="https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778876055/Boustanetech8_klrkma.png"
+            src="/boutique-showroom.jpg"
             alt="Al Karim Vision - Boutique en Ligne"
             fetchPriority="high"
             loading="eager"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
           />
-          {/* Overlay: Sombre sur mobile, Dégradé Premium sur desktop */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-gray-dark/80 dark:to-transparent z-10"></div>
+          {/* Overlay: Sombre sur mobile, Dégradé Premium avec touche de bleu logo */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-brand-blue-light/60 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-blue/10 dark:to-transparent z-10"></div>
           
           <div className="relative z-20 px-4 w-full max-w-7xl mx-auto flex items-center">
             <div className="max-w-2xl">
-              <motion.h1 
-                initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight flex items-center gap-4"
+              <motion.span 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold tracking-widest text-brand-blue bg-brand-blue/5 dark:bg-brand-blue/10 border border-brand-blue/20 uppercase mb-4 backdrop-blur-md"
               >
-                <Store size={40} className="text-brand-blue hidden sm:block" />
+                Boutique Officielle
+              </motion.span>
+              <motion.h1 
+                initial={{ y: 20, opacity: 0 }} 
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight uppercase"
+              >
                 Notre Boutique
               </motion.h1>
               <motion.p 
-                initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
+                initial={{ y: 20, opacity: 0 }} 
+                animate={{ y: 0, opacity: 1 }} 
+                transition={{ delay: 0.3 }}
                 className="text-gray-600 dark:text-gray-300 text-lg md:text-xl font-normal leading-relaxed"
               >
-                Parcourez tous nos univers et trouvez les meilleurs produits.
+                Parcourez l'ensemble de nos collections de prestige.
               </motion.p>
             </div>
           </div>

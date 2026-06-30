@@ -72,11 +72,11 @@ export const useCartStore = create((set, get) => ({
     
     cart.forEach(item => {
       message += `• ${item.quantity}x ${item.name} (${item.variant})\n`;
-      message += `  _SKU: ${item.sku}_ | *${(item.price * item.quantity).toFixed(2)}€*\n\n`;
+      message += `  _SKU: ${item.sku}_ | *${(item.price * item.quantity).toLocaleString('fr-FR')} FCFA*\n\n`;
     });
     
     message += `---------------------------\n`;
-    message += `*TOTAL À PAYER : ${total.toFixed(2)}€*\n\n`;
+    message += `*TOTAL À PAYER : ${total.toLocaleString('fr-FR')} FCFA*\n\n`;
     message += `_Merci de confirmer ma commande pour la livraison._`;
 
     // Encodage pour URL

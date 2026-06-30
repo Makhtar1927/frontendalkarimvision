@@ -46,7 +46,7 @@ const Maintenance = () => {
                     <div className="p-6 bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-150 dark:border-zinc-800">
                         <Phone className="text-brand-blue mx-auto mb-3" size={24} />
                         <h3 className="font-bold dark:text-white uppercase tracking-wider text-xs mb-1">Besoin d'aide ?</h3>
-                        <p className="text-sm text-gray-500">+221 78 437 94 62</p>
+                        <a href="tel:+221765662711" className="text-sm text-brand-blue hover:underline font-medium transition-colors">+221 76 566 27 11</a>
                     </div>
                 </div>
 

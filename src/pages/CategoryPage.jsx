@@ -10,25 +10,25 @@ const CATEGORY_INFO = {
   glasses: {
     title: "Lunettes & Optique",
     subtitle: "Des modèles élégants et des verres haute technologie pour sublimer votre regard.",
-    image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=1200&auto=format&fit=crop",
+    image: "/boutique-interieur-1.jpg",
     color: "from-sky-100 to-white dark:from-sky-950/30 dark:to-black"
   },
   perfume: {
     title: "Haute Parfumerie",
     subtitle: "Des fragrances rares et luxueuses pour affirmer votre identité.",
-    image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1200&auto=format&fit=crop",
+    image: "/boutique-interieur-2.jpg",
     color: "from-sky-50 to-white dark:from-stone-900 dark:to-black"
   },
   watches: {
     title: "Montres de Prestige",
     subtitle: "Gardez le contrôle du temps avec nos pièces horlogères d'exception.",
-    image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=1200&auto=format&fit=crop",
+    image: "/boutique-extra-1.jpg",
     color: "from-indigo-100 to-white dark:from-indigo-950/30 dark:to-black"
   },
   other: {
     title: "Divers & Accessoires",
     subtitle: "Une collection d'articles exclusifs et variés sélectionnés par nos soins.",
-    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1200&auto=format&fit=crop",
+    image: "/boutique-extra-2.jpg",
     color: "from-gray-100 to-white dark:from-zinc-900/20 dark:to-black"
   }
 };
@@ -131,20 +131,32 @@ const CategoryPage = () => {
             className="absolute inset-0 w-full h-full object-cover object-center md:object-right"
           />
         )}
-        {/* Overlay: Sombre sur mobile, Dégradé Premium sur desktop */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-gray-dark/80 dark:to-transparent z-10"></div>
+        {/* Overlay: Sombre sur mobile, Dégradé Premium avec touche de bleu logo */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-brand-blue-light/60 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-blue/10 dark:to-transparent z-10"></div>
         
         <div className="relative z-20 px-4 w-full max-w-7xl mx-auto flex items-center">
           <div className="max-w-2xl">
+            <motion.span 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold tracking-widest text-brand-blue bg-brand-blue/5 dark:bg-brand-blue/10 border border-brand-blue/20 uppercase mb-4 backdrop-blur-md"
+            >
+              Collection
+            </motion.span>
             <motion.h1 
-              initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+              initial={{ y: 20, opacity: 0 }} 
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
               className="text-4xl md:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight uppercase"
             >
               {info.title}
             </motion.h1>
             <motion.p 
-              initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-              className="text-gray-600 dark:text-gray-300 text-lg md:text-xl font-normal leading-relaxed"
+              initial={{ y: 20, opacity: 0 }} 
+              animate={{ y: 0, opacity: 1 }} 
+              transition={{ delay: 0.3 }}
+              className="text-gray-650 dark:text-gray-300 text-lg md:text-xl font-normal leading-relaxed"
             >
               {info.subtitle}
             </motion.p>
