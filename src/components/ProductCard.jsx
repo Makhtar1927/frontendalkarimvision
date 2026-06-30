@@ -117,9 +117,9 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* 2. INFORMATION AREA */}
-      <div className="flex flex-col flex-1 p-2.5 sm:p-4">
+      <div className="flex flex-col flex-1 p-2.5 sm:p-4 text-center">
         {/* Brand & Rating */}
-        <div className="flex items-center justify-between gap-1 mb-1">
+        <div className="flex items-center justify-center gap-2 mb-1.5">
           <p className="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             {product.brand || product.category || 'Al Karim Vision'}
           </p>
@@ -132,13 +132,13 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Product Name */}
-        <h3 className="text-slate-900 dark:text-zinc-50 font-bold text-[11px] sm:text-sm line-clamp-2 leading-snug group-hover:text-brand-blue dark:group-hover:text-brand-blue-accent transition-colors mb-2 flex-1">
+        <h3 className="text-slate-900 dark:text-zinc-50 font-bold text-[11px] sm:text-sm line-clamp-2 leading-snug group-hover:text-brand-blue dark:group-hover:text-brand-blue-accent transition-colors mb-2 flex-1 text-center">
           {product.name}
         </h3>
 
         {/* Variant Pills */}
         {validVariants.length > 1 && (
-          <div className="flex flex-wrap gap-1 mb-2" onClick={e => e.stopPropagation()}>
+          <div className="flex flex-wrap justify-center gap-1 mb-2.5" onClick={e => e.stopPropagation()}>
             {validVariants.map((variant) => {
               const isSelected = selectedVariant?.sku === variant.sku;
               const isOutOfStock = Number(variant.stock_quantity) <= 0;
@@ -162,28 +162,29 @@ const ProductCard = ({ product }) => {
           </div>
         )}
 
-        {/* Price & Action Row (Keurgui Store layout) */}
-        <div className="mt-auto pt-2 border-t border-slate-100 dark:border-zinc-800 flex items-end justify-between gap-1 sm:gap-2">
-          <div className="flex flex-col min-w-0">
+        {/* Price & Action Container */}
+        <div className="mt-auto pt-2.5 border-t border-slate-100 dark:border-zinc-800 flex flex-col items-center gap-2.5 w-full">
+          {/* Price */}
+          <div className="flex flex-col items-center text-center">
             {compareAtPrice > basePrice && (
-              <span className="text-slate-400 dark:text-zinc-500 text-[9px] sm:text-[10px] line-through font-medium leading-none mb-0.5">
+              <span className="text-slate-400 dark:text-zinc-500 text-[9px] sm:text-[10px] line-through font-medium leading-none mb-1">
                 {compareAtPrice.toLocaleString('fr-SN')} FCFA
               </span>
             )}
-            <span className="text-brand-blue font-black text-xs sm:text-base leading-none tracking-tight whitespace-nowrap">
-              {displayPrice.toLocaleString('fr-SN')}
-              <span className="text-[8px] sm:text-[10px] ml-0.5 text-brand-blue/70 font-bold">FCFA</span>
+            <span className="text-brand-blue font-black text-xs sm:text-base leading-none tracking-tight">
+              {displayPrice.toLocaleString('fr-SN')}{' '}
+              <span className="text-[8px] sm:text-[10px] text-brand-blue/70 font-bold">FCFA</span>
             </span>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1.5 shrink-0" onClick={e => e.stopPropagation()}>
+          <div className="flex flex-col items-center gap-2 w-full" onClick={e => e.stopPropagation()}>
             {!isVariantOutOfStock ? (
               <>
                 {/* Add to Cart */}
                 <button
                   onClick={handleAddToCart}
-                  className="bg-brand-blue hover:bg-brand-blue-dark text-white px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-md shadow-brand-blue/20 flex items-center gap-1.5"
+                  className="w-full bg-brand-blue hover:bg-brand-blue-dark text-white py-2 rounded-xl text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-md shadow-brand-blue/20 flex items-center justify-center gap-1.5"
                 >
                   <ShoppingCart size={10} strokeWidth={2.5} />
                   Ajouter
@@ -195,14 +196,15 @@ const ProductCard = ({ product }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105 shrink-0 active:scale-95"
+                  className="w-full py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center gap-1.5 text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-200 hover:scale-[1.01] active:scale-95 shadow-md shadow-emerald-500/20"
                   title="Commander sur WhatsApp"
                 >
                   <img src="/WhatsApp.svg" alt="WhatsApp" className="w-4 h-4 object-contain" />
+                  WhatsApp
                 </a>
               </>
             ) : (
-              <span className="flex items-center gap-1 text-[9px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+              <span className="flex items-center justify-center gap-1 text-[9px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider py-1.5">
                 <AlertCircle size={11} />
                 Épuisé
               </span>
