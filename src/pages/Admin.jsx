@@ -20,7 +20,7 @@ const ADMIN_TABS = [
 
 const MONTHS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
 
-const PIE_COLORS = ['#d4af37', '#18181b', '#3b82f6', '#9ca3af', '#f59e0b']; // Or, Noir, Bleu, Gris, Ambre
+const PIE_COLORS = ['#0284c7', '#1e293b', '#0369a1', '#64748b', '#0ea5e9']; // Bleu de la marque, Slate, Bleu foncé, Gris, Accent
 
 const Admin = () => {
   // --- ÉTAT DU STORE (Sélecteurs optimisés pour éviter les re-renders infinis) ---
@@ -687,7 +687,7 @@ const Admin = () => {
           </td>
           <td style="padding: 12px 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
           <td style="padding: 12px 10px; border-bottom: 1px solid #eee; text-align: right;">${new Intl.NumberFormat('fr-FR').format(item.unit_price)} FCFA</td>
-          <td style="padding: 12px 10px; border-bottom: 1px solid #eee; text-align: right; font-weight: bold; color: #d4af37;">${new Intl.NumberFormat('fr-FR').format(item.unit_price * item.quantity)} FCFA</td>
+          <td style="padding: 12px 10px; border-bottom: 1px solid #eee; text-align: right; font-weight: bold; color: #0284c7;">${new Intl.NumberFormat('fr-FR').format(item.unit_price * item.quantity)} FCFA</td>
         </tr>
       `;
     });
@@ -698,15 +698,15 @@ const Admin = () => {
           <title>Facture _ N°${order.id.toString().padStart(4, '0')}</title>
           <style>
             body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #18181b; margin: 0; padding: 40px; }
-            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #d4af37; padding-bottom: 20px; margin-bottom: 40px; }
-            .logo { font-size: 28px; font-weight: bold; color: #d4af37; letter-spacing: 2px; }
+            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #0284c7; padding-bottom: 20px; margin-bottom: 40px; }
+            .logo { font-size: 28px; font-weight: bold; color: #0284c7; letter-spacing: 2px; }
             .logo span { color: #18181b; }
             .invoice-details { text-align: right; }
             .customer-info { margin-bottom: 40px; line-height: 1.6; }
             table { border-collapse: collapse; margin-bottom: 40px; width: 100%; }
             th { text-align: left; padding: 12px 10px; background: #f4f4f5; border-bottom: 2px solid #e4e4e7; color: #71717a; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
             .total-section { text-align: right; font-size: 18px; margin-top: 20px; padding-top: 20px; border-top: 2px solid #f4f4f5; }
-            .total-section strong { color: #d4af37; font-size: 28px; display: block; margin-top: 5px; }
+            .total-section strong { color: #0284c7; font-size: 28px; display: block; margin-top: 5px; }
             @media print { body { padding: 0; } @page { size: A4 portrait; margin: 1.5cm; } }
           </style>
         </head>
@@ -726,7 +726,7 @@ const Admin = () => {
           </div>
           
           <div class="customer-info">
-            <h3 style="color: #d4af37; margin-bottom: 10px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Adressée à :</h3>
+            <h3 style="color: #0284c7; margin-bottom: 10px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Adressée à :</h3>
             <strong>${order.customer_name}</strong><br/>
             Téléphone : ${order.customer_phone}<br/>
             Adresse : ${order.customer_address || 'Sénégal'}
@@ -783,13 +783,15 @@ const Admin = () => {
         {/* LOGO SECTION */}
         <div className="h-20 flex items-center px-6 border-b border-gray-100 dark:border-gray-800 overflow-hidden shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-brand-blue rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-gold/20">
-              <Shield className="text-white" size={20} />
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Al Karim Vision" 
+              className="w-10 h-10 object-contain rounded-lg shadow-sm"
+            />
             {!isSidebarCollapsed && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="whitespace-nowrap">
                 <h2 className="text-sm font-bold text-brand-blue tracking-widest leading-none">AL KARIM</h2>
-                <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Admin Panel</span>
+                <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Administration</span>
               </motion.div>
             )}
           </div>
@@ -807,7 +809,7 @@ const Admin = () => {
                 title={isSidebarCollapsed ? tab.label : ''}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all relative group ${
                   isActive 
-                    ? 'bg-brand-blue text-white font-bold shadow-lg shadow-gold/20' 
+                    ? 'bg-brand-blue text-white font-bold shadow-lg shadow-brand-blue/15' 
                     : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-900 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
@@ -854,7 +856,11 @@ const Admin = () => {
       {/* MOBILE HEADER */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-brand-gray-dark border-b border-gray-200 dark:border-gray-800 z-[60] flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <Shield className="text-brand-blue" size={20} />
+          <img 
+            src="/logo.png" 
+            alt="Al Karim Vision" 
+            className="w-8 h-8 object-contain rounded-lg shadow-sm"
+          />
           <h2 className="text-sm font-bold text-brand-blue tracking-widest">AL KARIM</h2>
         </div>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-600 dark:text-gray-400">
@@ -885,10 +891,14 @@ const Admin = () => {
               {/* Header inside drawer */}
               <div className="px-5 pb-5 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Shield className="text-brand-blue" size={20} />
+                  <img 
+                    src="/logo.png" 
+                    alt="Al Karim Vision" 
+                    className="w-8 h-8 object-contain rounded-lg shadow-sm"
+                  />
                   <div>
                     <h2 className="text-sm font-bold text-brand-blue tracking-wider leading-none">AL KARIM</h2>
-                    <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Admin Panel</span>
+                    <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Administration</span>
                   </div>
                 </div>
                 <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 text-gray-500 dark:text-gray-400">
@@ -1038,7 +1048,7 @@ const Admin = () => {
                     <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
                     
                     {/* Axe Y Gauche pour les Revenus (Valeurs élevées en FCFA) */}
-                    <YAxis yAxisId="left" stroke="#d4af37" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => value >= 1000 ? `${value / 1000}k` : value} />
+                    <YAxis yAxisId="left" stroke="#0284c7" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => value >= 1000 ? `${value / 1000}k` : value} />
                     
                     {/* Axe Y Droit pour les Commandes (Petites valeurs) */}
                     <YAxis yAxisId="right" orientation="right" stroke="#3b82f6" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
@@ -1049,7 +1059,7 @@ const Admin = () => {
                       cursor={{fill: 'rgba(255,255,255,0.05)'}}
                       formatter={(value, name) => [name === 'Revenus' ? `${new Intl.NumberFormat('fr-FR').format(value)} FCFA` : value, name]}
                     />
-                    <Bar yAxisId="left" dataKey="ventes" fill="#d4af37" radius={[4, 4, 0, 0]} name="Revenus" />
+                    <Bar yAxisId="left" dataKey="ventes" fill="#0284c7" radius={[4, 4, 0, 0]} name="Revenus" />
                     <Bar yAxisId="right" dataKey="commandes" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Commandes" />
                   </BarChart>
                   </ResponsiveContainer>
@@ -1099,7 +1109,7 @@ const Admin = () => {
             <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-8 gap-4">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold dark:text-white">Gestion du Catalogue</h1>
-                <p className="text-gray-500 mt-2 text-sm sm:text-base">Gérez vos iPhones, Parfums et Cafés d'exception.</p>
+                <p className="text-gray-500 mt-2 text-sm sm:text-base">Gérez vos lunettes de luxe, parfums de niche et montres de prestige.</p>
               </div>
               <button 
                 onClick={handleOpenAdd}
@@ -2048,12 +2058,12 @@ const Admin = () => {
             <form id="productForm" onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom du Produit</label>
-                <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: iPhone 16 Pro Max" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: Ray-Ban Aviator Classic" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Marque</label>
-                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Apple" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
+                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Ray-Ban" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm md:text-base" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Prix Actuel</label>
