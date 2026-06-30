@@ -699,74 +699,324 @@ const Admin = () => {
   // --- GÉNÉRATION ET IMPRESSION DE FACTURE (PDF) ---
   const printInvoice = (order) => {
     const invoiceWindow = window.open('', '_blank');
-    const date = new Date(order.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute:'2-digit' });
+    const date = new Date(order.created_at).toLocaleDateString('fr-FR', { 
+      day: '2-digit', 
+      month: 'long', 
+      year: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
 
     let itemsHtml = '';
+    let calculatedSubtotal = 0;
+    
     order.items?.forEach(item => {
+      const lineTotal = item.unit_price * item.quantity;
+      calculatedSubtotal += lineTotal;
       itemsHtml += `
         <tr>
-          <td style="padding: 12px 10px; border-bottom: 1px solid #eee;">
-            <strong>${item.product_name || 'Produit supprimé'}</strong><br/>
-            ${item.variant && String(item.variant).trim().toLowerCase() !== 'null' ? `<small style="color: #888; text-transform: uppercase; letter-spacing: 1px; font-size: 10px;">${item.variant}</small>` : ''}
+          <td style="padding: 16px; border-bottom: 1px solid #f1f5f9;">
+            <div style="font-weight: 600; color: #0f172a;">${item.product_name || 'Produit'}</div>
+            ${item.variant && String(item.variant).trim().toLowerCase() !== 'null' ? `<div style="font-size: 11px; color: #64748b; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Variante : ${item.variant}</div>` : ''}
           </td>
-          <td style="padding: 12px 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-          <td style="padding: 12px 10px; border-bottom: 1px solid #eee; text-align: right;">${new Intl.NumberFormat('fr-FR').format(item.unit_price)} FCFA</td>
-          <td style="padding: 12px 10px; border-bottom: 1px solid #eee; text-align: right; font-weight: bold; color: #0284c7;">${new Intl.NumberFormat('fr-FR').format(item.unit_price * item.quantity)} FCFA</td>
+          <td style="padding: 16px; border-bottom: 1px solid #f1f5f9; text-align: center; color: #334155;">${item.quantity}</td>
+          <td style="padding: 16px; border-bottom: 1px solid #f1f5f9; text-align: right; color: #334155;">${new Intl.NumberFormat('fr-FR').format(item.unit_price)} FCFA</td>
+          <td style="padding: 16px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 600; color: #0284c7;">${new Intl.NumberFormat('fr-FR').format(lineTotal)} FCFA</td>
         </tr>
       `;
     });
 
+    // Estimation intelligente des frais de livraison et de la remise
+    const totalAmount = parseFloat(order.total_amount) || 0;
+    const safeAddress = order.customer_address || '';
+    let shippingCost = 0;
+    
+    if (safeAddress.includes('Dakar') && !safeAddress.includes('Hors Dakar') && !safeAddress.includes('Banlieue')) {
+      shippingCost = 2000;
+    } else if (safeAddress.includes('Banlieue') || safeAddress.includes('Hors Dakar') || safeAddress.includes('Rufisque') || safeAddress.includes('Pikine') || safeAddress.includes('Guédiawaye')) {
+      shippingCost = 3000;
+    } else if (safeAddress.includes('Régions') || safeAddress.includes('Mbour') || safeAddress.includes('Thiès') || safeAddress.includes('Saint-Louis')) {
+      shippingCost = 5000;
+    } else if (totalAmount > calculatedSubtotal) {
+      shippingCost = totalAmount - calculatedSubtotal;
+    }
+
+    const discountAmount = Math.max(0, (calculatedSubtotal + shippingCost) - totalAmount);
+
+    const logoUrl = 'https://res.cloudinary.com/davjg4chq/image/upload/v1782856716/alkarim-vision/assets/al-karim-logo-jour.png';
+
     const html = `
-      <html>
+      <!DOCTYPE html>
+      <html lang="fr">
         <head>
-          <title>Facture _ N°${order.id.toString().padStart(4, '0')}</title>
+          <meta charset="utf-8">
+          <title>Facture N°${order.id.toString().padStart(4, '0')}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
           <style>
-            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #18181b; margin: 0; padding: 40px; }
-            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #0284c7; padding-bottom: 20px; margin-bottom: 40px; }
-            .logo { font-size: 28px; font-weight: bold; color: #0284c7; letter-spacing: 2px; }
-            .logo span { color: #18181b; }
-            .invoice-details { text-align: right; }
-            .customer-info { margin-bottom: 40px; line-height: 1.6; }
-            table { border-collapse: collapse; margin-bottom: 40px; width: 100%; }
-            th { text-align: left; padding: 12px 10px; background: #f4f4f5; border-bottom: 2px solid #e4e4e7; color: #71717a; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
-            .total-section { text-align: right; font-size: 18px; margin-top: 20px; padding-top: 20px; border-top: 2px solid #f4f4f5; }
-            .total-section strong { color: #0284c7; font-size: 28px; display: block; margin-top: 5px; }
-            @media print { body { padding: 0; } @page { size: A4 portrait; margin: 1.5cm; } }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body {
+              font-family: 'Plus Jakarta Sans', sans-serif;
+              color: #1e293b;
+              background-color: #ffffff;
+              padding: 40px;
+              line-height: 1.5;
+            }
+            .invoice-card {
+              max-width: 800px;
+              margin: 0 auto;
+              background: #ffffff;
+            }
+            .header-table {
+              width: 100%;
+              margin-bottom: 40px;
+              border-collapse: collapse;
+            }
+            .header-table td {
+              vertical-align: top;
+              border: none;
+            }
+            .logo-container {
+              display: flex;
+              flex-direction: column;
+              gap: 8px;
+            }
+            .logo-img {
+              height: 64px;
+              width: auto;
+              object-fit: contain;
+              align-self: flex-start;
+            }
+            .brand-title {
+              font-family: 'Outfit', sans-serif;
+              font-size: 20px;
+              font-weight: 700;
+              letter-spacing: 3px;
+              color: #0f172a;
+            }
+            .invoice-title-block {
+              text-align: right;
+            }
+            .invoice-label {
+              font-family: 'Outfit', sans-serif;
+              font-size: 32px;
+              font-weight: 600;
+              color: #0284c7;
+              letter-spacing: 2px;
+              margin-bottom: 8px;
+            }
+            .invoice-meta {
+              font-size: 13px;
+              color: #64748b;
+              line-height: 1.6;
+            }
+            .meta-value {
+              font-weight: 600;
+              color: #0f172a;
+            }
+            .details-table {
+              width: 100%;
+              margin-bottom: 40px;
+              border-collapse: collapse;
+            }
+            .details-table td {
+              width: 50%;
+              vertical-align: top;
+              border: none;
+              padding: 0 10px;
+            }
+            .details-table td:first-child {
+              padding-left: 0;
+            }
+            .details-table td:last-child {
+              padding-right: 0;
+            }
+            .info-card {
+              padding: 24px;
+              background: #f8fafc;
+              border-radius: 16px;
+              border: 1px solid #f1f5f9;
+              height: 100%;
+            }
+            .info-card-title {
+              font-family: 'Outfit', sans-serif;
+              font-size: 11px;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 1.5px;
+              color: #64748b;
+              margin-bottom: 12px;
+            }
+            .info-card-text {
+              font-size: 14px;
+              color: #334155;
+              line-height: 1.6;
+            }
+            .info-card-text strong {
+              color: #0f172a;
+            }
+            .items-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 30px;
+            }
+            .items-table th {
+              font-family: 'Outfit', sans-serif;
+              text-transform: uppercase;
+              font-size: 10px;
+              font-weight: 700;
+              letter-spacing: 1.5px;
+              color: #475569;
+              background: #f1f5f9;
+              padding: 14px 16px;
+              border-bottom: 2px solid #e2e8f0;
+              text-align: left;
+            }
+            .items-table th:nth-child(2) { text-align: center; }
+            .items-table th:nth-child(3), .items-table th:nth-child(4) { text-align: right; }
+            .summary-table {
+              width: 320px;
+              margin-left: auto;
+              border-collapse: collapse;
+              margin-bottom: 40px;
+            }
+            .summary-table td {
+              padding: 8px 16px;
+              font-size: 14px;
+              color: #475569;
+            }
+            .summary-table tr.total-row td {
+              border-top: 2px solid #e2e8f0;
+              padding-top: 16px;
+              font-weight: 700;
+              color: #0f172a;
+            }
+            .total-amount {
+              font-family: 'Outfit', sans-serif;
+              font-size: 22px;
+              color: #0284c7;
+              font-weight: 700;
+            }
+            .footer {
+              border-top: 1px dashed #cbd5e1;
+              padding-top: 30px;
+              text-align: center;
+              margin-top: 50px;
+            }
+            .footer-thankyou {
+              font-family: 'Outfit', sans-serif;
+              font-size: 15px;
+              font-weight: 600;
+              color: #0f172a;
+              margin-bottom: 8px;
+            }
+            .footer-terms {
+              font-size: 11px;
+              color: #94a3b8;
+            }
+            @media print {
+              body { padding: 0; }
+              .info-card { background: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              .items-table th { background: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              @page { size: A4; margin: 1.5cm; }
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <div class="logo">
-              <div style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
-                 <div>AL KARIM<span> VISION</span></div>
-                 <img src="${window.location.origin}/logo.png" alt="Al Karim Vision Logo" style="height: 50px; width: auto; border-radius: 6px;" />
-              </div>
-            </div>
-            <div class="invoice-details">
-              <h1 style="margin:0 0 5px 0; color: #18181b; letter-spacing: 2px;">FACTURE</h1>
-              <strong>N° :</strong> #${order.id.toString().padStart(4, '0')}<br/>
-              <strong>Date :</strong> ${date}
+          <div class="invoice-card">
+            <table class="header-table">
+              <tr>
+                <td>
+                  <div class="logo-container">
+                    <img src="${logoUrl}" alt="Al Karim Vision Logo" class="logo-img" />
+                    <div class="brand-title">AL KARIM VISION</div>
+                  </div>
+                </td>
+                <td class="invoice-title-block">
+                  <div class="invoice-label">FACTURE</div>
+                  <div class="invoice-meta">
+                    N° de facture : <span class="meta-value">#${order.id.toString().padStart(4, '0')}</span><br/>
+                    Date de commande : <span class="meta-value">${date}</span><br/>
+                    Mode de paiement : <span class="meta-value">${order.payment_method || 'WhatsApp / Livraison'}</span>
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <table class="details-table">
+              <tr>
+                <td>
+                  <div class="info-card">
+                    <div class="info-card-title">Émetteur</div>
+                    <div class="info-card-text">
+                      <strong>Al Karim Vision</strong><br/>
+                      Showroom Lunetterie & Parfumerie de Luxe<br/>
+                      Dakar, Sénégal<br/>
+                      Contact : +221 77 826 31 31
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="info-card">
+                    <div class="info-card-title">Destinataire</div>
+                    <div class="info-card-text">
+                      <strong>${order.customer_name}</strong><br/>
+                      Téléphone : ${order.customer_phone}<br/>
+                      Adresse : ${order.customer_address || 'Sénégal'}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Description de l'article</th>
+                  <th style="text-align: center;">Quantité</th>
+                  <th style="text-align: right;">Prix Unitaire</th>
+                  <th style="text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+
+            <table class="summary-table">
+              <tr>
+                <td style="text-align: left;">Sous-total</td>
+                <td style="text-align: right; font-weight: 500; color: #0f172a;">${new Intl.NumberFormat('fr-FR').format(calculatedSubtotal)} FCFA</td>
+              </tr>
+              ${shippingCost > 0 ? `
+                <tr>
+                  <td style="text-align: left;">Frais de livraison</td>
+                  <td style="text-align: right; font-weight: 500; color: #0f172a;">+ ${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA</td>
+                </tr>
+              ` : ''}
+              ${discountAmount > 0 ? `
+                <tr>
+                  <td style="text-align: left; color: #dc2626;">Remise appliquée</td>
+                  <td style="text-align: right; font-weight: 600; color: #dc2626;">- ${new Intl.NumberFormat('fr-FR').format(discountAmount)} FCFA</td>
+                </tr>
+              ` : ''}
+              <tr class="total-row">
+                <td style="text-align: left;">Total Net à Payer</td>
+                <td style="text-align: right;" class="total-amount">${new Intl.NumberFormat('fr-FR').format(totalAmount)} FCFA</td>
+              </tr>
+            </table>
+
+            <div class="footer">
+              <div class="footer-thankyou">Merci pour votre confiance !</div>
+              <div class="footer-terms">Al Karim Vision - L'excellence à votre regard. Si vous avez des questions concernant cette facture, n'hésitez pas à nous contacter.</div>
             </div>
           </div>
           
-          <div class="customer-info">
-            <h3 style="color: #0284c7; margin-bottom: 10px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Adressée à :</h3>
-            <strong>${order.customer_name}</strong><br/>
-            Téléphone : ${order.customer_phone}<br/>
-            Adresse : ${order.customer_address || 'Sénégal'}
-          </div>
-
-          <table>
-            <thead><tr><th>Description de l'article</th><th style="text-align: center;">Qté</th><th style="text-align: right;">Prix Unitaire</th><th style="text-align: right;">Montant</th></tr></thead>
-            <tbody>${itemsHtml}</tbody>
-          </table>
-
-          <div class="total-section">
-            <span style="color: #71717a; text-transform: uppercase; font-size: 12px; font-weight: bold; letter-spacing: 1px;">Total TTC</span>
-            <strong>${new Intl.NumberFormat('fr-FR').format(order.total_amount)} FCFA</strong>
-          </div>
-          
-          <script>window.onload = () => { window.print(); window.close(); }</script>
+          <script>
+            window.onload = () => {
+              window.print();
+              setTimeout(() => { window.close(); }, 500);
+            }
+          </script>
         </body>
       </html>
     `;
