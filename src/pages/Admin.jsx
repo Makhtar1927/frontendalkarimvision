@@ -81,6 +81,8 @@ const Admin = () => {
   const [auditLogs, setAuditLogs] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [catalogViewMode, setCatalogViewMode] = useState('grid');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('all');
   
   // Nouveaux états pour les paramètres du site
   const [siteSettings, setSiteSettings] = useState({
@@ -1040,16 +1042,20 @@ const Admin = () => {
     invoiceWindow.document.close();
   };
 
-  // 1. Filtrage (Sécurisé pour éviter les crashs si product.name est null)
-  let processedProducts = products.filter(product => 
-    product && product.name && product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // 1. Filtrage (Sécurisé pour éviter les crashs si product.name est null et avec filtre catégorie)
+  let processedProducts = (products || []).filter(product => {
+    if (!product || !product.name) return false;
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (product.brand && product.brand.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesCategory = selectedCategoryFilter === 'all' || product.category === selectedCategoryFilter;
+    return matchesSearch && matchesCategory;
+  });
 
   // 2. Tri par Prix
   if (sortOrder === 'asc') {
-    processedProducts.sort((a, b) => parseFloat(a.base_price) - parseFloat(b.base_price));
+    processedProducts.sort((a, b) => (parseFloat(a.base_price) || 0) - (parseFloat(b.base_price) || 0));
   } else if (sortOrder === 'desc') {
-    processedProducts.sort((a, b) => parseFloat(b.base_price) - parseFloat(a.base_price));
+    processedProducts.sort((a, b) => (parseFloat(b.base_price) || 0) - (parseFloat(a.base_price) || 0));
   }
 
   // 3. Pagination
@@ -1740,7 +1746,7 @@ const Admin = () => {
                   <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none [&::-webkit-scrollbar]:hidden">
                     {[
                       { id: 'all', label: 'Tous' },
-                      ...(categories || []).map(cat => ({
+                      ...(categories || []).filter(cat => cat && cat.name).map(cat => ({
                         id: cat.name,
                         label: cat.name === 'glasses' ? 'Lunettes de Soleil & Vue' :
                                cat.name === 'perfume' ? 'Parfumerie' :
