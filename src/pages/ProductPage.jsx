@@ -46,9 +46,9 @@ const ProductPage = () => {
   const [waveError, setWaveError] = useState('');
 
   const DELIVERY_ZONES = {
-    'dakar': { name: 'Dakar', cost: Number(settings.delivery_cost_dakar) || 2000 },
-    'suburbs': { name: 'Banlieue / Hors Dakar', cost: Number(settings.delivery_cost_suburbs) || 3000 },
-    'regions': { name: 'Régions (Sénégal)', cost: Number(settings.delivery_cost_regions) || 5000 },
+    'dakar': { name: 'Touba', cost: Number(settings.delivery_cost_dakar) || 2000 },
+    'suburbs': { name: 'Autour de Touba', cost: Number(settings.delivery_cost_suburbs) || 3000 },
+    'regions': { name: 'Autres Régions (Sénégal)', cost: Number(settings.delivery_cost_regions) || 5000 },
     'store': { name: 'Retrait en Magasin', cost: 0 }
   };
 
@@ -595,7 +595,7 @@ const ProductPage = () => {
                 <Truck className="text-brand-blue" size={16} />
                 <div>
                   <h4 className="font-bold text-gray-800 dark:text-white">Livraison Rapide</h4>
-                  <p className="text-gray-500">24h Dakar, 48h Régions</p>
+                  <p className="text-gray-500">24h Touba, 48h Régions</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-zinc-900/40 rounded-lg border border-gray-100 dark:border-zinc-800">

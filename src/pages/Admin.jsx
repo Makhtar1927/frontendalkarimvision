@@ -731,11 +731,11 @@ const Admin = () => {
     const safeAddress = order.customer_address || '';
     let shippingCost = 0;
     
-    if (safeAddress.includes('Dakar') && !safeAddress.includes('Hors Dakar') && !safeAddress.includes('Banlieue')) {
+    if (safeAddress.includes('Touba') && !safeAddress.includes('Autour')) {
       shippingCost = 2000;
-    } else if (safeAddress.includes('Banlieue') || safeAddress.includes('Hors Dakar') || safeAddress.includes('Rufisque') || safeAddress.includes('Pikine') || safeAddress.includes('Guédiawaye')) {
+    } else if (safeAddress.includes('Autour')) {
       shippingCost = 3000;
-    } else if (safeAddress.includes('Régions') || safeAddress.includes('Mbour') || safeAddress.includes('Thiès') || safeAddress.includes('Saint-Louis')) {
+    } else if (safeAddress.includes('Régions') || safeAddress.includes('Autres')) {
       shippingCost = 5000;
     } else if (totalAmount > calculatedSubtotal) {
       shippingCost = totalAmount - calculatedSubtotal;
@@ -950,7 +950,7 @@ const Admin = () => {
                     <div class="info-card-text">
                       <strong>Al Karim Vision</strong><br/>
                       Showroom Lunetterie & Parfumerie de Luxe<br/>
-                      Dakar, Sénégal<br/>
+                      Touba, Sénégal<br/>
                       Contact : +221 77 826 31 31
                     </div>
                   </div>
@@ -2304,15 +2304,15 @@ const Admin = () => {
                   <div className="pt-6 border-t border-gray-100 dark:border-gray-800 grid grid-cols-1 md:grid-cols-3 gap-6">
                     <h3 className="md:col-span-3 font-bold dark:text-white uppercase tracking-widest text-sm text-brand-blue">Tarifs de Livraison (FCFA)</h3>
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Dakar</label>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Touba</label>
                       <input type="number" value={siteSettings.delivery_cost_dakar} onChange={e => setSiteSettings({...siteSettings, delivery_cost_dakar: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Autour de Dakar / Banlieue</label>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Autour de Touba</label>
                       <input type="number" value={siteSettings.delivery_cost_suburbs} onChange={e => setSiteSettings({...siteSettings, delivery_cost_suburbs: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Régions</label>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Autres Régions</label>
                       <input type="number" value={siteSettings.delivery_cost_regions} onChange={e => setSiteSettings({...siteSettings, delivery_cost_regions: Number(e.target.value)})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                   </div>
