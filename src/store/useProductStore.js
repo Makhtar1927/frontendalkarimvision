@@ -132,6 +132,7 @@ const DEMO_PRODUCTS = [
 
 export const useProductStore = create((set, get) => ({
   products: [],
+  categories: [],
   stats: { graph: [], categorySales: [], kpi: { revenusMois: 0, commandesMois: 0 } },
   currentProduct: null,
   orders: [],
@@ -150,19 +151,43 @@ export const useProductStore = create((set, get) => ({
     set({ loading: true, isFetching: true, error: null });
     
     try {
-      const response = await apiFetch('/products?limit=1000');
-      if (response.ok) {
-        const data = await response.json();
-        set({ 
-          products: data.products || data, 
-          loading: false, 
-          isFetching: false, 
-          isInitialLoaded: true 
-        });
+      const [productsRes, categoriesRes] = await Promise.all([
+        apiFetch('/products?limit=1000'),
+        apiFetch('/products/categories')
+      ]);
+      
+      let productsData = [];
+      if (productsRes.ok) {
+        const data = await productsRes.json();
+        productsData = data.products || data;
       }
+      
+      let categoriesData = [];
+      if (categoriesRes.ok) {
+        categoriesData = await categoriesRes.json();
+      }
+      
+      set({ 
+        products: productsData, 
+        categories: categoriesData,
+        loading: false, 
+        isFetching: false, 
+        isInitialLoaded: true 
+      });
     } catch (err) {
       console.error("Erreur fetchProducts:", err);
-      set({ products: DEMO_PRODUCTS, loading: false, isFetching: false, isInitialLoaded: true });
+      set({ 
+        products: DEMO_PRODUCTS, 
+        categories: [
+          { id: 1, name: 'glasses', slug: 'glasses' },
+          { id: 2, name: 'perfume', slug: 'perfume' },
+          { id: 3, name: 'watches', slug: 'watches' },
+          { id: 4, name: 'other', slug: 'other' }
+        ],
+        loading: false, 
+        isFetching: false, 
+        isInitialLoaded: true 
+      });
     }
   },
 
@@ -176,10 +201,11 @@ export const useProductStore = create((set, get) => ({
 
     try {
       // On lance les appels essentiels en parallèle
-      const [productsRes, statsRes, ordersRes] = await Promise.all([
+      const [productsRes, statsRes, ordersRes, categoriesRes] = await Promise.all([
         apiFetch('/products?limit=1000'),
         apiFetch('/products/stats'),
-        apiFetch('/orders')
+        apiFetch('/orders'),
+        apiFetch('/products/categories')
       ]);
 
       let productsData = DEMO_PRODUCTS;
@@ -198,10 +224,16 @@ export const useProductStore = create((set, get) => ({
         ordersData = await ordersRes.json();
       }
 
+      let categoriesData = [];
+      if (categoriesRes.ok) {
+        categoriesData = await categoriesRes.json();
+      }
+
       set({ 
         products: productsData, 
         stats: statsData, 
         orders: ordersData,
+        categories: categoriesData,
         loading: false, 
         isFetching: false, 
         isInitialLoaded: true 
@@ -210,6 +242,12 @@ export const useProductStore = create((set, get) => ({
       console.error("Échec du chargement Admin - Mode Démo activé:", err);
       set({ 
         products: DEMO_PRODUCTS, 
+        categories: [
+          { id: 1, name: 'glasses', slug: 'glasses' },
+          { id: 2, name: 'perfume', slug: 'perfume' },
+          { id: 3, name: 'watches', slug: 'watches' },
+          { id: 4, name: 'other', slug: 'other' }
+        ],
         loading: false, 
         isFetching: false, 
         isInitialLoaded: true 
@@ -337,6 +375,21 @@ export const useProductStore = create((set, get) => ({
       return true;
     } catch (err) {
       console.error("Échec de la mise à jour du statut :", err);
+      return false;
+    }
+  },
+
+  addCategory: async (categoryData) => {
+    try {
+      const response = await apiFetch('/products/categories', {
+        method: 'POST',
+        body: JSON.stringify(categoryData)
+      });
+      if (!response.ok) throw new Error("Erreur lors de l'ajout de la catégorie");
+      await get().fetchAdminData(true);
+      return true;
+    } catch (err) {
+      console.error("Échec de la création de la catégorie :", err);
       return false;
     }
   }
