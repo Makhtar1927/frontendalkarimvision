@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Store, ShoppingCart, Search } from 'lucide-react';
+import { Home, Store, ShoppingCart, Info } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 
@@ -9,52 +9,33 @@ const MobileBottomNav = () => {
 
   const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleOpenSearch = () => {
-    window.dispatchEvent(new CustomEvent('open-search'));
-  };
-
   const navItems = [
-    { name: 'Accueil', path: '/', icon: <Home size={20} />, type: 'link' },
-    { name: 'Boutique', path: '/shop', icon: <Store size={20} />, type: 'link' },
-    { name: 'Recherche', onClick: handleOpenSearch, icon: <Search size={20} />, type: 'button' },
+    { name: 'Accueil', path: '/', icon: <Home size={20} /> },
+    { name: 'Boutique', path: '/shop', icon: <Store size={20} /> },
+    { name: 'À propos', path: '/about', icon: <Info size={20} /> },
   ];
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-brand-gray-dark/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800/80 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
       <div className="flex justify-around items-center h-16 px-2">
         {navItems.map((item) => {
-          if (item.type === 'link') {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link 
-                key={item.name} 
-                to={item.path}
-                className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-all ${
-                  isActive 
-                    ? 'text-brand-blue font-bold' 
-                    : 'text-gray-400 dark:text-zinc-550 hover:text-gray-800 dark:hover:text-zinc-200'
-                }`}
-              >
-                <div className={`p-1 rounded-lg transition-transform ${isActive ? 'scale-110' : ''}`}>
-                  {item.icon}
-                </div>
-                <span className="text-[9px] font-black tracking-widest uppercase">{item.name}</span>
-              </Link>
-            );
-          } else {
-            return (
-              <button 
-                key={item.name} 
-                onClick={item.onClick}
-                className="flex flex-col items-center justify-center w-full h-full space-y-1 text-gray-400 dark:text-zinc-550 hover:text-gray-800 dark:hover:text-zinc-200 transition-all"
-              >
-                <div className="p-1">
-                  {item.icon}
-                </div>
-                <span className="text-[9px] font-black tracking-widest uppercase">{item.name}</span>
-              </button>
-            );
-          }
+          const isActive = location.pathname === item.path;
+          return (
+            <Link 
+              key={item.name} 
+              to={item.path}
+              className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-all ${
+                isActive 
+                  ? 'text-brand-blue font-bold' 
+                  : 'text-gray-400 dark:text-zinc-550 hover:text-gray-800 dark:hover:text-zinc-200'
+              }`}
+            >
+              <div className={`p-1 rounded-lg transition-transform ${isActive ? 'scale-110' : ''}`}>
+                {item.icon}
+              </div>
+              <span className="text-[9px] font-black tracking-widest uppercase">{item.name}</span>
+            </Link>
+          );
         })}
 
         {/* Bouton Panier */}

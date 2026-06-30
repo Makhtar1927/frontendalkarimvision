@@ -142,8 +142,8 @@ const Navbar = () => {
                 <button onClick={() => setIsTrackingOpen(true)} aria-label="Suivre ma commande" className="hidden lg:flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
                   <PackageSearch size={18} />
                 </button>
-                {/* Recherche (Masqué sur mobile car présent en BottomNav) */}
-                <button onClick={() => setIsSearchOpen(true)} aria-label="Rechercher" className="hidden md:flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
+                {/* Recherche */}
+                <button onClick={() => setIsSearchOpen(true)} aria-label="Rechercher" className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
                   <Search size={18} />
                 </button>
                 {/* Mode sombre */}
@@ -174,60 +174,29 @@ const Navbar = () => {
       {/* OVERLAY MOBILE */}
       {isMenuOpen && <div className="lg:hidden fixed inset-0 z-30 bg-black/10 backdrop-blur-[2px]" onClick={() => setIsMenuOpen(false)} />}
 
-      {/* MENU MOBILE */}
+      {/* MENU MOBILE (Uniquement Suivi Commande et Mode Sombre/Clair) */}
       {isMenuOpen && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="lg:hidden fixed top-[80px] left-0 right-0 w-full bg-white/95 dark:bg-brand-gray-dark/95 backdrop-blur-xl border-b border-brand-blue/20 px-6 py-6 shadow-2xl z-40"
         >
-          {/* Outils rapides simplifiés (Suivi & Thème uniquement car Recherche & Panier sont dans le BottomNav permanent) */}
-          <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-100 dark:border-zinc-800">
+          <div className="grid grid-cols-2 gap-4">
             <button 
               onClick={() => { setIsTrackingOpen(true); setIsMenuOpen(false); }} 
-              className="flex items-center justify-center gap-3 p-3 bg-gray-50 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 rounded-xl hover:text-brand-blue transition-colors border border-gray-100 dark:border-zinc-850"
+              className="flex items-center justify-center gap-3 p-4 bg-gray-50 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 rounded-xl hover:text-brand-blue transition-colors border border-gray-100 dark:border-zinc-850 shadow-sm"
             >
-              <PackageSearch size={20} />
+              <PackageSearch size={20} className="text-brand-blue" />
               <span className="text-xs font-bold uppercase tracking-wider">Suivi Commande</span>
             </button>
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)} 
-              className="flex items-center justify-center gap-3 p-3 bg-gray-50 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 rounded-xl hover:text-brand-blue transition-colors border border-gray-100 dark:border-zinc-850"
+              className="flex items-center justify-center gap-3 p-4 bg-gray-50 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 rounded-xl hover:text-brand-blue transition-colors border border-gray-100 dark:border-zinc-850 shadow-sm"
             >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              {isDarkMode ? <Sun size={20} className="text-brand-blue" /> : <Moon size={20} className="text-brand-blue" />}
               <span className="text-xs font-bold uppercase tracking-wider">{isDarkMode ? 'Mode Clair' : 'Mode Sombre'}</span>
             </button>
           </div>
-
-          {/* Liens de navigation */}
-          <div className="space-y-1">
-            {NAV_LINKS.map(({ label, to }) => (
-              <Link
-                key={to}
-                to={to}
-                onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center px-4 py-3.5 rounded-xl font-bold text-base transition-all ${
-                  isActive(to)
-                    ? 'bg-brand-blue/10 text-brand-blue'
-                    : 'text-gray-800 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 hover:text-brand-blue'
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Admin si connecté */}
-          {isAuthenticated && (
-            <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 space-y-3">
-              <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-3 w-full p-4 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-black font-bold tracking-wide hover:opacity-90 transition-all">
-                <ShieldAlert size={18} /> Espace Admin
-              </Link>
-              <button onClick={() => { logout(); setIsMenuOpen(false); navigate('/'); }} className="flex items-center justify-center gap-3 w-full p-4 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 font-bold hover:bg-red-100 transition-all">
-                <LogOut size={18} /> Déconnexion
-              </button>
-            </div>
-          )}
         </motion.div>
       )}
 
