@@ -1670,22 +1670,63 @@ const Admin = () => {
               renderProductForm(true)
             ) : (
               <>
-                <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-8 gap-4">
+                {/* 1. ANCHOR: STATS OVERVIEW CARDS */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                  {/* Total models card */}
+                  <div className="bg-white dark:bg-brand-gray-dark p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm flex items-center justify-between transition-all hover:shadow-md">
+                    <div>
+                      <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Nombre de Modèles</span>
+                      <h3 className="text-3xl font-black dark:text-white">{processedProducts.length} <span className="text-sm font-medium text-gray-400">sur {products.length}</span></h3>
+                    </div>
+                    <div className="p-3 bg-brand-blue/10 text-brand-blue rounded-2xl">
+                      <PackageSearch size={24} />
+                    </div>
+                  </div>
+
+                  {/* Stock Total Card */}
+                  <div className="bg-white dark:bg-brand-gray-dark p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm flex items-center justify-between transition-all hover:shadow-md">
+                    <div>
+                      <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Articles en Stock</span>
+                      <h3 className="text-3xl font-black dark:text-white">
+                        {products.reduce((acc, p) => acc + (p.variants ? p.variants.reduce((vAcc, v) => vAcc + (v.stock_quantity || 0), 0) : 0), 0)}
+                      </h3>
+                    </div>
+                    <div className="p-3 bg-emerald-500/10 text-emerald-650 dark:text-emerald-400 rounded-2xl">
+                      <TrendingUp size={24} />
+                    </div>
+                  </div>
+
+                  {/* Stock Alert Card */}
+                  <div className="bg-white dark:bg-brand-gray-dark p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm flex items-center justify-between transition-all hover:shadow-md">
+                    <div>
+                      <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Alertes de Stock</span>
+                      <h3 className="text-3xl font-black dark:text-white">
+                        {products.filter(p => p.variants && p.variants.some(v => v.stock_quantity <= 3)).length}
+                      </h3>
+                    </div>
+                    <div className="p-3 bg-red-500/10 text-red-650 dark:text-red-400 rounded-2xl">
+                      <AlertTriangle size={24} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. HEADER: TITLE & NEW BUTTONS */}
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-6">
                   <div>
                     <h1 className="text-2xl sm:text-3xl font-bold dark:text-white">Gestion du Catalogue</h1>
                     <p className="text-gray-500 mt-2 text-sm sm:text-base">Gérez vos lunettes de luxe, parfums de niche et montres de prestige.</p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                  <div className="flex gap-3 w-full sm:w-auto">
                     <button 
                       onClick={() => handleTabClick('add-category')}
-                      className="w-full sm:w-auto justify-center bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-800 dark:text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-md"
+                      className="flex-1 sm:flex-none justify-center bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-800 dark:text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-sm border border-gray-200/50 dark:border-gray-800"
                     >
                       <Plus size={20} />
                       Créer un Catalogue
                     </button>
                     <button 
                       onClick={() => handleTabClick('add-product')}
-                      className="w-full sm:w-auto justify-center bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20"
+                      className="flex-1 sm:flex-none justify-center bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20"
                     >
                       <Plus size={20} />
                       Ajouter un produit
@@ -1693,184 +1734,336 @@ const Admin = () => {
                   </div>
                 </div>
 
-        {/* BARRE DE RECHERCHE */}
-        <div className="mb-6">
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Rechercher un produit par nom..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-800 rounded-2xl focus:outline-none focus:border-brand-blue dark:text-white transition-colors shadow-sm"
-            />
-          </div>
-        </div>
-
-        {/* TABLE MODERNE LUXURY & CARD LIST RESPONSIVE */}
-        <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
-          {/* Desktop Table (>= md) */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[700px]">
-              <thead>
-                <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
-                  <th className="p-4 font-medium whitespace-nowrap">Produit</th>
-                  <th className="p-4 font-medium whitespace-nowrap">Catégorie</th>
-                  <th 
-                    className="p-4 font-medium cursor-pointer hover:text-brand-blue transition-colors select-none whitespace-nowrap"
-                    onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                  >
-                    <div className="flex items-center gap-1">
-                      Prix
-                      {sortOrder === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                    </div>
-                  </th>
-                  <th className="p-4 text-right font-medium whitespace-nowrap">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {loading ? (
-                  <tr><td colSpan="4" className="text-center py-10 text-gray-500">Chargement sécurisé de la base de données...</td></tr>
-                ) : paginatedProducts.map(product => (
-                  <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
-                    <td className="p-4 flex items-center gap-4">
-                      <img src={product.image_url} alt={product.name} className="w-14 h-14 object-cover rounded-2xl border border-gray-100 dark:border-gray-800 animate-fade-in" />
-                      <div>
-                        <p className="font-bold dark:text-white">{product.name || 'Produit sans nom'}</p>
-                        <p className="text-xs text-brand-blue font-medium uppercase tracking-widest">{product.brand || 'Sans Marque'}</p>
-                      </div>
-                    </td>
-                    <td className="p-4 dark:text-gray-300 uppercase text-xs tracking-widest">
-                      <span className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl">
-                        {product.category === 'glasses' 
-                          ? 'Lunettes' 
-                          : product.category === 'perfume' 
-                          ? 'Parfum' 
-                          : product.category === 'watches' 
-                          ? 'Montre' 
-                          : product.category === 'other' 
-                          ? 'Divers' 
-                          : product.category}
-                      </span>
-                      {product.subcategory && (
-                        <span className="text-[10px] text-gray-400 block lowercase mt-1 font-semibold tracking-wider bg-gray-50 dark:bg-zinc-900 px-2 py-0.5 rounded-full w-fit">
-                          {product.subcategory === 'noir_fume' 
-                            ? 'noir fumé' 
-                            : product.subcategory === 'photogray' 
-                            ? 'photogray' 
-                            : product.subcategory === 'avec_alcool' 
-                            ? 'avec alcool' 
-                            : product.subcategory === 'sans_alcool' 
-                            ? 'sans alcool' 
-                            : product.subcategory}
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-4 font-bold dark:text-white">{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</td>
-                    <td className="p-4">
-                      <div className="flex justify-end gap-1">
-                        <button 
-                          title="Modifier" 
-                          onClick={() => handleOpenEdit(product)}
-                          className="p-2 text-gray-400 hover:text-brand-blue transition-colors"
+                {/* 3. CONTROL BAR: CATEGORY PILLS + SEARCH + VIEW SWITCHER */}
+                <div className="bg-white dark:bg-brand-gray-dark p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm mb-6 flex flex-col gap-4">
+                  {/* Category Filter pills */}
+                  <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none [&::-webkit-scrollbar]:hidden">
+                    {[
+                      { id: 'all', label: 'Tous' },
+                      ...(categories || []).map(cat => ({
+                        id: cat.name,
+                        label: cat.name === 'glasses' ? 'Lunettes de Soleil & Vue' :
+                               cat.name === 'perfume' ? 'Parfumerie' :
+                               cat.name === 'watches' ? 'Montres' :
+                               cat.name === 'other' ? 'Divers' : cat.name.charAt(0).toUpperCase() + cat.name.slice(1)
+                      }))
+                    ].map(tab => {
+                      const isActive = selectedCategoryFilter === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => { setSelectedCategoryFilter(tab.id); setCurrentPage(1); }}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                            isActive
+                              ? 'bg-brand-blue text-white shadow-sm'
+                              : 'bg-gray-55 dark:bg-zinc-900 text-gray-550 hover:bg-gray-100 dark:hover:bg-zinc-800 dark:text-gray-400'
+                          }`}
                         >
-                          <Edit size={18} />
+                          {tab.label}
                         </button>
-                        {userRole === 'admin' && (
-                          <button 
-                            title="Supprimer" 
-                            onClick={() => setProductToDelete(product)} 
-                            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {paginatedProducts.length === 0 && !loading && (
-                   <tr><td colSpan="4" className="text-center py-10 text-gray-500">Aucun produit trouvé.</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Card List (< md) */}
-          <div className="block md:hidden divide-y divide-gray-100 dark:divide-zinc-800">
-            {loading ? (
-              <div className="text-center py-10 text-gray-500 text-sm">Chargement sécurisé...</div>
-            ) : paginatedProducts.map(product => (
-              <div key={product.id} className="p-4 flex gap-4 hover:bg-gray-50/50 dark:hover:bg-zinc-900/30 transition-colors">
-                <img src={product.image_url} alt={product.name} className="w-16 h-16 object-cover rounded-xl border border-gray-150 dark:border-zinc-800 shrink-0" />
-                <div className="flex-1 min-w-0 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start justify-between gap-1">
-                      <h4 className="font-bold text-sm dark:text-white truncate">{product.name || 'Produit sans nom'}</h4>
-                      <div className="flex gap-1 shrink-0">
-                        <button 
-                          title="Modifier" 
-                          onClick={() => handleOpenEdit(product)}
-                          className="p-1.5 text-gray-450 hover:text-brand-blue"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        {userRole === 'admin' && (
-                          <button 
-                            title="Supprimer" 
-                            onClick={() => setProductToDelete(product)} 
-                            className="p-1.5 text-gray-455 hover:text-red-500"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-[10px] text-brand-blue font-bold uppercase tracking-wider mt-0.5">{product.brand || 'Sans Marque'}</p>
+                      );
+                    })}
                   </div>
-                  
-                  <div className="flex items-end justify-between gap-2 mt-2">
-                    <span className="font-black text-xs text-gray-800 dark:text-gray-205">
-                      {new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA
-                    </span>
-                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-zinc-800 rounded-md text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                      {product.category === 'glasses' ? 'Lunettes' : product.category === 'perfume' ? 'Parfum' : product.category === 'watches' ? 'Montre' : 'Divers'}
-                    </span>
+
+                  {/* Search input + view toggles */}
+                  <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 pt-2 border-t border-gray-50 dark:border-zinc-800/50">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                      <input 
+                        type="text" 
+                        placeholder="Rechercher un produit par nom ou marque..."
+                        value={searchQuery}
+                        onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                        className="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl focus:outline-none focus:border-brand-blue dark:text-white transition-colors text-sm"
+                      />
+                    </div>
+                    
+                    <div className="flex items-center gap-3 justify-end">
+                      {/* Sort Order Toggle */}
+                      <button
+                        onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                        className="p-2.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-855 hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-650 dark:text-gray-300 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold"
+                        title="Trier par Prix"
+                      >
+                        <span>Prix</span>
+                        {sortOrder === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                      </button>
+
+                      {/* Grid vs List Toggles */}
+                      <div className="flex bg-gray-50 dark:bg-zinc-905 p-1 rounded-xl border border-gray-200 dark:border-gray-855">
+                        <button
+                          onClick={() => setCatalogViewMode('grid')}
+                          className={`p-2 rounded-lg transition-all ${
+                            catalogViewMode === 'grid'
+                              ? 'bg-white dark:bg-brand-gray-dark text-brand-blue shadow-sm'
+                              : 'text-gray-450 hover:text-gray-600 dark:hover:text-gray-300'
+                          }`}
+                          title="Mode Grille"
+                        >
+                          <LayoutGrid size={16} />
+                        </button>
+                        <button
+                          onClick={() => setCatalogViewMode('list')}
+                          className={`p-2 rounded-lg transition-all ${
+                            catalogViewMode === 'list'
+                              ? 'bg-white dark:bg-brand-gray-dark text-brand-blue shadow-sm'
+                              : 'text-gray-450 hover:text-gray-600 dark:hover:text-gray-300'
+                          }`}
+                          title="Mode Table/Liste"
+                        >
+                          <List size={16} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            {paginatedProducts.length === 0 && !loading && (
-               <div className="text-center py-10 text-gray-500 text-sm">Aucun produit trouvé.</div>
-            )}
-          </div>
-        </div>
-          
-          {/* CONTRÔLES DE PAGINATION */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-zinc-900/30">
-              <span className="text-sm text-gray-500 dark:text-gray-400 font-medium tracking-wide">
-                Page <span className="text-brand-blue">{currentPage}</span> sur {totalPages}
-              </span>
-              <div className="flex gap-2">
-                <button 
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className="p-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-brand-gray-dark rounded-2xl disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm"
-                >
-                  <ChevronLeft size={18} className="dark:text-white" />
-                </button>
-                <button 
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  className="p-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-brand-gray-dark rounded-2xl disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm"
-                >
-                  <ChevronRight size={18} className="dark:text-white" />
-                </button>
-              </div>
-            </div>
-          )}
-          </>
+
+                {/* 4. PRODUCT LIST: GRID MODE */}
+                {catalogViewMode === 'grid' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    {loading ? (
+                      <div className="col-span-full text-center py-16 text-gray-500">
+                        <Loader2 className="animate-spin mx-auto mb-4 text-brand-blue" size={32} />
+                        Chargement du catalogue de luxe...
+                      </div>
+                    ) : paginatedProducts.map(product => {
+                      const totalStock = product.variants ? product.variants.reduce((acc, v) => acc + (v.stock_quantity || 0), 0) : 0;
+                      let stockLabel = 'Rupture';
+                      let stockColor = 'bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400';
+                      if (totalStock > 3) {
+                        stockLabel = `En Stock (${totalStock})`;
+                        stockColor = 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400';
+                      } else if (totalStock > 0) {
+                        stockLabel = `Stock Bas (${totalStock})`;
+                        stockColor = 'bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-400';
+                      }
+
+                      return (
+                        <motion.div
+                          layout
+                          key={product.id}
+                          className="bg-white dark:bg-brand-gray-dark rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg transition-all group flex flex-col"
+                        >
+                          {/* Image Container */}
+                          <div className="relative aspect-square overflow-hidden bg-gray-50 dark:bg-zinc-900 border-b border-gray-100 dark:border-gray-800">
+                            <img 
+                              src={product.image_url} 
+                              alt={product.name} 
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            {/* Stock Badge */}
+                            <span className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-[10px] font-black tracking-wide uppercase shadow-sm ${stockColor}`}>
+                              {stockLabel}
+                            </span>
+                            {/* Category Badge */}
+                            <span className="absolute top-4 left-4 px-3 py-1.5 bg-black/60 backdrop-blur-md text-white rounded-full text-[10px] font-bold tracking-wider uppercase">
+                              {product.category === 'glasses' ? 'Lunettes' :
+                               product.category === 'perfume' ? 'Parfum' :
+                               product.category === 'watches' ? 'Montre' : 'Divers'}
+                            </span>
+                          </div>
+
+                          {/* Info section */}
+                          <div className="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                              <span className="text-[10px] font-black text-brand-blue uppercase tracking-widest block mb-1">
+                                {product.brand || 'Sans Marque'}
+                              </span>
+                              <h3 className="font-bold text-gray-900 dark:text-white group-hover:text-brand-blue transition-colors line-clamp-1">
+                                {product.name}
+                              </h3>
+                              {product.subcategory && (
+                                <span className="text-[10px] text-gray-405 dark:text-gray-500 mt-1 inline-block bg-gray-55 dark:bg-zinc-900 px-2 py-0.5 rounded-md lowercase font-bold tracking-wide">
+                                  {product.subcategory === 'noir_fume' ? 'Noir Fumé' :
+                                   product.subcategory === 'photogray' ? 'Photogray' :
+                                   product.subcategory === 'avec_alcool' ? 'Avec Alcool' :
+                                   product.subcategory === 'sans_alcool' ? 'Sans Alcool' : product.subcategory}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-50 dark:border-zinc-800/50">
+                              <div className="flex flex-col">
+                                {product.compare_at_price && (
+                                  <span className="text-xs text-gray-400 line-through">
+                                    {new Intl.NumberFormat('fr-FR').format(product.compare_at_price)} FCFA
+                                  </span>
+                                )}
+                                <span className="font-black text-brand-blue dark:text-white text-lg leading-none">
+                                  {new Intl.NumberFormat('fr-FR').format(product.base_price)} <span className="text-xs font-semibold text-gray-400">FCFA</span>
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  onClick={() => handleOpenEdit(product)}
+                                  className="p-2.5 bg-gray-50 dark:bg-zinc-900 hover:bg-brand-blue/10 hover:text-brand-blue text-gray-500 dark:text-gray-400 rounded-xl transition-all"
+                                  title="Modifier le produit"
+                                >
+                                  <Edit size={16} />
+                                </button>
+                                {userRole === 'admin' && (
+                                  <button
+                                    onClick={() => setProductToDelete(product)}
+                                    className="p-2.5 bg-gray-50 dark:bg-zinc-900 hover:bg-red-500/10 hover:text-red-500 text-gray-500 dark:text-gray-400 rounded-xl transition-all"
+                                    title="Supprimer le produit"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+
+                    {!loading && paginatedProducts.length === 0 && (
+                      <div className="col-span-full text-center py-16 bg-white dark:bg-brand-gray-dark rounded-3xl border border-gray-100 dark:border-gray-800">
+                        <p className="text-gray-400 font-medium">Aucun modèle ne correspond à votre recherche.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 5. PRODUCT LIST: TABLE MODE (DESKTOP) & LIST MODE (MOBILE) */}
+                {catalogViewMode === 'list' && (
+                  <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden mb-6">
+                    {/* Desktop Table (>= md) */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                          <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-100 dark:border-gray-800">
+                            <th className="p-4 font-medium whitespace-nowrap">Produit</th>
+                            <th className="p-4 font-medium whitespace-nowrap">Catégorie</th>
+                            <th className="p-4 font-medium whitespace-nowrap">Stock</th>
+                            <th className="p-4 font-medium whitespace-nowrap">Prix</th>
+                            <th className="p-4 text-right font-medium whitespace-nowrap">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                          {loading ? (
+                            <tr><td colSpan="5" className="text-center py-12 text-gray-500">Chargement...</td></tr>
+                          ) : paginatedProducts.map(product => {
+                            const totalStock = product.variants ? product.variants.reduce((acc, v) => acc + (v.stock_quantity || 0), 0) : 0;
+                            let stockColor = 'text-red-500 font-bold';
+                            if (totalStock > 3) stockColor = 'text-emerald-500 font-bold';
+                            else if (totalStock > 0) stockColor = 'text-amber-500 font-bold';
+
+                            return (
+                              <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors">
+                                <td className="p-4 flex items-center gap-4">
+                                  <img src={product.image_url} alt={product.name} className="w-12 h-12 object-cover rounded-xl border border-gray-100 dark:border-gray-855 shrink-0" />
+                                  <div>
+                                    <p className='font-bold dark:text-white line-clamp-1'>{product.name || 'Sans nom'}</p>
+                                    <p className='text-xs text-brand-blue font-bold uppercase tracking-widest'>{product.brand || 'Sans Marque'}</p>
+                                  </div>
+                                </td>
+                                <td className="p-4 dark:text-gray-300 uppercase text-xs tracking-widest">
+                                  <span className="px-2.5 py-1 bg-gray-55 dark:bg-zinc-900 border border-gray-100 dark:border-gray-800 rounded-lg">
+                                    {product.category === 'glasses' ? 'Lunettes' :
+                                     product.category === 'perfume' ? 'Parfum' :
+                                     product.category === 'watches' ? 'Montre' : 'Divers'}
+                                  </span>
+                                </td>
+                                <td className={`p-4 text-xs ${stockColor}`}>
+                                  {totalStock === 0 ? 'Rupture' : `${totalStock} en stock`}
+                                </td>
+                                <td className='p-4 font-bold dark:text-white'>{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</td>
+                                <td className="p-4">
+                                  <div className="flex justify-end gap-1">
+                                    <button 
+                                      title="Modifier" 
+                                      onClick={() => handleOpenEdit(product)}
+                                      className="p-2 text-gray-400 hover:text-brand-blue transition-colors"
+                                    >
+                                      <Edit size={18} />
+                                    </button>
+                                    {userRole === 'admin' && (
+                                      <button 
+                                        title="Supprimer" 
+                                        onClick={() => setProductToDelete(product)} 
+                                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                                      >
+                                        <Trash2 size={18} />
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          {paginatedProducts.length === 0 && !loading && (
+                            <tr><td colSpan="5" className="text-center py-12 text-gray-500">Aucun produit trouvé.</td></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile Card List (< md) */}
+                    <div className="block md:hidden divide-y divide-gray-150 dark:divide-zinc-800">
+                      {loading ? (
+                        <div className="text-center py-12 text-gray-500 text-sm">Chargement...</div>
+                      ) : paginatedProducts.map(product => {
+                        const totalStock = product.variants ? product.variants.reduce((acc, v) => acc + (v.stock_quantity || 0), 0) : 0;
+                        let stockLabel = 'Rupture';
+                        let stockBadgeClass = 'bg-red-50 text-red-655 dark:bg-red-950/20 dark:text-red-450';
+                        if (totalStock > 3) {
+                          stockLabel = 'En Stock';
+                          stockBadgeClass = 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-455';
+                        } else if (totalStock > 0) {
+                          stockLabel = `${totalStock} restants`;
+                          stockBadgeClass = 'bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-455';
+                        }
+
+                        return (
+                          <div key={product.id} className="p-4 flex gap-4 hover:bg-gray-50/50 dark:hover:bg-zinc-900/30 transition-colors">
+                            <img src={product.image_url} alt={product.name} className="w-16 h-16 object-cover rounded-2xl border border-gray-100 dark:border-zinc-800 shrink-0" />
+                            <div className="flex-1 min-w-0 flex flex-col justify-between">
+                              <div>
+                                <div className="flex items-start justify-between gap-1">
+                                  <h4 className='font-bold text-sm dark:text-white truncate'>{product.name || 'Produit sans nom'}</h4>
+                                  <div className="flex gap-1.5 shrink-0">
+                                    <button 
+                                      title="Modifier" 
+                                      onClick={() => handleOpenEdit(product)}
+                                      className="p-1 text-gray-400 hover:text-brand-blue"
+                                    >
+                                      <Edit size={16} />
+                                    </button>
+                                    {userRole === 'admin' && (
+                                      <button 
+                                        title="Supprimer" 
+                                        onClick={() => setProductToDelete(product)} 
+                                        className="p-1 text-gray-400 hover:text-red-500"
+                                      >
+                                        <Trash2 size={16} />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className='text-[10px] text-brand-blue font-bold uppercase tracking-wider mt-0.5'>{product.brand || 'Sans Marque'}</p>
+                              </div>
+                              
+                              <div className="flex items-center justify-between gap-2 mt-2">
+                                <span className="font-black text-xs text-gray-900 dark:text-gray-150">
+                                  {new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide ${stockBadgeClass}`}>
+                                  {stockLabel}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {paginatedProducts.length === 0 && !loading && (
+                        <div className="text-center py-12 text-gray-500 text-sm">Aucun produit trouvé.</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
