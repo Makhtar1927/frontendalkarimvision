@@ -33,9 +33,7 @@ const VALEURS = [
 ];
 
 const HORAIRES = [
-  { jour: 'Lundi – Vendredi', heure: '08h00 – 20h00' },
-  { jour: 'Samedi',           heure: '09h00 – 20h00' },
-  { jour: 'Dimanche',         heure: '10h00 – 18h00' },
+  { jour: 'Tous les jours', heure: '08h30 – 23h00' },
 ];
 
 export default function About() {

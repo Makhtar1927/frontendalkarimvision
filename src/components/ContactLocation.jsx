@@ -41,7 +41,7 @@ const ContactLocation = () => {
                 </div>
                 <div>
                   <h4 className="font-bold dark:text-white text-sm">Horaires</h4>
-                  <p className="text-gray-500 text-xs">Sam - Jeu : 09h - 21h<br/>Vendredi : Fermé</p>
+                  <p className="text-gray-500 text-xs">Tous les jours de 8h30 à 23h</p>
                 </div>
               </div>
 
