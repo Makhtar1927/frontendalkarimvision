@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '../store/useProductStore';
 import { useAuthStore } from '../store/useAuthStore';
-import { PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image, ArrowLeft } from 'lucide-react';
+import { PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image, ArrowLeft, PlusCircle, FolderPlus } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { apiFetch } from '../components/api';
 import SEO from '../components/SEO';
@@ -10,6 +10,8 @@ import SEO from '../components/SEO';
 const ADMIN_TABS = [
   { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
   { id: 'catalog', label: 'Catalogue', icon: PackageSearch },
+  { id: 'add-product', label: 'Ajouter Produit', icon: PlusCircle },
+  { id: 'add-category', label: 'Créer Catalogue', icon: FolderPlus },
   { id: 'orders', label: 'Commandes', icon: ShoppingBag },
   { id: 'reviews', label: 'Avis Clients', icon: MessageSquare },
   { id: 'team', label: 'Équipe', icon: Users, adminOnly: true },
@@ -483,6 +485,18 @@ const Admin = () => {
     setCurrentView('add-product');
   };
 
+  const handleTabClick = (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === 'catalog') {
+      setCurrentView('list');
+    } else if (tabId === 'add-product') {
+      handleOpenAdd();
+    } else if (tabId === 'add-category') {
+      setCategoryFormData({ name: '', description: '' });
+      setCurrentView('add-category');
+    }
+  };
+
   // Fonction pour ouvrir la page en mode "Modification"
   const handleOpenEdit = (product) => {
     setEditingId(product.id);
@@ -547,6 +561,7 @@ const Admin = () => {
     setIsUploading(false);
 
     if (success) {
+      setActiveTab('catalog');
       setCurrentView('list');
       setFormData({ name: '', brand: '', category: 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: [] });
       setSelectedFiles([]); // On reset les fichiers
@@ -569,6 +584,7 @@ const Admin = () => {
 
     if (success) {
       showNotification("Catalogue / Catégorie créé avec succès !");
+      setActiveTab('catalog');
       setCurrentView('list');
       setCategoryFormData({ name: '', description: '' });
     } else {
@@ -1040,6 +1056,276 @@ const Admin = () => {
   const totalPages = Math.ceil(processedProducts.length / ITEMS_PER_PAGE);
   const paginatedProducts = processedProducts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
+  const renderCategoryForm = () => {
+    return (
+      <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+          <button 
+            onClick={() => handleTabClick('catalog')}
+            className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-600 dark:text-gray-300 transition-colors"
+            title="Retour au catalogue"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold dark:text-white">
+              Créer un nouveau Catalogue (Catégorie)
+            </h2>
+            <p className="text-xs text-gray-500 mt-1">Créez une nouvelle catégorie pour organiser vos produits.</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleCategorySubmit} className="space-y-6 max-w-2xl">
+          <div>
+            <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Nom du Catalogue</label>
+            <input 
+              required 
+              value={categoryFormData.name} 
+              onChange={e => setCategoryFormData({...categoryFormData, name: e.target.value})} 
+              type="text" 
+              placeholder="Ex: Maroquinerie, Bijoux..." 
+              className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" 
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Description</label>
+            <textarea 
+              value={categoryFormData.description} 
+              onChange={e => setCategoryFormData({...categoryFormData, description: e.target.value})} 
+              placeholder="Description succincte de ce catalogue d'articles..." 
+              rows="4" 
+              className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" 
+            />
+          </div>
+
+          <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+            <button 
+              type="button" 
+              onClick={() => handleTabClick('catalog')}
+              className="px-6 py-3 border border-gray-200 dark:border-gray-850 text-gray-600 dark:text-gray-300 font-bold rounded-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-sm"
+            >
+              Annuler
+            </button>
+            <button 
+              type="submit" 
+              disabled={isCategoryUploading}
+              className="px-8 py-3 bg-brand-blue hover:bg-brand-blue-dark text-white font-bold rounded-full shadow-md transition-all flex items-center gap-2 text-sm disabled:opacity-50"
+            >
+              {isCategoryUploading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Création...
+                </>
+              ) : (
+                'Créer le catalogue'
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  };
+
+  const renderProductForm = (isEditing = false) => {
+    return (
+      <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+          <button 
+            onClick={() => handleTabClick('catalog')}
+            className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-600 dark:text-gray-300 transition-colors"
+            title="Retour au catalogue"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold dark:text-white">
+              {isEditing ? 'Modifier le Produit' : 'Ajouter un nouveau Produit'}
+            </h2>
+            <p className="text-xs text-gray-500 mt-1">Remplissez les informations ci-dessous pour publier un article dans votre vitrine.</p>
+          </div>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Nom du Produit</label>
+              <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: Ray-Ban Aviator Classic" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Marque</label>
+              <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Ray-Ban" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Prix de Vente (FCFA)</label>
+              <input required value={formData.base_price} onChange={e => setFormData({...formData, base_price: e.target.value})} type="number" step="0.01" placeholder="0.00" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Ancien Prix / Prix de comparaison (Optionnel)</label>
+              <input value={formData.compare_at_price} onChange={e => setFormData({...formData, compare_at_price: e.target.value})} type="number" step="0.01" placeholder="Ex: 120000" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Catégorie</label>
+              <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subcategory: ''})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer">
+                {categories && categories.length > 0 ? (
+                  categories.map(cat => (
+                    <option key={cat.id} value={cat.name}>
+                      {cat.name === 'glasses' ? 'Lunettes de Soleil & Vue' :
+                       cat.name === 'perfume' ? 'Parfumerie de Niche' :
+                       cat.name === 'watches' ? 'Montres de Prestige' :
+                       cat.name === 'other' ? 'Divers & Accessoires' : cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="glasses">Lunettes de Soleil & Vue</option>
+                    <option value="perfume">Parfumerie de Niche</option>
+                    <option value="watches">Montres de Prestige</option>
+                    <option value="other">Divers & Accessoires</option>
+                  </>
+                )}
+              </select>
+            </div>
+          </div>
+
+          {/* SOUS-CATÉGORIES POUR LUNETTES ET PARFUMS */}
+          {(formData.category === 'glasses' || formData.category === 'perfume') && (
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Sous-Catégorie</label>
+              <select 
+                value={formData.subcategory || ''} 
+                onChange={e => setFormData({...formData, subcategory: e.target.value})} 
+                className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer"
+              >
+                <option value="">Aucune sous-catégorie</option>
+                {formData.category === 'glasses' ? (
+                  <>
+                    <option value="noir_fume">Noir Fumé</option>
+                    <option value="photogray">Photogray</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="avec_alcool">Avec Alcool</option>
+                    <option value="sans_alcool">Sans Alcool</option>
+                  </>
+                )}
+              </select>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Images & Vidéos (Glissez ou Cliquez)</label>
+            <div className="flex flex-col gap-3">
+              <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand-blue file:text-white hover:file:bg-brand-blue-dark cursor-pointer" />
+              
+              {(formData.existing_media.length > 0 || selectedFiles.length > 0) && (
+                <div className="flex gap-2 flex-wrap mt-2 p-3 bg-gray-50 dark:bg-zinc-900/50 rounded-2xl border border-gray-100 dark:border-gray-800">
+                  {formData.existing_media.map((url, idx) => (
+                    <div key={`old-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                      {url.match(/\.(mp4|webm)$/i) ? (
+                        <video src={url} className="w-full h-full object-cover" />
+                      ) : (
+                        <img src={url} className="w-full h-full object-cover" />
+                      )}
+                      <button type="button" onClick={() => setFormData({...formData, existing_media: formData.existing_media.filter(u => u !== url)})} className="absolute inset-0 bg-black/60 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                  {selectedFiles.map((file, idx) => (
+                    <div key={`new-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-brand-blue/50 shadow-sm">
+                      <div className="absolute top-0 left-0 bg-brand-blue text-white text-[8px] font-bold px-1 rounded-br-sm z-10">NOUVEAU</div>
+                      {file.type.includes('video') ? (
+                        <video src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
+                      ) : (
+                        <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
+                      )}
+                      <button type="button" onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))} className="absolute inset-0 bg-black/60 flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* VARIANTES */}
+          <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h4 className="text-sm font-bold dark:text-white uppercase tracking-wider">Variantes du Produit (Optionnel)</h4>
+                <p className="text-xs text-gray-500">Ajoutez des couleurs, tailles, contenances ou types de verres avec leur propre stock.</p>
+              </div>
+              <button 
+                type="button" 
+                onClick={handleAddVariant}
+                className="px-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-zinc-800 text-xs font-bold rounded-xl dark:text-white transition-colors"
+              >
+                + Ajouter une Variante
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {(formData.variants || []).map((v, idx) => (
+                <div key={idx} className="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-gray-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Valeur (ex: Cadran Bleu, 50ml)</label>
+                    <input required value={v.attribute_value} onChange={e => handleVariantChange(idx, 'attribute_value', e.target.value)} type="text" placeholder="Cadran Noir" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">SKU (Optionnel)</label>
+                    <input value={v.sku || ''} onChange={e => handleVariantChange(idx, 'sku', e.target.value)} type="text" placeholder="SKU-AUTO" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Modificateur de prix</label>
+                    <input value={v.price_modifier || 0} onChange={e => handleVariantChange(idx, 'price_modifier', parseFloat(e.target.value))} type="number" placeholder="0" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
+                  </div>
+                  <div className="flex gap-2 items-end">
+                    <div className="flex-1">
+                      <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Stock</label>
+                      <input value={v.stock_quantity || 0} onChange={e => handleVariantChange(idx, 'stock_quantity', parseInt(e.target.value))} type="number" placeholder="0" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
+                    </div>
+                    <button type="button" onClick={() => handleRemoveVariant(idx)} className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/20 text-red-650 hover:bg-red-100 transition-colors mb-0.5">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+            <button 
+              type="button" 
+              onClick={() => handleTabClick('catalog')}
+              className="px-6 py-3 border border-gray-200 dark:border-gray-850 text-gray-600 dark:text-gray-300 font-bold rounded-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-sm"
+            >
+              Annuler
+            </button>
+            <button 
+              type="submit" 
+              disabled={isUploading}
+              className="px-8 py-3 bg-brand-blue hover:bg-brand-blue-dark text-white font-bold rounded-full shadow-md transition-all flex items-center gap-2 text-sm disabled:opacity-50"
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Sauvegarde...
+                </>
+              ) : (
+                isEditing ? 'Mettre à jour le Produit' : 'Publier le Produit'
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  };
+
   return (
     <>
       <SEO 
@@ -1079,7 +1365,7 @@ const Admin = () => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabClick(tab.id)}
                 title={isSidebarCollapsed ? tab.label : ''}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all relative group ${
                   isActive 
@@ -1188,7 +1474,7 @@ const Admin = () => {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }}
+                      onClick={() => { handleTabClick(tab.id); setIsMobileMenuOpen(false); }}
                       className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
                         isActive 
                           ? 'bg-brand-blue text-white shadow-md shadow-brand-blue/15' 
@@ -1380,7 +1666,9 @@ const Admin = () => {
         {/* SECTION : CATALOGUE */}
         {activeTab === 'catalog' && (
           <div className="animate-in fade-in duration-300">
-            {currentView === 'list' ? (
+            {currentView === 'edit-product' ? (
+              renderProductForm(true)
+            ) : (
               <>
                 <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-8 gap-4">
                   <div>
@@ -1389,14 +1677,14 @@ const Admin = () => {
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <button 
-                      onClick={() => setCurrentView('add-category')}
+                      onClick={() => handleTabClick('add-category')}
                       className="w-full sm:w-auto justify-center bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-800 dark:text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-md"
                     >
                       <Plus size={20} />
                       Créer un Catalogue
                     </button>
                     <button 
-                      onClick={handleOpenAdd}
+                      onClick={() => handleTabClick('add-product')}
                       className="w-full sm:w-auto justify-center bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20"
                     >
                       <Plus size={20} />
@@ -1583,271 +1871,23 @@ const Admin = () => {
             </div>
           )}
           </>
-        ) : currentView === 'add-category' ? (
-          <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
-              <button 
-                onClick={() => setCurrentView('list')}
-                className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-600 dark:text-gray-300 transition-colors"
-                title="Retour au catalogue"
-              >
-                <ArrowLeft size={20} />
-              </button>
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold dark:text-white">
-                  Créer un nouveau Catalogue (Catégorie)
-                </h2>
-                <p className="text-xs text-gray-500 mt-1">Créez une nouvelle catégorie pour organiser vos produits.</p>
-              </div>
-            </div>
-
-            <form onSubmit={handleCategorySubmit} className="space-y-6 max-w-2xl">
-              <div>
-                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Nom du Catalogue</label>
-                <input 
-                  required 
-                  value={categoryFormData.name} 
-                  onChange={e => setCategoryFormData({...categoryFormData, name: e.target.value})} 
-                  type="text" 
-                  placeholder="Ex: Maroquinerie, Bijoux..." 
-                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" 
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Description</label>
-                <textarea 
-                  value={categoryFormData.description} 
-                  onChange={e => setCategoryFormData({...categoryFormData, description: e.target.value})} 
-                  placeholder="Description succincte de ce catalogue d'articles..." 
-                  rows="4" 
-                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" 
-                />
-              </div>
-
-              <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
-                <button 
-                  type="button" 
-                  onClick={() => setCurrentView('list')}
-                  className="px-6 py-3 border border-gray-200 dark:border-gray-850 text-gray-600 dark:text-gray-300 font-bold rounded-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-sm"
-                >
-                  Annuler
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={isCategoryUploading}
-                  className="px-8 py-3 bg-brand-blue hover:bg-brand-blue-dark text-white font-bold rounded-full shadow-md transition-all flex items-center gap-2 text-sm disabled:opacity-50"
-                >
-                  {isCategoryUploading ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Création...
-                    </>
-                  ) : (
-                    'Créer le catalogue'
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        ) : (
-          <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
-              <button 
-                onClick={() => setCurrentView('list')}
-                className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-600 dark:text-gray-300 transition-colors"
-                title="Retour au catalogue"
-              >
-                <ArrowLeft size={20} />
-              </button>
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold dark:text-white">
-                  {editingId ? 'Modifier le Produit' : 'Ajouter un nouveau Produit'}
-                </h2>
-                <p className="text-xs text-gray-500 mt-1">Remplissez les informations ci-dessous pour publier un article dans votre vitrine.</p>
-              </div>
-            </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Nom du Produit</label>
-                  <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} type="text" placeholder="Ex: Ray-Ban Aviator Classic" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Marque</label>
-                  <input value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} type="text" placeholder="Ex: Ray-Ban" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Prix de Vente (FCFA)</label>
-                  <input required value={formData.base_price} onChange={e => setFormData({...formData, base_price: e.target.value})} type="number" step="0.01" placeholder="0.00" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Ancien Prix / Prix de comparaison (Optionnel)</label>
-                  <input value={formData.compare_at_price} onChange={e => setFormData({...formData, compare_at_price: e.target.value})} type="number" step="0.01" placeholder="Ex: 120000" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Catégorie</label>
-                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subcategory: ''})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer">
-                    {categories && categories.length > 0 ? (
-                      categories.map(cat => (
-                        <option key={cat.id} value={cat.name}>
-                          {cat.name === 'glasses' ? 'Lunettes de Soleil & Vue' :
-                           cat.name === 'perfume' ? 'Parfumerie de Niche' :
-                           cat.name === 'watches' ? 'Montres de Prestige' :
-                           cat.name === 'other' ? 'Divers & Accessoires' : cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
-                        </option>
-                      ))
-                    ) : (
-                      <>
-                        <option value="glasses">Lunettes de Soleil & Vue</option>
-                        <option value="perfume">Parfumerie de Niche</option>
-                        <option value="watches">Montres de Prestige</option>
-                        <option value="other">Divers & Accessoires</option>
-                      </>
-                    )}
-                  </select>
-                </div>
-              </div>
-
-              {/* SOUS-CATÉGORIES POUR LUNETTES ET PARFUMS */}
-              {(formData.category === 'glasses' || formData.category === 'perfume') && (
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Sous-Catégorie</label>
-                  <select 
-                    value={formData.subcategory || ''} 
-                    onChange={e => setFormData({...formData, subcategory: e.target.value})} 
-                    className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm cursor-pointer"
-                  >
-                    <option value="">Aucune sous-catégorie</option>
-                    {formData.category === 'glasses' ? (
-                      <>
-                        <option value="noir_fume">Noir Fumé</option>
-                        <option value="photogray">Photogray</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="avec_alcool">Avec Alcool</option>
-                        <option value="sans_alcool">Sans Alcool</option>
-                      </>
-                    )}
-                  </select>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Images & Vidéos (Glissez ou Cliquez)</label>
-                <div className="flex flex-col gap-3">
-                  <input multiple onChange={e => setSelectedFiles(Array.from(e.target.files))} type="file" accept="image/*,video/mp4,video/quicktime" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand-blue file:text-white hover:file:bg-brand-blue-dark cursor-pointer" />
-                  
-                  {(formData.existing_media.length > 0 || selectedFiles.length > 0) && (
-                    <div className="flex gap-2 flex-wrap mt-2 p-3 bg-gray-50 dark:bg-zinc-900/50 rounded-2xl border border-gray-100 dark:border-gray-800">
-                      {formData.existing_media.map((url, idx) => (
-                        <div key={`old-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                          {url.match(/\.(mp4|webm)$/i) ? (
-                            <video src={url} className="w-full h-full object-cover" />
-                          ) : (
-                            <img src={url} className="w-full h-full object-cover" />
-                          )}
-                          <button type="button" onClick={() => setFormData({...formData, existing_media: formData.existing_media.filter(u => u !== url)})} className="absolute inset-0 bg-black/60 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      ))}
-                      {selectedFiles.map((file, idx) => (
-                        <div key={`new-${idx}`} className="relative w-16 h-16 group rounded-2xl overflow-hidden border border-brand-blue/50 shadow-sm">
-                          <div className="absolute top-0 left-0 bg-brand-blue text-white text-[8px] font-bold px-1 rounded-br-sm z-10">NOUVEAU</div>
-                          {file.type.includes('video') ? (
-                            <video src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
-                          ) : (
-                            <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" />
-                          )}
-                          <button type="button" onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))} className="absolute inset-0 bg-black/60 flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* VARIANTES */}
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <h4 className="text-sm font-bold dark:text-white uppercase tracking-wider">Variantes du Produit (Optionnel)</h4>
-                    <p className="text-xs text-gray-500">Ajoutez des couleurs, tailles, contenances ou types de verres avec leur propre stock.</p>
-                  </div>
-                  <button 
-                    type="button" 
-                    onClick={handleAddVariant}
-                    className="px-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-zinc-800 text-xs font-bold rounded-xl dark:text-white transition-colors"
-                  >
-                    + Ajouter une Variante
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {(formData.variants || []).map((v, idx) => (
-                    <div key={idx} className="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-gray-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-gray-200 dark:border-gray-800">
-                      <div>
-                        <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Valeur (ex: Cadran Bleu, 50ml)</label>
-                        <input required value={v.attribute_value} onChange={e => handleVariantChange(idx, 'attribute_value', e.target.value)} type="text" placeholder="Cadran Noir" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">SKU (Optionnel)</label>
-                        <input value={v.sku || ''} onChange={e => handleVariantChange(idx, 'sku', e.target.value)} type="text" placeholder="SKU-AUTO" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Modificateur de prix</label>
-                        <input value={v.price_modifier || 0} onChange={e => handleVariantChange(idx, 'price_modifier', parseFloat(e.target.value))} type="number" placeholder="0" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
-                      </div>
-                      <div className="flex gap-2 items-end">
-                        <div className="flex-1">
-                          <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Stock</label>
-                          <input value={v.stock_quantity || 0} onChange={e => handleVariantChange(idx, 'stock_quantity', parseInt(e.target.value))} type="number" placeholder="0" className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-xs dark:text-white" />
-                        </div>
-                        <button type="button" onClick={() => handleRemoveVariant(idx)} className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/20 text-red-650 hover:bg-red-100 transition-colors mb-0.5">
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
-                <button 
-                  type="button" 
-                  onClick={() => setCurrentView('list')}
-                  className="px-6 py-3 border border-gray-200 dark:border-gray-850 text-gray-600 dark:text-gray-300 font-bold rounded-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-sm"
-                >
-                  Annuler
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={isUploading}
-                  className="px-8 py-3 bg-brand-blue hover:bg-brand-blue-dark text-white font-bold rounded-full shadow-md transition-all flex items-center gap-2 text-sm disabled:opacity-50"
-                >
-                  {isUploading ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Sauvegarde...
-                    </>
-                  ) : (
-                    editingId ? 'Mettre à jour le Produit' : 'Publier le Produit'
-                  )}
-                </button>
-              </div>
-            </form>
+            )}
           </div>
         )}
-      </div>
-      )}
+
+        {/* SECTION : AJOUTER PRODUIT */}
+        {activeTab === 'add-product' && (
+          <div className="animate-in fade-in duration-300">
+            {renderProductForm(false)}
+          </div>
+        )}
+
+        {/* SECTION : CREER CATALOGUE */}
+        {activeTab === 'add-category' && (
+          <div className="animate-in fade-in duration-300">
+            {renderCategoryForm()}
+          </div>
+        )}
 
         {/* SECTION : COMMANDES */}
         {activeTab === 'orders' && (
