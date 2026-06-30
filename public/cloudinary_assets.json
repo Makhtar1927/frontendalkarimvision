@@ -63,5 +63,15 @@
     "filename": "Al Karim Logo.png",
     "url": "https://res.cloudinary.com/davjg4chq/image/upload/v1782855700/alkarim-vision/assets/alkarim-vision/assets/al-karim-logo.png",
     "public_id": "alkarim-vision/assets/alkarim-vision/assets/al-karim-logo"
+  },
+  {
+    "filename": "Al Karim Logo Jour.png",
+    "url": "https://res.cloudinary.com/davjg4chq/image/upload/v1782856716/alkarim-vision/assets/al-karim-logo-jour.png",
+    "public_id": "alkarim-vision/assets/al-karim-logo-jour"
+  },
+  {
+    "filename": "Al Karim Logo Nuit.png",
+    "url": "https://res.cloudinary.com/davjg4chq/image/upload/v1782856744/alkarim-vision/assets/al-karim-logo-nuit.png",
+    "public_id": "alkarim-vision/assets/al-karim-logo-nuit"
   }
 ]

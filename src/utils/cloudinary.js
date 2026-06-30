@@ -16,6 +16,8 @@ export const CLOUDINARY_ASSET_MAP = {
   '/alkarim-portrait.png': 'https://res.cloudinary.com/davjg4chq/image/upload/v1782855654/alkarim-vision/assets/alkarim-vision/assets/alkarim-portrait.png',
   '/logo.png': 'https://res.cloudinary.com/davjg4chq/image/upload/v1782855678/alkarim-vision/assets/alkarim-vision/assets/logo.png',
   '/Al Karim Logo.png': 'https://res.cloudinary.com/davjg4chq/image/upload/v1782855700/alkarim-vision/assets/alkarim-vision/assets/al-karim-logo.png',
+  '/Al Karim Logo Jour.png': 'https://res.cloudinary.com/davjg4chq/image/upload/v1782856716/alkarim-vision/assets/al-karim-logo-jour.png',
+  '/Al Karim Logo Nuit.png': 'https://res.cloudinary.com/davjg4chq/image/upload/v1782856744/alkarim-vision/assets/al-karim-logo-nuit.png',
 };
 
 /**
