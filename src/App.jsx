@@ -17,6 +17,7 @@ const Login = React.lazy(() => import('./pages/Login'));
 const ProductPage = React.lazy(() => import('./pages/ProductPage'));
 const Maintenance = React.lazy(() => import('./pages/Maintenance'));
 const Shop = React.lazy(() => import('./pages/Shop'));
+const About = React.lazy(() => import('./pages/About'));
 
 function App() {
   const { isCartOpen, closeCart } = useCartStore();
@@ -68,6 +69,7 @@ function App() {
             <Route path="/maintenance" element={<Maintenance />} />
             <Route path="/product/:productId" element={<ProductPage />} />
             <Route path="/category/:categoryId" element={<CategoryPage />} />
+            <Route path="/about" element={<About />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/admin" element={<Admin />} />
             </Route>

@@ -1,0 +1,253 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { MapPin, Phone, Mail, Clock, Star, Shield, Award, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.1 } }),
+};
+
+const VALEURS = [
+  {
+    icon: Shield,
+    titre: 'Authenticité garantie',
+    texte: 'Chaque produit vendu chez Al Karim Vision est soigneusement sélectionné et garanti authentique. Nous ne compromettrons jamais sur la qualité.',
+  },
+  {
+    icon: Star,
+    titre: 'Excellence du service',
+    texte: 'Nous accompagnons chaque client avec attention, en prenant le temps de comprendre ses besoins pour lui proposer la meilleure solution.',
+  },
+  {
+    icon: Award,
+    titre: 'Produits de prestige',
+    texte: 'Nous référençons des marques reconnues mondialement dans l\'optique, la haute parfumerie et l\'horlogerie de prestige.',
+  },
+  {
+    icon: Heart,
+    titre: 'Satisfaction client',
+    texte: 'Votre satisfaction est notre priorité absolue. Nous mettons tout en œuvre pour que chaque achat soit une expérience mémorable.',
+  },
+];
+
+const HORAIRES = [
+  { jour: 'Lundi – Vendredi', heure: '08h00 – 20h00' },
+  { jour: 'Samedi',           heure: '09h00 – 20h00' },
+  { jour: 'Dimanche',         heure: '10h00 – 18h00' },
+];
+
+export default function About() {
+  return (
+    <div className="min-h-screen bg-white dark:bg-brand-gray-dark text-gray-800 dark:text-gray-200">
+
+      {/* ── HERO ── */}
+      <section className="relative h-[45vh] md:h-[55vh] flex items-center overflow-hidden bg-gradient-to-br from-brand-blue to-brand-blue-dark">
+        <div className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }}
+        />
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white">
+          <motion.p
+            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+            className="text-xs font-bold tracking-[0.3em] uppercase text-white/70 mb-4"
+          >
+            Notre Histoire
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-4xl md:text-6xl font-black mb-6 leading-tight"
+          >
+            À propos d'<span className="text-white">Al Karim Vision</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.25 }}
+            className="text-base md:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed"
+          >
+            Une boutique spécialisée dans l'optique, la parfumerie et l'horlogerie de prestige, au cœur de Touba, Sénégal.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ── QUI SOMMES-NOUS ── */}
+      <section className="max-w-5xl mx-auto px-6 py-20">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <span className="text-xs font-bold tracking-[0.25em] uppercase text-brand-blue">Notre mission</span>
+            <h2 className="text-3xl font-black mt-3 mb-5 dark:text-white">Qualité, Élégance &amp; Satisfaction</h2>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+              Al Karim Vision est une boutique spécialisée dans la vente de <strong className="text-gray-800 dark:text-white">lunettes de vue</strong>, <strong className="text-gray-800 dark:text-white">lunettes de soleil</strong>, <strong className="text-gray-800 dark:text-white">montres</strong> et <strong className="text-gray-800 dark:text-white">parfums</strong> de qualité.
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+              Nous proposons un large choix de marques reconnues ainsi que des accessoires adaptés à tous les styles et budgets. Notre priorité est d'offrir à chaque client des produits authentiques, un accueil chaleureux et un service personnalisé.
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+              Fondée avec la vision de rendre l'élégance accessible, Al Karim Vision s'est imposée comme une référence de confiance dans la région de Touba et au-delà.
+            </p>
+          </motion.div>
+
+          <motion.div variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <img
+              src="/boutique-showroom.jpg"
+              alt="Showroom Al Karim Vision"
+              className="w-full h-72 md:h-80 object-cover rounded-2xl shadow-xl"
+              onError={e => { e.target.style.display = 'none'; }}
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── NOS VALEURS ── */}
+      <section className="bg-gray-50 dark:bg-zinc-900/50 py-20">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold tracking-[0.25em] uppercase text-brand-blue">Ce qui nous guide</span>
+            <h2 className="text-3xl font-black mt-3 dark:text-white">Nos Valeurs</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {VALEURS.map(({ icon: Icon, titre, texte }, i) => (
+              <motion.div
+                key={titre}
+                variants={fadeUp} custom={i * 0.5} initial="hidden" whileInView="visible" viewport={{ once: true }}
+                className="bg-white dark:bg-brand-gray-dark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="w-12 h-12 bg-brand-blue/10 rounded-xl flex items-center justify-center mb-4">
+                  <Icon className="text-brand-blue" size={22} />
+                </div>
+                <h3 className="font-bold text-base mb-2 dark:text-white">{titre}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{texte}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── NOS PRODUITS ── */}
+      <section className="max-w-5xl mx-auto px-6 py-20">
+        <div className="text-center mb-14">
+          <span className="text-xs font-bold tracking-[0.25em] uppercase text-brand-blue">Ce que nous vendons</span>
+          <h2 className="text-3xl font-black mt-3 dark:text-white">Nos Spécialités</h2>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-6">
+          {[
+            { img: '/boutique-interieur-1.jpg', label: 'Optique', desc: 'Lunettes de vue & soleil · Grandes marques · Montures premium' },
+            { img: '/boutique-interieur-2.jpg', label: 'Parfumerie', desc: 'Parfums authentiques · Oud de prestige · Fragrances de niche' },
+            { img: '/boutique-extra-1.jpg',     label: 'Horlogerie', desc: 'Montres de prestige · Collections homme & femme' },
+          ].map(({ img, label, desc }, i) => (
+            <motion.div
+              key={label}
+              variants={fadeUp} custom={i * 0.5} initial="hidden" whileInView="visible" viewport={{ once: true }}
+              className="group relative overflow-hidden rounded-2xl shadow-sm"
+            >
+              <img src={img} alt={label} className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500" onError={e => { e.target.parentElement.style.display='none'; }} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-5">
+                <span className="text-white font-black text-lg">{label}</span>
+                <span className="text-white/70 text-xs mt-1">{desc}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── INFOS DE CONTACT ── */}
+      <section className="bg-gray-50 dark:bg-zinc-900/50 py-20" id="contact">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold tracking-[0.25em] uppercase text-brand-blue">Venez nous rendre visite</span>
+            <h2 className="text-3xl font-black mt-3 dark:text-white">Nous trouver</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Adresse */}
+            <motion.div variants={fadeUp} custom={0} initial="hidden" whileInView="visible" viewport={{ once: true }}
+              className="bg-white dark:bg-brand-gray-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800"
+            >
+              <div className="w-12 h-12 bg-brand-blue/10 rounded-xl flex items-center justify-center mb-4">
+                <MapPin className="text-brand-blue" size={22} />
+              </div>
+              <h3 className="font-bold text-base mb-3 dark:text-white">Adresse</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Niari, Route de Ndiouga Kébé<br />
+                <strong className="text-gray-700 dark:text-gray-300">Touba, Sénégal</strong>
+              </p>
+              <a
+                href="https://maps.google.com/?q=Touba+Senegal"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 mt-4 text-xs font-bold text-brand-blue hover:underline"
+              >
+                <MapPin size={13} /> Voir sur Google Maps
+              </a>
+            </motion.div>
+
+            {/* Téléphone & WhatsApp */}
+            <motion.div variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}
+              className="bg-white dark:bg-brand-gray-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800"
+            >
+              <div className="w-12 h-12 bg-brand-blue/10 rounded-xl flex items-center justify-center mb-4">
+                <Phone className="text-brand-blue" size={22} />
+              </div>
+              <h3 className="font-bold text-base mb-3 dark:text-white">Téléphone</h3>
+              <div className="space-y-2">
+                <a href="tel:+221765662711" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue transition-colors">
+                  <Phone size={14} /> +221 76 566 27 11
+                </a>
+                <a href="tel:+221784379462" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue transition-colors">
+                  <Phone size={14} /> +221 78 437 94 62
+                </a>
+              </div>
+              <a
+                href="https://wa.me/221765662711"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-full transition-colors"
+              >
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+              </a>
+            </motion.div>
+
+            {/* Email & Horaires */}
+            <motion.div variants={fadeUp} custom={2} initial="hidden" whileInView="visible" viewport={{ once: true }}
+              className="bg-white dark:bg-brand-gray-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800"
+            >
+              <div className="w-12 h-12 bg-brand-blue/10 rounded-xl flex items-center justify-center mb-4">
+                <Clock className="text-brand-blue" size={22} />
+              </div>
+              <h3 className="font-bold text-base mb-3 dark:text-white">Horaires d'ouverture</h3>
+              <div className="space-y-2">
+                {HORAIRES.map(({ jour, heure }) => (
+                  <div key={jour} className="flex justify-between items-center text-sm">
+                    <span className="text-gray-500 dark:text-gray-400">{jour}</span>
+                    <span className="font-bold text-gray-800 dark:text-white">{heure}</span>
+                  </div>
+                ))}
+              </div>
+              <a href="mailto:amdydieng062@gmail.com" className="flex items-center gap-2 mt-4 text-xs text-gray-500 dark:text-gray-400 hover:text-brand-blue transition-colors">
+                <Mail size={13} /> amdydieng062@gmail.com
+              </a>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-20 px-6 text-center">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-2xl mx-auto">
+          <h2 className="text-3xl font-black mb-4 dark:text-white">Découvrez notre collection</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+            Parcourez notre boutique en ligne et trouvez la pièce qui vous correspond, ou venez directement nous rendre visite à Touba.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/shop" className="px-8 py-3.5 bg-brand-blue hover:bg-brand-blue-dark text-white font-bold rounded-full transition-all shadow-lg shadow-brand-blue/25">
+              Visiter la boutique
+            </Link>
+            <a href="https://wa.me/221765662711" target="_blank" rel="noopener noreferrer" className="px-8 py-3.5 border-2 border-gray-200 dark:border-zinc-700 text-gray-800 dark:text-white hover:border-brand-blue hover:text-brand-blue font-bold rounded-full transition-all">
+              Nous contacter
+            </a>
+          </div>
+        </motion.div>
+      </section>
+
+    </div>
+  );
+}

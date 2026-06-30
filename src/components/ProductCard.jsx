@@ -211,31 +211,30 @@ const ProductCard = ({ product }) => {
         </div>
       </div>
 
-      {/* TOAST */}
       {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
           {showToast && (
             <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 30 }}
               role="alert"
               aria-live="assertive"
-              transition={{ type: "spring", stiffness: 350, damping: 26 }}
-              className="fixed bottom-6 right-6 z-[9999] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 p-4 rounded-2xl shadow-xl flex items-center gap-3 cursor-default max-w-xs"
+              transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+              className="fixed bottom-20 left-4 right-4 md:bottom-6 md:left-auto md:right-6 md:w-80 z-[9999] bg-white dark:bg-zinc-900 border border-emerald-200 dark:border-emerald-500/30 p-3.5 rounded-2xl shadow-xl flex items-center gap-3 cursor-default"
               onClick={(e) => e.stopPropagation()}
             >
-              <img 
-                src={imageUrl} 
-                alt={product.name} 
-                className="w-11 h-11 rounded-xl object-contain border border-slate-100 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 shrink-0" 
-                onError={(e) => { e.target.src = 'https://placehold.co/100x100/png?text=Miniature'; }}
+              <img
+                src={imageUrl}
+                alt={product.name}
+                className="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-zinc-800 shrink-0"
+                onError={(e) => { e.target.src = 'https://placehold.co/80x80/png?text=?'; }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Ajouté !</p>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate mt-0.5">{product.name}</h4>
+                <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Ajouté !</p>
+                <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate mt-0.5">{product.name}</h4>
               </div>
-              <CheckCircle2 size={20} className="text-emerald-500 shrink-0" />
+              <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
             </motion.div>
           )}
         </AnimatePresence>,
