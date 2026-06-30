@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '../store/useProductStore';
 import { useAuthStore } from '../store/useAuthStore';
-import { PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image, ArrowLeft, PlusCircle, FolderPlus } from 'lucide-react';
+import { AlertTriangle, LayoutGrid, List, PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image, ArrowLeft, PlusCircle, FolderPlus } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { apiFetch } from '../components/api';
 import SEO from '../components/SEO';
