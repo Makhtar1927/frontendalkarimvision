@@ -340,7 +340,7 @@ const handleMockRequest = async (endpoint, options) => {
   // 2. POST /auth/login
   if (endpoint === '/auth/login' && options.method === 'POST') {
     const body = JSON.parse(options.body);
-    if (body.email === 'amdydieng062@gmail.com' && body.password === 'alkarim') {
+    if ((body.email === 'amdydieng062@gmail.com' || body.email === 'alkarimvision@gmail.com') && body.password === 'alkarim') {
       const payloadObj = {
         id: 1,
         role: 'admin',
@@ -351,7 +351,7 @@ const handleMockRequest = async (endpoint, options) => {
       return getCleanJson({
         message: "Connexion réussie",
         token: token,
-        admin: { name: 'Admin Al Karim', email: 'amdydieng062@gmail.com' }
+        admin: { name: 'Admin Al Karim', email: body.email }
       });
     } else {
       return {
