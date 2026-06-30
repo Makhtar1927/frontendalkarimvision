@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Clock, Mail, Camera, MessageCircle } from 'lucide-react';
+import { getOptimizedImageUrl } from '../utils/cloudinary';
 
 const ContactLocation = () => {
   return (
@@ -89,7 +90,7 @@ const ContactLocation = () => {
             {/* Photo réelle de la boutique */}
             <div className="relative h-[220px] md:h-[280px] w-full rounded-xl overflow-hidden border-4 border-white dark:border-brand-gray-dark shadow-2xl">
               <img
-                src="/boutique-interieur-2.jpg"
+                src={getOptimizedImageUrl('/boutique-interieur-2.jpg')}
                 alt="Intérieur de la boutique Al Karim Vision — Touba, Sénégal"
                 className="w-full h-full object-cover object-center"
                 loading="lazy"

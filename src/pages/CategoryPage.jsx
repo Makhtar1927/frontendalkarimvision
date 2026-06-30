@@ -46,6 +46,8 @@ const SUBCATEGORY_MAP = {
   ]
 };
 
+import { getOptimizedImageUrl } from '../utils/cloudinary';
+
 const CategoryPage = () => {
   const { categoryId } = useParams();
   const { fetchProducts, getProductsByCategory, loading } = useProductStore();
@@ -115,7 +117,7 @@ const CategoryPage = () => {
       <SEO 
         title={info.title} 
         description={info.subtitle} 
-        image={info.image}
+        image={getOptimizedImageUrl(info.image)}
         schema={categorySchema}
       />
       <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 pb-20">
@@ -123,7 +125,7 @@ const CategoryPage = () => {
       <div className="relative h-[40vh] md:h-[50vh] w-full flex items-center overflow-hidden">
         {info.image && (
           <img 
-            src={info.image}
+            src={getOptimizedImageUrl(info.image)}
             alt={info.title}
             fetchPriority="high"
             loading="eager"

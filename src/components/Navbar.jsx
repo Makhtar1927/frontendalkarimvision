@@ -6,6 +6,7 @@ import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useProductStore } from '../store/useProductStore';
 import { apiFetch } from './api';
+import { getOptimizedImageUrl } from '../utils/cloudinary';
 
 const NAV_LINKS = [
   { label: 'Accueil',  to: '/' },
@@ -82,7 +83,7 @@ const Navbar = () => {
 
               {/* LOGO */}
               <Link to="/" className="flex-shrink-0 flex items-center gap-3">
-                <img src="/logo.png" alt={settings.store_name} className="h-10 md:h-12 w-auto object-contain rounded-lg" />
+                <img src={getOptimizedImageUrl('/logo.png')} alt={settings.store_name} className="h-10 md:h-12 w-auto object-contain rounded-lg" />
                 {settings.maintenance_mode && isAuthenticated && (
                   <div className="flex items-center gap-1 bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-[10px] font-bold border border-red-200">
                     <HardHat size={12} /> MAINTENANCE

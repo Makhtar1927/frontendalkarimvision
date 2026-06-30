@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Star, Shield, Award, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getOptimizedImageUrl } from '../utils/cloudinary';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -46,7 +47,7 @@ export default function About() {
 
         {/* ── FOND : image boutique pleine largeur + blur + overlay ── */}
         <img
-          src="/boutique-showroom.jpg"
+          src={getOptimizedImageUrl('/boutique-showroom.jpg')}
           alt=""
           aria-hidden="true"
           className="absolute inset-0 w-full h-full object-cover scale-105 blur-[3px]"
@@ -101,10 +102,9 @@ export default function About() {
               initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
               className="order-1 md:order-2 flex justify-center md:justify-end"
             >
-              {/* Cadre circulaire */}
               <div className="w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[420px] lg:h-[420px] rounded-full overflow-hidden border-4 border-white dark:border-zinc-700 shadow-2xl shadow-brand-blue/20 flex-shrink-0">
                 <img
-                  src="/alkarim-portrait.png"
+                  src={getOptimizedImageUrl('/alkarim-portrait.png')}
                   alt="Al Karim — Fondateur de Al Karim Vision"
                   className="w-full h-full object-cover object-top select-none"
                   draggable={false}
@@ -137,7 +137,7 @@ export default function About() {
 
           <motion.div variants={fadeUp} custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <img
-              src="/boutique-showroom.jpg"
+              src={getOptimizedImageUrl('/boutique-showroom.jpg')}
               alt="Showroom Al Karim Vision"
               className="w-full h-72 md:h-80 object-cover rounded-2xl shadow-xl"
               onError={e => { e.target.style.display = 'none'; }}
@@ -179,9 +179,9 @@ export default function About() {
         </div>
         <div className="grid sm:grid-cols-3 gap-6">
           {[
-            { img: '/boutique-interieur-1.jpg', label: 'Optique', desc: 'Lunettes de vue & soleil · Grandes marques · Montures premium' },
-            { img: '/boutique-interieur-2.jpg', label: 'Parfumerie', desc: 'Parfums authentiques · Oud de prestige · Fragrances de niche' },
-            { img: '/boutique-extra-1.jpg',     label: 'Horlogerie', desc: 'Montres de prestige · Collections homme & femme' },
+            { img: getOptimizedImageUrl('/boutique-interieur-1.jpg'), label: 'Optique', desc: 'Lunettes de vue & soleil · Grandes marques · Montures premium' },
+            { img: getOptimizedImageUrl('/boutique-interieur-2.jpg'), label: 'Parfumerie', desc: 'Parfums authentiques · Oud de prestige · Fragrances de niche' },
+            { img: getOptimizedImageUrl('/boutique-extra-1.jpg'),     label: 'Horlogerie', desc: 'Montres de prestige · Collections homme & femme' },
           ].map(({ img, label, desc }, i) => (
             <motion.div
               key={label}

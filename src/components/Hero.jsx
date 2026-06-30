@@ -39,6 +39,8 @@ const STATIC_FALLBACK_SLIDES = [
   }
 ];
 
+import { getOptimizedImageUrl } from '../utils/cloudinary';
+
 const Hero = () => {
   const [slides, setSlides] = useState([]);
   const [current, setCurrent] = useState(0);
@@ -88,9 +90,11 @@ const Hero = () => {
   if (slides.length === 0) return null;
 
   const currentSlide = slides[current];
-  const slideImage = currentSlide.image_url || currentSlide.image;
+  const rawImage = currentSlide.image_url || currentSlide.image;
+  const slideImage = getOptimizedImageUrl(rawImage);
   const slideRoute = currentSlide.link_url || currentSlide.route;
   const slideBtnText = currentSlide.button_text || "Découvrir la collection";
+
 
   return (
     <div className="relative h-[45vh] sm:h-[65vh] w-full overflow-hidden bg-white dark:bg-brand-gray-dark border-b border-gray-100 dark:border-zinc-800/80">

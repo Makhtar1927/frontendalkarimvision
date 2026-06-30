@@ -13,6 +13,8 @@ const CATEGORIES = [
   { id: 'other', name: 'Divers' }
 ];
 
+import { getOptimizedImageUrl } from '../utils/cloudinary';
+
 const Shop = () => {
   const { products, fetchProducts, loading } = useProductStore();
   const [searchQuery, setSearchQuery] = useState('');
@@ -84,7 +86,7 @@ const Shop = () => {
         {/* BANNIÈRE HERO DE LA BOUTIQUE */}
         <div className="relative h-[40vh] md:h-[50vh] w-full flex items-center overflow-hidden">
           <img 
-            src="/boutique-showroom.jpg"
+            src={getOptimizedImageUrl('/boutique-showroom.jpg')}
             alt="Al Karim Vision - Boutique en Ligne"
             fetchPriority="high"
             loading="eager"
@@ -93,6 +95,7 @@ const Shop = () => {
           />
           {/* Overlay: Sombre sur mobile, Dégradé Premium avec touche de bleu logo */}
           <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-brand-blue-light/60 to-transparent dark:from-brand-gray-dark/95 dark:via-brand-blue/10 dark:to-transparent z-10"></div>
+
           
           <div className="relative z-20 px-4 w-full max-w-7xl mx-auto flex items-center">
             <div className="max-w-2xl">
