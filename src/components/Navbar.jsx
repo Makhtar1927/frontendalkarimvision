@@ -46,6 +46,13 @@ const Navbar = () => {
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
+  // Écouteur global pour ouvrir la recherche depuis le bas
+  useEffect(() => {
+    const handleOpenSearch = () => setIsSearchOpen(true);
+    window.addEventListener('open-search', handleOpenSearch);
+    return () => window.removeEventListener('open-search', handleOpenSearch);
+  }, []);
+
   const searchResults = searchQuery.trim() === ''
     ? []
     : products.filter(p =>
@@ -58,21 +65,32 @@ const Navbar = () => {
   const handleTrackOrder = async (e) => {
     e.preventDefault();
     if (!trackingId) return;
-    setTrackingLoading(true); setTrackingError(''); setTrackingResult(null);
+    setTrackingLoading(true);
+    setTrackingError('');
+    setTrackingResult(null);
     try {
-      const res = await apiFetch(`/orders/${trackingId}/status`);
-      const data = await res.json().catch(() => ({}));
-      res.ok ? setTrackingResult(data) : setTrackingError(data.message || 'Commande introuvable.');
-    } catch { setTrackingError('Une erreur est survenue.'); }
-    finally { setTrackingLoading(false); }
+      const res = await apiFetch(`/orders/track?id=${trackingId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setTrackingResult(data);
+      } else {
+        setTrackingError('Commande introuvable ou mauvais numéro.');
+      }
+    } catch (err) {
+      setTrackingError('Erreur de connexion. Veuillez réessayer.');
+    } finally {
+      setTrackingLoading(false);
+    }
   };
 
-  const closeTracking = () => { setIsTrackingOpen(false); setTrackingResult(null); setTrackingId(''); setTrackingError(''); };
-
-  const isActive = (to) => {
-    if (to === '/') return location.pathname === '/';
-    return location.pathname.startsWith(to);
+  const closeTracking = () => {
+    setIsTrackingOpen(false);
+    setTrackingId('');
+    setTrackingResult(null);
+    setTrackingError('');
   };
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <>
@@ -86,7 +104,7 @@ const Navbar = () => {
                 <img src={getOptimizedImageUrl('/logo.png')} alt={settings.store_name} className="h-10 md:h-12 w-auto object-contain rounded-lg" />
                 {settings.maintenance_mode && isAuthenticated && (
                   <div className="flex items-center gap-1 bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-[10px] font-bold border border-red-200">
-                    <HardHat size={12} /> MAINTENANCE
+                     <HardHat size={12} /> MAINTENANCE
                   </div>
                 )}
               </Link>
@@ -124,16 +142,16 @@ const Navbar = () => {
                 <button onClick={() => setIsTrackingOpen(true)} aria-label="Suivre ma commande" className="hidden lg:flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
                   <PackageSearch size={18} />
                 </button>
-                {/* Recherche */}
-                <button onClick={() => setIsSearchOpen(true)} aria-label="Rechercher" className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
+                {/* Recherche (Masqué sur mobile car présent en BottomNav) */}
+                <button onClick={() => setIsSearchOpen(true)} aria-label="Rechercher" className="hidden md:flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
                   <Search size={18} />
                 </button>
                 {/* Mode sombre */}
                 <button onClick={() => setIsDarkMode(!isDarkMode)} aria-label="Changer le thème" className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full bg-brand-blue/10 dark:bg-zinc-800 text-brand-blue transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
                   {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
                 </button>
-                {/* Panier */}
-                <div className="relative cursor-pointer group" onClick={toggleCart}>
+                {/* Panier (Masqué sur mobile car présent en BottomNav) */}
+                <div className="relative cursor-pointer group hidden md:block" onClick={toggleCart}>
                   <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 dark:bg-zinc-800/50 text-gray-600 dark:text-gray-300 group-hover:bg-brand-blue group-hover:text-white transition-all shadow-sm border border-transparent dark:border-zinc-700/50">
                     <ShoppingCart size={18} />
                   </div>
@@ -163,24 +181,21 @@ const Navbar = () => {
           animate={{ opacity: 1, y: 0 }}
           className="lg:hidden fixed top-[80px] left-0 right-0 w-full bg-white/95 dark:bg-brand-gray-dark/95 backdrop-blur-xl border-b border-brand-blue/20 px-6 py-6 shadow-2xl z-40"
         >
-          {/* Outils rapides */}
-          <div className="flex items-center justify-around mb-6 pb-6 border-b border-gray-100 dark:border-zinc-800">
-            <button onClick={() => { setIsTrackingOpen(true); setIsMenuOpen(false); }} className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-brand-blue transition-colors">
-              <PackageSearch size={22} />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Suivi</span>
+          {/* Outils rapides simplifiés (Suivi & Thème uniquement car Recherche & Panier sont dans le BottomNav permanent) */}
+          <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-100 dark:border-zinc-800">
+            <button 
+              onClick={() => { setIsTrackingOpen(true); setIsMenuOpen(false); }} 
+              className="flex items-center justify-center gap-3 p-3 bg-gray-50 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 rounded-xl hover:text-brand-blue transition-colors border border-gray-100 dark:border-zinc-850"
+            >
+              <PackageSearch size={20} />
+              <span className="text-xs font-bold uppercase tracking-wider">Suivi Commande</span>
             </button>
-            <button onClick={() => { setIsSearchOpen(true); setIsMenuOpen(false); }} className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-brand-blue transition-colors">
-              <Search size={22} />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Chercher</span>
-            </button>
-            <button onClick={() => { toggleCart(); setIsMenuOpen(false); }} className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-brand-blue transition-colors relative">
-              <ShoppingCart size={22} />
-              {itemCount > 0 && <span className="absolute -top-1 -right-2 bg-brand-blue text-white text-[10px] font-bold px-1 rounded-full">{itemCount}</span>}
-              <span className="text-[10px] font-bold uppercase tracking-wider">Panier</span>
-            </button>
-            <button onClick={() => setIsDarkMode(!isDarkMode)} className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-brand-blue transition-colors">
-              {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
-              <span className="text-[10px] font-bold uppercase tracking-wider">Thème</span>
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)} 
+              className="flex items-center justify-center gap-3 p-3 bg-gray-50 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 rounded-xl hover:text-brand-blue transition-colors border border-gray-100 dark:border-zinc-850"
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              <span className="text-xs font-bold uppercase tracking-wider">{isDarkMode ? 'Mode Clair' : 'Mode Sombre'}</span>
             </button>
           </div>
 
