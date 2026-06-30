@@ -41,32 +41,82 @@ export default function About() {
   return (
     <div className="min-h-screen bg-white dark:bg-brand-gray-dark text-gray-800 dark:text-gray-200">
 
-      {/* ── HERO ── */}
-      <section className="relative h-[45vh] md:h-[55vh] flex items-center overflow-hidden bg-gradient-to-br from-brand-blue to-brand-blue-dark">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }}
+      {/* ── HERO FONDATEUR ── */}
+      <section className="relative overflow-hidden border-b border-gray-100 dark:border-zinc-800">
+
+        {/* ── FOND : image boutique pleine largeur + blur + overlay ── */}
+        <img
+          src="/boutique-showroom.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover scale-105 blur-[3px]"
         />
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white">
-          <motion.p
-            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-            className="text-xs font-bold tracking-[0.3em] uppercase text-white/70 mb-4"
-          >
-            Notre Histoire
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black mb-6 leading-tight"
-          >
-            À propos d'<span className="text-white">Al Karim Vision</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.25 }}
-            className="text-base md:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed"
-          >
-            Une boutique spécialisée dans l'optique, la parfumerie et l'horlogerie de prestige, au cœur de Touba, Sénégal.
-          </motion.p>
+        {/* Overlay blanc pour préserver la lisibilité du texte */}
+        <div className="absolute inset-0 bg-white/75 dark:bg-zinc-950/80" />
+
+        {/* ── CONTENU ── */}
+        <div className="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-0 md:min-h-[85vh] flex items-center">
+          <div className="w-full grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+
+            {/* Colonne gauche : texte */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+              className="order-2 md:order-1"
+            >
+              <div className="inline-flex items-center gap-2 bg-brand-blue/10 border border-brand-blue/25 text-brand-blue text-[10px] font-black uppercase tracking-[0.3em] px-3.5 py-1.5 rounded-full mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
+                Fondateur
+              </div>
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 dark:text-white leading-[1.08] tracking-tight mb-3">
+                Al Karim<br />
+                <span className="text-brand-blue">Vision</span>
+              </h1>
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 mb-6">
+                Touba, Sénégal — Optique · Parfums · Montres
+              </p>
+
+              <div className="w-10 h-0.5 bg-brand-blue mb-6" />
+
+              <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed max-w-md mb-10">
+                Rendre l'élégance accessible à tous. Depuis Touba, Al Karim Vision sélectionne et propose des produits authentiques — lunettes de prestige, parfums rares et montres de qualité — pour chaque style et chaque budget.
+              </p>
+
+              <div className="flex items-stretch gap-0 divide-x divide-gray-300 dark:divide-zinc-700 border border-gray-300 dark:border-zinc-700 rounded-2xl overflow-hidden w-fit bg-white/60 dark:bg-zinc-900/60 backdrop-blur-sm">
+                {[
+                  { val: '100%', label: 'Authenticité' },
+                  { val: '+3',   label: 'Catégories' },
+                  { val: '∞',    label: 'Satisfaction' },
+                ].map(({ val, label }) => (
+                  <div key={label} className="px-5 py-4 text-center">
+                    <p className="text-xl font-black text-gray-900 dark:text-white">{val}</p>
+                    <p className="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mt-0.5">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Colonne droite : portrait seul, sans cadre */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
+              className="order-1 md:order-2 flex justify-center md:justify-end"
+            >
+              {/* Cadre circulaire */}
+              <div className="w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-[420px] lg:h-[420px] rounded-full overflow-hidden border-4 border-white dark:border-zinc-700 shadow-2xl shadow-brand-blue/20 flex-shrink-0">
+                <img
+                  src="/alkarim-portrait.png"
+                  alt="Al Karim — Fondateur de Al Karim Vision"
+                  className="w-full h-full object-cover object-top select-none"
+                  draggable={false}
+                />
+              </div>
+            </motion.div>
+
+
+          </div>
         </div>
       </section>
+
 
       {/* ── QUI SOMMES-NOUS ── */}
       <section className="max-w-5xl mx-auto px-6 py-20">
