@@ -366,7 +366,7 @@ const Navbar = () => {
                 aria-label="Champ de recherche globale"
                 autoFocus
                 type="text"
-                placeholder="Rechercher un iPhone, un Parfum, un Café..."
+                placeholder="Rechercher des lunettes, des parfums, des montres..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 bg-transparent border-none focus:outline-none dark:text-white text-base md:text-lg font-medium"
