@@ -73,7 +73,7 @@ const Admin = () => {
   // Nouveaux états pour le Tri et la Pagination
   const [sortOrder, setSortOrder] = useState(null); // null | 'asc' | 'desc'
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 5; // Nombre de produits par page
+  const ITEMS_PER_PAGE = 24; // Nombre de produits par page
   const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'pending', 'paid', 'shipped'
   const [monthFilter, setMonthFilter] = useState('all'); // Filtre par mois
 
@@ -2067,6 +2067,36 @@ const Admin = () => {
                         <div className="text-center py-12 text-gray-500 text-sm">Aucun produit trouvé.</div>
                       )}
                     </div>
+                  </div>
+                )}
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex justify-between items-center px-6 py-4 bg-white dark:bg-brand-gray-dark border border-gray-150 dark:border-gray-800 rounded-2xl shadow-sm mt-6">
+                    <button
+                      onClick={() => {
+                        setCurrentPage(prev => Math.max(prev - 1, 1));
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-gray-55 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 text-gray-750 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-gray-55 disabled:dark:hover:bg-zinc-900 disabled:cursor-not-allowed transition-all shadow-sm flex items-center gap-2"
+                    >
+                      <ChevronLeft size={14} />
+                      Précédent
+                    </button>
+                    <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                      Page {currentPage} sur {totalPages}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-gray-55 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 text-gray-750 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-gray-55 disabled:dark:hover:bg-zinc-900 disabled:cursor-not-allowed transition-all shadow-sm flex items-center gap-2"
+                    >
+                      Suivant
+                      <ChevronRight size={14} />
+                    </button>
                   </div>
                 )}
               </>
