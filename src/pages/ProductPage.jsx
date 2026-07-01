@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useProductStore } from '../store/useProductStore';
 import { useCartStore } from '../store/useCartStore';
@@ -22,6 +22,21 @@ const ProductPage = () => {
   const [newReview, setNewReview] = useState({ name: '', rating: 5, comment: '' });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  
+  const similarRef = useRef(null);
+  const recentRef = useRef(null);
+
+  const scrollLeft = (ref) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = (ref) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  };
   
   // NOUVEAU : Index du carousel et Fullscreen
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
@@ -73,11 +88,11 @@ const ProductPage = () => {
     if (currentProduct?.category_id) {
       const fetchSimilar = async () => {
         try {
-          const res = await apiFetch(`/products?categoryId=${currentProduct.category_id}&limit=5`);
+          const res = await apiFetch(`/products?categoryId=${currentProduct.category_id}&limit=11`);
           if (res.ok) {
             const data = await res.json();
             const productsList = data.products || data; // Gère les deux formats (paginé ou tableau)
-            setSimilarProducts(productsList.filter(p => p.id !== currentProduct.id).slice(0, 4));
+            setSimilarProducts(productsList.filter(p => p.id !== currentProduct.id).slice(0, 10));
           }
         } catch (err) {
           console.error("Erreur lors de la récupération des produits similaires:", err);
@@ -95,14 +110,14 @@ const ProductPage = () => {
         let viewedProducts = storedViews ? JSON.parse(storedViews) : [];
 
         // 1. On met à jour l'affichage avec les anciens produits (en excluant l'actuel)
-        setRecentlyViewed(viewedProducts.filter(p => p.id !== currentProduct.id).slice(0, 4));
+        setRecentlyViewed(viewedProducts.filter(p => p.id !== currentProduct.id).slice(0, 10));
 
         // 2. On met à jour la liste pour le localStorage (on place le produit actuel en premier)
         viewedProducts = viewedProducts.filter(p => p.id !== currentProduct.id);
         viewedProducts.unshift(currentProduct);
         
-        // 3. On conserve uniquement les 4 derniers produits en mémoire pour ne pas saturer le navigateur
-        if (viewedProducts.length > 4) viewedProducts = viewedProducts.slice(0, 4);
+        // 3. On conserve uniquement les 10 derniers produits en mémoire pour ne pas saturer le navigateur
+        if (viewedProducts.length > 10) viewedProducts = viewedProducts.slice(0, 10);
         localStorage.setItem('alkarimvision_recent_views', JSON.stringify(viewedProducts));
       } catch (err) {
         console.error("Erreur d'accès au localStorage pour les vues récentes", err);
@@ -670,30 +685,82 @@ const ProductPage = () => {
         </div>
       </div>
 
-      {/* PRODUITS SIMILAIRES */}
-      {similarProducts.length > 0 && (
+      {/* PRODUITS RÉCEMMENT CONSULTÉS */}
+      {recentlyViewed.length > 0 && (
         <div className="mt-24 pt-10 border-t border-gray-100 dark:border-gray-800">
           <h2 className="text-2xl font-luxury font-bold dark:text-white mb-8">
-            Vous aimerez aussi
+            Récemment consultés
           </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {similarProducts.map(p => (
-              <ProductCard key={p.id} product={p} />
-            ))}
+          <div className="relative group">
+            {/* Bouton Gauche */}
+            <button 
+              onClick={() => scrollLeft(recentRef)} 
+              className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 z-10 w-10 h-10 rounded-full bg-white/95 dark:bg-zinc-900/95 border border-gray-150 dark:border-zinc-800 shadow-md flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
+              aria-label="Faire défiler à gauche"
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            {/* Conteneur de scroll */}
+            <div 
+              ref={recentRef}
+              className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
+            >
+              {recentlyViewed.map(p => (
+                <div key={`recent-${p.id}`} className="min-w-[165px] xs:min-w-[180px] sm:min-w-[245px] md:min-w-[265px] snap-start flex-shrink-0">
+                  <ProductCard product={p} />
+                </div>
+              ))}
+            </div>
+
+            {/* Bouton Droit */}
+            <button 
+              onClick={() => scrollRight(recentRef)} 
+              className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 z-10 w-10 h-10 rounded-full bg-white/95 dark:bg-zinc-900/95 border border-gray-150 dark:border-zinc-800 shadow-md flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
+              aria-label="Faire défiler à droite"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
         </div>
       )}
 
-      {/* PRODUITS RÉCEMMENT CONSULTÉS */}
-      {recentlyViewed.length > 0 && (
+      {/* PRODUITS SIMILAIRES */}
+      {similarProducts.length > 0 && (
         <div className="mt-16 pt-10 border-t border-gray-100 dark:border-gray-800">
           <h2 className="text-2xl font-luxury font-bold dark:text-white mb-8">
-            Récemment consultés
+            Vous aimerez aussi
           </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {recentlyViewed.map(p => (
-              <ProductCard key={`recent-${p.id}`} product={p} />
-            ))}
+          <div className="relative group">
+            {/* Bouton Gauche */}
+            <button 
+              onClick={() => scrollLeft(similarRef)} 
+              className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 z-10 w-10 h-10 rounded-full bg-white/95 dark:bg-zinc-900/95 border border-gray-150 dark:border-zinc-800 shadow-md flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
+              aria-label="Faire défiler à gauche"
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            {/* Conteneur de scroll */}
+            <div 
+              ref={similarRef}
+              className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
+            >
+              {similarProducts.map(p => (
+                <div key={p.id} className="min-w-[165px] xs:min-w-[180px] sm:min-w-[245px] md:min-w-[265px] snap-start flex-shrink-0">
+                  <ProductCard product={p} />
+                </div>
+              ))}
+            </div>
+
+            {/* Bouton Droit */}
+            <button 
+              onClick={() => scrollRight(similarRef)} 
+              className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 z-10 w-10 h-10 rounded-full bg-white/95 dark:bg-zinc-900/95 border border-gray-150 dark:border-zinc-800 shadow-md flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
+              aria-label="Faire défiler à droite"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
         </div>
       )}
