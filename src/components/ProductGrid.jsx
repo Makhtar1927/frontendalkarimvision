@@ -18,7 +18,7 @@ const ProductGrid = () => {
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(true);
   }, [fetchProducts]);
 
   if (loading) {

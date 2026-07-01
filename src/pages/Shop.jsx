@@ -25,7 +25,7 @@ const Shop = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(true);
     window.scrollTo(0, 0);
   }, [fetchProducts]);
 
