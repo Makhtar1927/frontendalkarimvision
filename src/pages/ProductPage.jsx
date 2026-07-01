@@ -275,14 +275,14 @@ const ProductPage = () => {
       // Clean fields
       setWaveName('');
       setWavePhone('');
-      window.location.href = `https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/?amount=${finalTotal}`;
+      window.location.href = `https://pay.wave.com/m/M_rDVUEo3vU_Sh/c/sn/?amount=${finalTotal}`;
     } catch (error) {
       console.error(error);
       if (error.message.includes("Serveur injoignable") || error.message.includes("démonstration")) {
         setIsWaveModalOpen(false);
         setWaveName('');
         setWavePhone('');
-        window.location.href = `https://pay.wave.com/m/M_VdELf5tD6Zki/c/sn/?amount=${finalTotal}`;
+        window.location.href = `https://pay.wave.com/m/M_rDVUEo3vU_Sh/c/sn/?amount=${finalTotal}`;
       } else {
         setWaveError(error.message || "Une erreur est survenue. Veuillez réessayer.");
       }
