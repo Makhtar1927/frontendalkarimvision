@@ -707,7 +707,7 @@ const ProductPage = () => {
               className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
             >
               {recentlyViewed.map(p => (
-                <div key={`recent-${p.id}`} className="min-w-[165px] xs:min-w-[180px] sm:min-w-[245px] md:min-w-[265px] snap-start flex-shrink-0">
+                <div key={`recent-${p.id}`} className="w-[135px] xs:w-[155px] sm:w-[195px] md:w-[215px] lg:w-[225px] snap-start flex-shrink-0">
                   <ProductCard product={p} />
                 </div>
               ))}
@@ -747,7 +747,7 @@ const ProductPage = () => {
               className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
             >
               {similarProducts.map(p => (
-                <div key={p.id} className="min-w-[165px] xs:min-w-[180px] sm:min-w-[245px] md:min-w-[265px] snap-start flex-shrink-0">
+                <div key={p.id} className="w-[135px] xs:w-[155px] sm:w-[195px] md:w-[215px] lg:w-[225px] snap-start flex-shrink-0">
                   <ProductCard product={p} />
                 </div>
               ))}
