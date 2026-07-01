@@ -11,7 +11,7 @@ import { apiFetch } from '../components/api';
 
 const ProductPage = () => {
   const { productId } = useParams();
-  const { currentProduct, fetchProductById, clearCurrentProduct, loading, error } = useProductStore();
+  const { currentProduct, fetchProductById, clearCurrentProduct, loading, error, settings: storeSettings, fetchSettings } = useProductStore();
   const { addToCart } = useCartStore();
 
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -28,13 +28,13 @@ const ProductPage = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // RÉGLAGES DYNAMIQUES ET STICKY BAR
-  const [settings, setSettings] = useState({
+  const settings = storeSettings || {
     whatsapp_number: "221784379462",
     store_name: "Al Karim Vision",
     delivery_cost_dakar: 2000,
     delivery_cost_suburbs: 3000,
     delivery_cost_regions: 5000
-  });
+  };
   const [showStickyBar, setShowStickyBar] = useState(false);
 
   // ÉTATS ACHAT RAPIDE WAVE
@@ -53,19 +53,8 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const res = await apiFetch('/settings');
-        if (res.ok) {
-          const data = await res.json();
-          setSettings(data);
-        }
-      } catch (err) {
-        console.error("Erreur settings product page:", err);
-      }
-    };
-    loadSettings();
-  }, []);
+    fetchSettings();
+  }, [fetchSettings]);
 
   useEffect(() => {
     const handleScroll = () => {

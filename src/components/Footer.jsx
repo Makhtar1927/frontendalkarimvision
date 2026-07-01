@@ -2,34 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { Send, CheckCircle2, Loader2, Compass, Phone, Mail, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { apiFetch } from './api';
+import { useProductStore } from '../store/useProductStore';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
   const [message, setMessage] = useState('');
-  const [settings, setSettings] = useState({
+  
+  const { settings: storeSettings, fetchSettings } = useProductStore();
+
+  const settings = storeSettings || {
     store_name: 'Al Karim Vision',
     contact_phone: '221784379462',
     contact_email: 'contact@alkarimvision.com',
     contact_address: 'Touba Darou Khoudoss, Niary Etage',
     maps_link: 'https://www.google.com/maps?q=14.8605356,-15.8835194&z=17&hl=fr',
     whatsapp_number: '221784379462'
-  });
+  };
 
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const res = await apiFetch('/settings');
-        if (res.ok) {
-          const data = await res.json();
-          setSettings(data);
-        }
-      } catch (err) {
-        console.error("Erreur chargement settings footer:", err);
-      }
-    };
-    loadSettings();
-  }, []);
+    fetchSettings();
+  }, [fetchSettings]);
 
   const handleSubscribe = async (e) => {
     e.preventDefault();

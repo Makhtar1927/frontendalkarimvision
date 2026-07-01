@@ -7,7 +7,7 @@ import { useAuthStore } from './store/useAuthStore';
 import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
 import MobileBottomNav from './components/MobileBottomNav';
-import { apiFetch } from './components/api';
+import { useProductStore } from './store/useProductStore';
 
 // Le "Lazy loading" des pages améliore les performances.
 const Admin = React.lazy(() => import('./pages/Admin'));
@@ -22,29 +22,18 @@ const About = React.lazy(() => import('./pages/About'));
 function App() {
   const { isCartOpen, closeCart } = useCartStore();
   const { user } = useAuthStore();
+  const { settings, fetchSettings } = useProductStore();
   const location = useLocation();
-  const [maintenance, setMaintenance] = useState(false);
-  const [whatsappNumber, setWhatsappNumber] = useState('221765662711');
   
   const isAdminPage = location.pathname.startsWith('/admin');
   const isLoginPage = location.pathname === '/login';
   const isMaintenancePage = location.pathname === '/maintenance';
 
   useEffect(() => {
-    const checkMaintenance = async () => {
-      try {
-        const res = await apiFetch('/settings');
-        if (res.ok) {
-          const data = await res.json();
-          setMaintenance(data.maintenance_mode);
-          if (data.whatsapp_number) {
-            setWhatsappNumber(data.whatsapp_number);
-          }
-        }
-      } catch (err) {}
-    };
-    checkMaintenance();
-  }, [location.pathname]);
+    fetchSettings();
+  }, [fetchSettings]);
+
+  const maintenance = settings?.maintenance_mode || false;
 
   // Si maintenance activée, on redirige tout le monde sauf les admins vers /maintenance
   if (maintenance && !user && !isLoginPage && !isMaintenancePage) {

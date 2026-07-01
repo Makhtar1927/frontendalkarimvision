@@ -18,11 +18,11 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cart, toggleCart } = useCartStore();
   const { isAuthenticated, logout } = useAuthStore();
-  const { products, fetchProducts } = useProductStore();
+  const { products, fetchProducts, settings: storeSettings, fetchSettings } = useProductStore();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [settings, setSettings] = useState({ store_name: 'Al Karim Vision', maintenance_mode: false });
+  const settings = storeSettings || { store_name: 'Al Karim Vision', maintenance_mode: false };
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
@@ -38,8 +38,8 @@ const Navbar = () => {
 
   useEffect(() => {
     fetchProducts();
-    apiFetch('/settings').then(r => r.ok && r.json()).then(d => d && setSettings(d)).catch(() => {});
-  }, [fetchProducts]);
+    fetchSettings();
+  }, [fetchProducts, fetchSettings]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);

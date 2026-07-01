@@ -142,6 +142,28 @@ export const useProductStore = create((set, get) => ({
   isFetchingOrders: false,
   isInitialLoaded: false,
   error: null,
+  settings: null,
+  isFetchingSettings: false,
+
+  // Récupérer la configuration globale (cachable au niveau client)
+  fetchSettings: async (force = false) => {
+    const { settings, isFetchingSettings } = get();
+    if (!force && (settings || isFetchingSettings)) return settings;
+    
+    set({ isFetchingSettings: true });
+    try {
+      const response = await apiFetch('/settings');
+      if (response.ok) {
+        const data = await response.json();
+        set({ settings: data, isFetchingSettings: false });
+        return data;
+      }
+    } catch (err) {
+      console.error("Erreur lors de la récupération des paramètres:", err);
+    }
+    set({ isFetchingSettings: false });
+    return get().settings;
+  },
 
   // Récupérer uniquement les produits (utilisé par la Navbar pour la recherche)
   fetchProducts: async () => {

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Star, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
+import { getOptimizedImageUrl } from '../utils/cloudinary';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCartStore();
@@ -41,9 +42,10 @@ const ProductCard = ({ product }) => {
   };
 
   const isVideo = product.image_url?.match(/\.(mp4|mov|webm)$/i);
-  const imageUrl = isVideo 
+  const rawImageUrl = isVideo 
     ? product.image_url.replace(/\.(mp4|mov|webm)$/i, '.jpg') 
     : (product.image_url || 'https://via.placeholder.com/400');
+  const imageUrl = getOptimizedImageUrl(rawImageUrl, { width: 500 });
 
   return (
     <motion.article 

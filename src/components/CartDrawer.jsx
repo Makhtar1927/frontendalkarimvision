@@ -4,18 +4,21 @@ import { X, Trash2, MessageCircle, Loader2, CheckCircle2, ShoppingCart, ArrowRig
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 import { apiFetch } from './api';
+import { useProductStore } from '../store/useProductStore';
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const { cart, getTotal, removeFromCart, updateQuantity, clearCart } = useCartStore();
   const navigate = useNavigate();
 
-  // États pour les réglages dynamiques
-  const [settings, setSettings] = useState({
+  const { settings: storeSettings, fetchSettings } = useProductStore();
+
+  // Configuration locale ou fallback
+  const settings = storeSettings || {
     whatsapp_number: "221784379462",
     delivery_cost_dakar: 2000,
     delivery_cost_suburbs: 3000,
     delivery_cost_regions: 5000
-  });
+  };
 
   // 1. Tarifs de livraison par zone (Mapés sur les réglages)
   const DELIVERY_ZONES = {
@@ -36,19 +39,10 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
   // --- RÉCUPÉRATION DES RÉGLAGES ---
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const res = await apiFetch('/settings');
-        if (res.ok) {
-          const data = await res.json();
-          setSettings(data);
-        }
-      } catch (err) {
-        console.error("Erreur settings cart:", err);
-      }
-    };
-    if (isOpen) loadSettings();
-  }, [isOpen]);
+    if (isOpen) {
+      fetchSettings();
+    }
+  }, [isOpen, fetchSettings]);
 
   const subtotal = getTotal();
   const shippingCost = DELIVERY_ZONES[deliveryZone].cost;
