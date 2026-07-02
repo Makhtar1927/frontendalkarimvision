@@ -95,6 +95,12 @@ const Admin = () => {
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSimplifiedMode, setIsSimplifiedMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('alkarim_admin_simplified') !== 'false';
+    }
+    return true;
+  });
 
   // --- ÉTATS POUR LE CARROUSEL ACCUEIL (SLIDES) ---
   const [slides, setSlides] = useState([]);
@@ -275,7 +281,23 @@ const Admin = () => {
   const user = useAuthStore(state => state.user);
   const userName = user?.full_name || 'Utilisateur';
   const userRole = user?.role || 'moderator';
-  const visibleTabs = ADMIN_TABS.filter(tab => !tab.adminOnly || userRole === 'admin');
+
+  const visibleTabs = ADMIN_TABS.filter(tab => {
+    if (isSimplifiedMode) {
+      const allowedTabIds = ['dashboard', 'catalog', 'orders', 'settings'];
+      if (!allowedTabIds.includes(tab.id)) return false;
+    }
+    return !tab.adminOnly || userRole === 'admin';
+  });
+
+  useEffect(() => {
+    if (isSimplifiedMode) {
+      const allowedTabIds = ['dashboard', 'catalog', 'orders', 'settings', 'add-product', 'add-category'];
+      if (!allowedTabIds.includes(activeTab)) {
+        setActiveTab('dashboard');
+      }
+    }
+  }, [isSimplifiedMode, activeTab]);
 
   useEffect(() => {
     // Force la récupération des données à chaque visite (lors de la connexion ou navigation)
@@ -1367,7 +1389,7 @@ const Admin = () => {
         <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden">
           {visibleTabs.map(tab => {
             const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
+            const isActive = activeTab === tab.id || (tab.id === 'catalog' && (activeTab === 'add-product' || activeTab === 'add-category'));
             return (
               <button
                 key={tab.id}
@@ -1394,6 +1416,23 @@ const Admin = () => {
             className="w-full hidden lg:flex items-center gap-3 px-4 py-2 text-gray-400 hover:text-brand-blue transition-colors text-xs font-bold uppercase tracking-widest"
           >
             {isSidebarCollapsed ? <ChevronRight size={18} /> : <><ChevronLeft size={18} /> Réduire</>}
+          </button>
+
+          <button 
+            onClick={() => {
+              const newMode = !isSimplifiedMode;
+              setIsSimplifiedMode(newMode);
+              localStorage.setItem('alkarim_admin_simplified', String(newMode));
+            }}
+            className={`w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold uppercase tracking-widest transition-all rounded-xl ${
+              isSimplifiedMode 
+                ? 'text-brand-blue bg-brand-blue/10 hover:bg-brand-blue/20 dark:bg-brand-blue/5' 
+                : 'text-gray-450 dark:text-gray-400 hover:text-brand-blue hover:bg-gray-50 dark:hover:bg-zinc-900/50'
+            } ${isSidebarCollapsed ? 'justify-center' : ''}`}
+            title={isSimplifiedMode ? "Passer au Mode Avancé" : "Passer au Mode Simplifié"}
+          >
+            <Shield size={16} className="shrink-0" />
+            {!isSidebarCollapsed && <span>{isSimplifiedMode ? "Mode Simple" : "Mode Avancé"}</span>}
           </button>
           
           <div className={`flex items-center gap-3 p-2 rounded-2xl ${!isSidebarCollapsed ? 'bg-gray-50 dark:bg-zinc-900/50' : ''}`}>
@@ -1476,7 +1515,7 @@ const Admin = () => {
               <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
                 {visibleTabs.map(tab => {
                   const Icon = tab.icon;
-                  const isActive = activeTab === tab.id;
+                  const isActive = activeTab === tab.id || (tab.id === 'catalog' && (activeTab === 'add-product' || activeTab === 'add-category'));
                   return (
                     <button
                       key={tab.id}
@@ -1505,6 +1544,23 @@ const Admin = () => {
                     <p className="text-[9px] text-gray-400 uppercase tracking-wider truncate">{userRole === 'admin' ? 'Admin' : 'Modérateur'}</p>
                   </div>
                 </div>
+
+                <button 
+                  onClick={() => {
+                    const newMode = !isSimplifiedMode;
+                    setIsSimplifiedMode(newMode);
+                    localStorage.setItem('alkarim_admin_simplified', String(newMode));
+                  }}
+                  className={`w-full flex items-center justify-center gap-2 py-2.5 mb-2 text-xs font-bold uppercase tracking-wider transition-all rounded-xl border ${
+                    isSimplifiedMode 
+                      ? 'text-brand-blue bg-brand-blue/10 border-brand-blue/20 dark:bg-brand-blue/5' 
+                      : 'text-gray-550 dark:text-gray-400 border-gray-200 dark:border-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-900/50'
+                  }`}
+                >
+                  <Shield size={14} />
+                  <span>{isSimplifiedMode ? "Mode Simple" : "Mode Avancé"}</span>
+                </button>
+
                 <button 
                   onClick={() => { useAuthStore.getState().logout(); window.location.href = '/'; }}
                   className="w-full flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/20 text-red-650 dark:text-red-450 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
