@@ -1,7 +1,7 @@
 import { useAuthStore } from '../store/useAuthStore';
 
 // SYSTEM OF MOCK DATA FOR OFFLINE/CLIENT-SIDE DEMO MODE
-const MOCK_MODE = import.meta.env.VITE_MOCK_MODE !== 'false';
+const MOCK_MODE = import.meta.env.VITE_MOCK_MODE === 'true';
 
 const INITIAL_PRODUCTS = [
   {
@@ -437,12 +437,15 @@ const handleMockRequest = async (endpoint, options) => {
     const base_price = formData.get('base_price') || '0';
     const compare_at_price = formData.get('compare_at_price') || '';
     const description = formData.get('description') || '';
-    const imageFile = formData.get('image');
+    const mediaFiles = formData.getAll('media');
+    const imageFile = mediaFiles.length > 0 ? mediaFiles[0] : null;
     
     let image_url = 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=800&auto=format&fit=crop';
     if (imageFile && imageFile.name) {
       image_url = URL.createObjectURL(imageFile);
     }
+
+    const mediaUrls = mediaFiles.map(file => file.name ? URL.createObjectURL(file) : '');
 
     const variantsStr = formData.get('variants');
     let variants = [];
@@ -462,6 +465,7 @@ const handleMockRequest = async (endpoint, options) => {
       compare_at_price: compare_at_price || null,
       description,
       image_url,
+      media_urls: mediaUrls,
       variants
     };
 
@@ -481,12 +485,24 @@ const handleMockRequest = async (endpoint, options) => {
     const base_price = formData.get('base_price') || '0';
     const compare_at_price = formData.get('compare_at_price') || '';
     const description = formData.get('description') || '';
-    const imageFile = formData.get('image');
+    const mediaFiles = formData.getAll('media');
+    const imageFile = mediaFiles.length > 0 ? mediaFiles[0] : null;
     
     let image_url = null;
     if (imageFile && imageFile.name) {
       image_url = URL.createObjectURL(imageFile);
     }
+
+    const existingMediaStr = formData.get('existing_media');
+    let parsedExistingMedia = [];
+    if (existingMediaStr) {
+      try {
+        parsedExistingMedia = JSON.parse(existingMediaStr);
+      } catch (e) {}
+    }
+    const newMediaUrls = mediaFiles.map(file => file.name ? URL.createObjectURL(file) : '');
+    const finalMediaUrls = [...parsedExistingMedia, ...newMediaUrls];
+    const finalImageUrl = finalMediaUrls.length > 0 ? finalMediaUrls[0] : (image_url || null);
 
     const variantsStr = formData.get('variants');
     let variants = null;
@@ -506,9 +522,10 @@ const handleMockRequest = async (endpoint, options) => {
           subcategory,
           base_price,
           compare_at_price: compare_at_price || null,
-          description
+          description,
+          media_urls: finalMediaUrls
         };
-        if (image_url) u.image_url = image_url;
+        if (finalImageUrl) u.image_url = finalImageUrl;
         if (variants) u.variants = variants;
         return u;
       }
