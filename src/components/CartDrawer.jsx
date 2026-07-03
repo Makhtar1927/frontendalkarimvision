@@ -40,6 +40,37 @@ const CartDrawer = ({ isOpen, onClose }) => {
   const [formError, setFormError] = useState('');
   const [deliveryZone, setDeliveryZone] = useState('dakar'); // Zone par défaut
   const [waveSummaryData, setWaveSummaryData] = useState(null);
+  
+  // États pour les coupons / codes promo
+  const [promoCodeText, setPromoCodeText] = useState('');
+  const [couponData, setCouponData] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
+  const handleApplyCoupon = async () => {
+    if (!promoCodeText.trim()) return;
+    setCouponError('');
+    setIsValidatingCoupon(true);
+    try {
+      const response = await apiFetch(`/coupons/validate/${promoCodeText.trim()}?orderAmount=${subtotal}`);
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Code invalide.');
+      }
+      setCouponData(result);
+    } catch (err) {
+      setCouponError(err.message);
+      setCouponData(null);
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponData(null);
+    setPromoCodeText('');
+    setCouponError('');
+  };
 
   // Récupération des réglages
   useEffect(() => {
@@ -49,11 +80,21 @@ const CartDrawer = ({ isOpen, onClose }) => {
   }, [isOpen, fetchSettings]);
 
   const subtotal = getTotal();
+
+  // Calcul de la remise du coupon
+  let discountAmount = 0;
+  if (couponData) {
+    if (couponData.type === 'percentage') {
+      discountAmount = subtotal * (couponData.value / 100);
+    } else if (couponData.type === 'fixed') {
+      discountAmount = couponData.value;
+    }
+  }
   
   // Règle psychologique : Livraison offerte si panier >= Seuil
   const isFreeShippingEligible = subtotal >= FREE_SHIPPING_THRESHOLD;
   const shippingCost = (isFreeShippingEligible && deliveryZone !== 'store') ? 0 : DELIVERY_ZONES[deliveryZone].cost;
-  const finalTotal = subtotal + shippingCost;
+  const finalTotal = Math.max(0, subtotal - discountAmount) + shippingCost;
 
   // Calculateur de barre de progression de livraison gratuite
   const remainingForFreeShipping = FREE_SHIPPING_THRESHOLD - subtotal;
@@ -76,6 +117,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
       customer_address: DELIVERY_ZONES[deliveryZone].name, 
       payment_method: paymentType === 'wave' ? 'Wave' : 'WhatsApp / Paiement à la livraison',
       total_amount: finalTotal,
+      promo_code: couponData ? couponData.code : null,
       items: cart.map(item => {
         let variantId = item.variant_id || item.variantId || null;
         if (typeof variantId === 'object' && variantId !== null) variantId = variantId.id;
@@ -130,6 +172,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
     // Déclencher le suivi d'achat publicitaire
     trackPurchaseEvent(waveSummaryData.orderId, amountToPay, cart);
     clearCart();
+    handleRemoveCoupon();
     setWaveSummaryData(null);
     onClose();
     window.location.href = `https://pay.wave.com/m/M_rDVUEo3vU_Sh/c/sn/?amount=${amountToPay}`;
@@ -162,6 +205,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
     setTimeout(() => {
       setIsSuccess(false);
       clearCart();
+      handleRemoveCoupon();
       onClose();
       window.location.href = whatsappLink;
     }, 2500);
@@ -436,12 +480,56 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     {formError && <p className="text-xs text-center text-red-500 font-bold">{formError}</p>}
                   </div>
 
+                  {/* CODE PROMO */}
+                  <div className="space-y-2.5 border-t border-gray-100 dark:border-zinc-850 pt-4">
+                    <label htmlFor="promoCode" className="block text-[9px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Code Promo</label>
+                    <div className="flex gap-2">
+                      <input 
+                        id="promoCode"
+                        type="text" 
+                        value={promoCodeText} 
+                        onChange={(e) => setPromoCodeText(e.target.value)} 
+                        disabled={couponData !== null}
+                        placeholder="Ex: BIENVENUE10" 
+                        className="flex-1 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-xs uppercase dark:text-white focus:border-brand-blue outline-none transition-colors" 
+                      />
+                      {couponData ? (
+                        <button 
+                          onClick={handleRemoveCoupon}
+                          className="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                        >
+                          Retirer
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={handleApplyCoupon}
+                          disabled={isValidatingCoupon || !promoCodeText.trim()}
+                          className="bg-brand-blue hover:bg-brand-blue-dark text-white px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50"
+                        >
+                          {isValidatingCoupon ? '...' : 'Valider'}
+                        </button>
+                      )}
+                    </div>
+                    {couponError && <p className="text-[10px] text-red-500 font-bold mt-1">{couponError}</p>}
+                    {couponData && (
+                      <p className="text-[10px] text-green-500 font-bold mt-1">
+                        Code promo "{couponData.code}" activé !
+                      </p>
+                    )}
+                  </div>
+
                   {/* RÉCAPITULATIF DES PRIX */}
                   <div className="space-y-2.5 border-t border-gray-100 dark:border-zinc-850 pt-4">
                     <div className="flex justify-between items-center text-xs text-gray-500 dark:text-zinc-400">
                       <span>Sous-total</span>
                       <span className="font-bold text-gray-800 dark:text-gray-200">{new Intl.NumberFormat('fr-FR').format(subtotal)} FCFA</span>
                     </div>
+                    {discountAmount > 0 && (
+                      <div className="flex justify-between items-center text-xs text-green-500">
+                        <span>Réduction Code Promo</span>
+                        <span className="font-bold">-{new Intl.NumberFormat('fr-FR').format(discountAmount)} FCFA</span>
+                      </div>
+                    )}
                     <div className="flex justify-between items-center text-xs text-gray-500 dark:text-zinc-400">
                       <span>Frais de livraison</span>
                       {shippingCost === 0 ? (
