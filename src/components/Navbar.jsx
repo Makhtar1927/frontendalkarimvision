@@ -69,7 +69,7 @@ const Navbar = () => {
     setTrackingError('');
     setTrackingResult(null);
     try {
-      const res = await apiFetch(`/orders/track?id=${trackingId}`);
+      const res = await apiFetch(`/orders/${trackingId}/status`);
       if (res.ok) {
         const data = await res.json();
         setTrackingResult(data);

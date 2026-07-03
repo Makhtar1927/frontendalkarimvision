@@ -412,7 +412,7 @@ const handleMockRequest = async (endpoint, options) => {
         json: async () => ({ error: "Commande introuvable" })
       };
     }
-    return getCleanJson({ status: order.status });
+    return getCleanJson({ id: order.id, total_amount: order.total_amount, status: order.status });
   }
 
   // 7. GET /settings
