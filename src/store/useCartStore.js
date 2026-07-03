@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { trackAddToCartEvent } from '../components/TrackingManager';
 
 export const useCartStore = create((set, get) => ({
   cart: [],
@@ -14,6 +15,15 @@ export const useCartStore = create((set, get) => ({
     
     const existingItem = currentCart.find(item => item.id === itemIdentifier);
     
+    // Déclenchement événement Tracking
+    const finalPrice = parseFloat(product.base_price) + parseFloat(safeVariant.price_modifier || 0);
+    trackAddToCartEvent({
+      id: product.id,
+      name: product.name,
+      price: finalPrice,
+      quantity: 1
+    });
+
     if (existingItem) {
       set({ 
         cart: currentCart.map(item => 
@@ -28,7 +38,7 @@ export const useCartStore = create((set, get) => ({
           variantId: safeVariant.id,
           name: product.name, 
           variant: safeVariant.attribute_value,
-          price: parseFloat(product.base_price) + parseFloat(safeVariant.price_modifier || 0),
+          price: finalPrice,
           quantity: 1,
           sku: safeVariant.sku,
           image_url: product.image_url

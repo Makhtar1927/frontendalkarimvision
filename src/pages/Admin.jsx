@@ -89,7 +89,8 @@ const Admin = () => {
     store_name: '', contact_phone: '', contact_email: '', contact_address: '',
     maps_link: '', whatsapp_number: '', facebook_link: '', instagram_link: '',
     tiktok_link: '', snapchat_link: '', maintenance_mode: false, delivery_cost_dakar: 2000,
-    delivery_cost_suburbs: 3000, delivery_cost_regions: 5000
+    delivery_cost_suburbs: 3000, delivery_cost_regions: 5000,
+    facebook_pixel_id: '', google_analytics_id: '', tiktok_pixel_id: '', facebook_domain_verification: ''
   });
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -2659,6 +2660,26 @@ const Admin = () => {
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Snapchat</label>
                       <input value={siteSettings.snapchat_link} onChange={e => setSiteSettings({...siteSettings, snapchat_link: e.target.value})} placeholder="https://snapchat.com/add/..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                    </div>
+                  </div>
+
+                  <div className="pt-6 border-t border-gray-100 dark:border-gray-800 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <h3 className="md:col-span-2 font-bold dark:text-white uppercase tracking-widest text-sm text-brand-blue">Publicité & Tracking (Pixels / Analytics)</h3>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Facebook Pixel ID</label>
+                      <input value={siteSettings.facebook_pixel_id || ''} onChange={e => setSiteSettings({...siteSettings, facebook_pixel_id: e.target.value})} placeholder="Ex: 123456789012345" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">TikTok Pixel ID</label>
+                      <input value={siteSettings.tiktok_pixel_id || ''} onChange={e => setSiteSettings({...siteSettings, tiktok_pixel_id: e.target.value})} placeholder="Ex: C87365HSJSKJSJSJS" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Google Analytics ID (G-XXXXXX)</label>
+                      <input value={siteSettings.google_analytics_id || ''} onChange={e => setSiteSettings({...siteSettings, google_analytics_id: e.target.value})} placeholder="Ex: G-XXXXXXXXXX" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Code de Vérification de Domaine Facebook (Meta Tag)</label>
+                      <input value={siteSettings.facebook_domain_verification || ''} onChange={e => setSiteSettings({...siteSettings, facebook_domain_verification: e.target.value})} placeholder="Ex: abcdefghijklmnopqrstuvwxyz1234" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                   </div>
 

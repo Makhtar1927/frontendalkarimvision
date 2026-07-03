@@ -6,6 +6,7 @@ import { useCartStore } from '../store/useCartStore';
 import { apiFetch } from './api';
 import { useProductStore } from '../store/useProductStore';
 import { getOptimizedImageUrl } from '../utils/cloudinary';
+import { trackInitiateCheckoutEvent, trackPurchaseEvent } from './TrackingManager';
 
 const FREE_SHIPPING_THRESHOLD = 50000; // Seuil de livraison gratuite à 50 000 FCFA
 
@@ -66,6 +67,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
     setFormError('');
     setIsSubmitting(true);
 
+    // Déclencher le suivi du début de commande
+    trackInitiateCheckoutEvent(cart, finalTotal);
+
     const orderData = {
       customer_name: customerName,
       customer_phone: customerPhone,
@@ -123,6 +127,8 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
   const handleContinueToWave = () => {
     const amountToPay = finalTotal;
+    // Déclencher le suivi d'achat publicitaire
+    trackPurchaseEvent(waveSummaryData.orderId, amountToPay, cart);
     clearCart();
     setWaveSummaryData(null);
     onClose();
@@ -147,6 +153,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappLink = `https://wa.me/${settings.whatsapp_number}?text=${encodedMessage}`;
+
+    // Déclencher le suivi d'achat publicitaire
+    trackPurchaseEvent(orderId, finalTotal, cart);
 
     setIsSuccess(true);
 
