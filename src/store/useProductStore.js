@@ -1,8 +1,18 @@
 import { create } from 'zustand';
 import { apiFetch } from '../components/api';
+import { STARTER_CATEGORIES, STARTER_PRODUCTS } from '../data/starterProducts';
 
 // Mode Production : Pas de données de démonstration.
 
+const mergeById = (apiItems = [], starterItems = []) => {
+  const starterIds = new Set(starterItems.map(item => String(item.id)));
+  return [
+    ...starterItems,
+    ...apiItems.filter(item => !starterIds.has(String(item.id)))
+  ];
+};
+
+const starterFallbackCategories = () => STARTER_CATEGORIES;
 
 export const useProductStore = create((set, get) => ({
   products: [],
@@ -99,11 +109,13 @@ export const useProductStore = create((set, get) => ({
         const data = await productsRes.json();
         productsData = data.products || data;
       }
+      productsData = mergeById(productsData, STARTER_PRODUCTS);
       
       let categoriesData = [];
       if (categoriesRes.ok) {
         categoriesData = await categoriesRes.json();
       }
+      categoriesData = mergeById(categoriesData, STARTER_CATEGORIES);
       
       set({ 
         products: productsData, 
@@ -115,13 +127,8 @@ export const useProductStore = create((set, get) => ({
     } catch (err) {
       console.error("Erreur fetchProducts:", err);
       set({ 
-        products: [], 
-        categories: get().categories.length > 0 ? get().categories : [
-          { id: 1, name: 'glasses', slug: 'glasses' },
-          { id: 2, name: 'perfume', slug: 'perfume' },
-          { id: 3, name: 'watches', slug: 'watches' },
-          { id: 4, name: 'other', slug: 'other' }
-        ],
+        products: STARTER_PRODUCTS, 
+        categories: get().categories.length > 0 ? get().categories : starterFallbackCategories(),
         loading: false, 
         isFetching: false, 
         isInitialLoaded: true 
@@ -151,6 +158,7 @@ export const useProductStore = create((set, get) => ({
         const data = await productsRes.json();
         productsData = data.products || data;
       }
+      productsData = mergeById(productsData, STARTER_PRODUCTS);
 
       let statsData = get().stats;
       if (statsRes.ok) {
@@ -166,6 +174,7 @@ export const useProductStore = create((set, get) => ({
       if (categoriesRes.ok) {
         categoriesData = await categoriesRes.json();
       }
+      categoriesData = mergeById(categoriesData, STARTER_CATEGORIES);
 
       set({ 
         products: productsData, 
@@ -179,13 +188,8 @@ export const useProductStore = create((set, get) => ({
     } catch (err) {
       console.error("Échec du chargement Admin :", err);
       set({ 
-        products: [], 
-        categories: get().categories.length > 0 ? get().categories : [
-          { id: 1, name: 'glasses', slug: 'glasses' },
-          { id: 2, name: 'perfume', slug: 'perfume' },
-          { id: 3, name: 'watches', slug: 'watches' },
-          { id: 4, name: 'other', slug: 'other' }
-        ],
+        products: STARTER_PRODUCTS, 
+        categories: get().categories.length > 0 ? get().categories : starterFallbackCategories(),
         loading: false, 
         isFetching: false, 
         isInitialLoaded: true 
@@ -231,10 +235,22 @@ export const useProductStore = create((set, get) => ({
     set({ loading: true, error: null, currentProduct: null });
     try {
       const response = await apiFetch(`/products/${id}`);
-      if (!response.ok) throw new Error("Produit introuvable");
+      if (!response.ok) {
+        const starterProduct = STARTER_PRODUCTS.find(product => String(product.id) === String(id));
+        if (starterProduct) {
+          set({ currentProduct: starterProduct, loading: false });
+          return;
+        }
+        throw new Error("Produit introuvable");
+      }
       const data = await response.json();
       set({ currentProduct: data, loading: false });
     } catch (err) {
+      const starterProduct = STARTER_PRODUCTS.find(product => String(product.id) === String(id));
+      if (starterProduct) {
+        set({ currentProduct: starterProduct, loading: false, error: null });
+        return;
+      }
       console.error("Erreur lors de la récupération du produit:", err);
       set({ error: err.message, loading: false });
     }
