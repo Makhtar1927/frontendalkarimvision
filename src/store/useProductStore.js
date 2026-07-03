@@ -166,9 +166,9 @@ export const useProductStore = create((set, get) => ({
   },
 
   // Récupérer uniquement les produits (utilisé par la Navbar pour la recherche)
-  fetchProducts: async () => {
+  fetchProducts: async (force = false) => {
     const { isInitialLoaded, isFetching } = get();
-    if (isInitialLoaded || isFetching) return;
+    if (!force && (isInitialLoaded || isFetching)) return;
     
     set({ loading: true, isFetching: true, error: null });
     

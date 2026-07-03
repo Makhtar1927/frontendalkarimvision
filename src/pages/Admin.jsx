@@ -73,7 +73,7 @@ const Admin = () => {
   // Nouveaux états pour le Tri et la Pagination
   const [sortOrder, setSortOrder] = useState(null); // null | 'asc' | 'desc'
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 5; // Nombre de produits par page
+  const ITEMS_PER_PAGE = 24; // Nombre de produits par page
   const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'pending', 'paid', 'shipped'
   const [monthFilter, setMonthFilter] = useState('all'); // Filtre par mois
 
@@ -88,7 +88,7 @@ const Admin = () => {
   const [siteSettings, setSiteSettings] = useState({
     store_name: '', contact_phone: '', contact_email: '', contact_address: '',
     maps_link: '', whatsapp_number: '', facebook_link: '', instagram_link: '',
-    tiktok_link: '', maintenance_mode: false, delivery_cost_dakar: 2000,
+    tiktok_link: '', snapchat_link: '', maintenance_mode: false, delivery_cost_dakar: 2000,
     delivery_cost_suburbs: 3000, delivery_cost_regions: 5000
   });
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
@@ -2125,6 +2125,36 @@ const Admin = () => {
                     </div>
                   </div>
                 )}
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex justify-between items-center px-6 py-4 bg-white dark:bg-brand-gray-dark border border-gray-150 dark:border-gray-800 rounded-2xl shadow-sm mt-6">
+                    <button
+                      onClick={() => {
+                        setCurrentPage(prev => Math.max(prev - 1, 1));
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-gray-55 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 text-gray-750 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-gray-55 disabled:dark:hover:bg-zinc-900 disabled:cursor-not-allowed transition-all shadow-sm flex items-center gap-2"
+                    >
+                      <ChevronLeft size={14} />
+                      Précédent
+                    </button>
+                    <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                      Page {currentPage} sur {totalPages}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-gray-55 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 text-gray-750 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-gray-55 disabled:dark:hover:bg-zinc-900 disabled:cursor-not-allowed transition-all shadow-sm flex items-center gap-2"
+                    >
+                      Suivant
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -2583,6 +2613,10 @@ const Admin = () => {
                       <input value={siteSettings.contact_email} onChange={e => setSiteSettings({...siteSettings, contact_email: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                     <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Téléphone de Contact</label>
+                      <input value={siteSettings.contact_phone} onChange={e => setSiteSettings({...siteSettings, contact_phone: e.target.value})} placeholder="22177..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                    </div>
+                    <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Téléphone WhatsApp (International)</label>
                       <input value={siteSettings.whatsapp_number} onChange={e => setSiteSettings({...siteSettings, whatsapp_number: e.target.value})} placeholder="22177..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
@@ -2616,11 +2650,15 @@ const Admin = () => {
                     <h3 className="md:col-span-2 font-bold dark:text-white uppercase tracking-widest text-sm text-brand-blue">Réseaux Sociaux</h3>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Instagram</label>
-                      <input value={siteSettings.instagram_link} onChange={e => setSiteSettings({...siteSettings, instagram_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                      <input value={siteSettings.instagram_link} onChange={e => setSiteSettings({...siteSettings, instagram_link: e.target.value})} placeholder="https://instagram.com/..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">TikTok</label>
-                      <input value={siteSettings.tiktok_link} onChange={e => setSiteSettings({...siteSettings, tiktok_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                      <input value={siteSettings.tiktok_link} onChange={e => setSiteSettings({...siteSettings, tiktok_link: e.target.value})} placeholder="https://tiktok.com/@..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Snapchat</label>
+                      <input value={siteSettings.snapchat_link} onChange={e => setSiteSettings({...siteSettings, snapchat_link: e.target.value})} placeholder="https://snapchat.com/add/..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                   </div>
 

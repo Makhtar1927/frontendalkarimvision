@@ -25,7 +25,7 @@ const Shop = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(true);
     window.scrollTo(0, 0);
   }, [fetchProducts]);
 

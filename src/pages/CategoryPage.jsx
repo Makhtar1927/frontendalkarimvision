@@ -59,7 +59,7 @@ const CategoryPage = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(true);
     window.scrollTo(0, 0); // Scroll top on page load
     setSelectedBrand(''); // Réinitialise le filtre marque si on change de catégorie
     setSelectedSubcategory(''); // Réinitialise la sous-catégorie si on change de catégorie
