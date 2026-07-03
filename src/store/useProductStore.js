@@ -5,11 +5,10 @@ import { STARTER_CATEGORIES, STARTER_PRODUCTS } from '../data/starterProducts';
 // Mode Production : Pas de données de démonstration.
 
 const mergeById = (apiItems = [], starterItems = []) => {
-  const starterIds = new Set(starterItems.map(item => String(item.id)));
-  return [
-    ...starterItems,
-    ...apiItems.filter(item => !starterIds.has(String(item.id)))
-  ];
+  if (apiItems && apiItems.length > 0) {
+    return apiItems;
+  }
+  return starterItems;
 };
 
 const starterFallbackCategories = () => STARTER_CATEGORIES;
