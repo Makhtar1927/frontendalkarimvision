@@ -30,7 +30,8 @@ export const useCartStore = create((set, get) => ({
           variant: safeVariant.attribute_value,
           price: parseFloat(product.base_price) + parseFloat(safeVariant.price_modifier || 0),
           quantity: 1,
-          sku: safeVariant.sku
+          sku: safeVariant.sku,
+          image_url: product.image_url
         }]
       });
     }
@@ -62,7 +63,7 @@ export const useCartStore = create((set, get) => ({
     return get().cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
   },
 
-  // GÉNÉRER LE LIEN WHATSAPP (L'Intelligence du projet)
+  // Génération du lien de redirection WhatsApp
   generateWhatsAppLink: (phoneNumber) => {
     const cart = get().cart;
     const total = get().getTotal();

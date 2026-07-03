@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trash2, MessageCircle, Loader2, CheckCircle2, ShoppingCart, ArrowRight } from 'lucide-react';
+import { X, Trash2, Loader2, CheckCircle2, ShoppingCart, ArrowRight, ShieldCheck, Truck, Lock, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 import { apiFetch } from './api';
 import { useProductStore } from '../store/useProductStore';
+import { getOptimizedImageUrl } from '../utils/cloudinary';
+
+const FREE_SHIPPING_THRESHOLD = 50000; // Seuil de livraison gratuite à 50 000 FCFA
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const { cart, getTotal, removeFromCart, updateQuantity, clearCart } = useCartStore();
@@ -20,7 +23,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
     delivery_cost_regions: 5000
   };
 
-  // 1. Tarifs de livraison par zone (Mapés sur les réglages)
+  // Tarifs de livraison par zone
   const DELIVERY_ZONES = {
     'dakar': { name: 'Touba', cost: Number(settings.delivery_cost_dakar) || 0 },
     'suburbs': { name: 'Autour de Touba', cost: Number(settings.delivery_cost_suburbs) || 0 },
@@ -37,7 +40,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
   const [deliveryZone, setDeliveryZone] = useState('dakar'); // Zone par défaut
   const [waveSummaryData, setWaveSummaryData] = useState(null);
 
-  // --- RÉCUPÉRATION DES RÉGLAGES ---
+  // Récupération des réglages
   useEffect(() => {
     if (isOpen) {
       fetchSettings();
@@ -45,8 +48,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
   }, [isOpen, fetchSettings]);
 
   const subtotal = getTotal();
-  const shippingCost = DELIVERY_ZONES[deliveryZone].cost;
+  
+  // Règle psychologique : Livraison offerte si panier >= Seuil
+  const isFreeShippingEligible = subtotal >= FREE_SHIPPING_THRESHOLD;
+  const shippingCost = (isFreeShippingEligible && deliveryZone !== 'store') ? 0 : DELIVERY_ZONES[deliveryZone].cost;
   const finalTotal = subtotal + shippingCost;
+
+  // Calculateur de barre de progression de livraison gratuite
+  const remainingForFreeShipping = FREE_SHIPPING_THRESHOLD - subtotal;
+  const freeShippingProgress = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
 
   const handleOrderSubmit = async (paymentType = 'whatsapp') => {
     if (!customerName || !customerPhone) {
@@ -59,16 +69,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
     const orderData = {
       customer_name: customerName,
       customer_phone: customerPhone,
-      customer_address: DELIVERY_ZONES[deliveryZone].name, // Sauvegardé en base de données
+      customer_address: DELIVERY_ZONES[deliveryZone].name, 
       payment_method: paymentType === 'wave' ? 'Wave' : 'WhatsApp / Paiement à la livraison',
-      total_amount: finalTotal, // On envoie le montant TTC (avec livraison)
+      total_amount: finalTotal,
       items: cart.map(item => {
-        // Détection robuste au cas où la variante est stockée comme un objet complet
         let variantId = item.variant_id || item.variantId || null;
         if (typeof variantId === 'object' && variantId !== null) variantId = variantId.id;
 
         return {
-          id: item.productId || item.product_id || item.id, // Extraction garantie de l'ID produit
+          id: item.productId || item.product_id || item.id,
           variant_id: variantId,
           quantity: item.quantity,
           price: item.price
@@ -94,7 +103,6 @@ const CartDrawer = ({ isOpen, onClose }) => {
       }
     } catch (error) {
       console.error(error);
-      // MODE HORS-LIGNE : Si le serveur est injoignable ou s'il s'agit d'une démo, on sécurise la vente en envoyant quand même le WhatsApp/Wave !
       if (error.message.includes("Serveur injoignable") || error.message.includes("démonstration")) {
         if (paymentType === 'wave') {
           triggerWave("HORS-LIGNE");
@@ -133,14 +141,13 @@ const CartDrawer = ({ isOpen, onClose }) => {
       message += ` - ${new Intl.NumberFormat('fr-FR').format(item.price * item.quantity)} FCFA\n`;
     });
 
-    message += `\n📦 *Livraison :* ${DELIVERY_ZONES[deliveryZone].name} (+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA)\n`;
+    message += `\n📦 *Livraison :* ${DELIVERY_ZONES[deliveryZone].name} ${shippingCost === 0 ? '(Offerte !)' : `(+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA)`}\n`;
     message += `💰 *TOTAL À PAYER : ${new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA*\n\n`;
-    message += `Bonjour BoustaneTech Store, je souhaite confirmer ma commande.`;
+    message += `Bonjour, je souhaite confirmer ma commande et planifier ma livraison.`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappLink = `https://wa.me/${settings.whatsapp_number}?text=${encodedMessage}`;
 
-    // Afficher le succès pendant 2 secondes avant de fermer
     setIsSuccess(true);
 
     setTimeout(() => {
@@ -151,15 +158,19 @@ const CartDrawer = ({ isOpen, onClose }) => {
     }, 2500);
   };
 
+  const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
     <AnimatePresence>
       {isOpen && (
         <>
           {/* Overlay sombre */}
           <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-[60] backdrop-blur-sm cursor-pointer"
+            className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm cursor-pointer"
           />
 
           {/* Drawer */}
@@ -167,7 +178,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 220 }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="cart-drawer-title"
@@ -187,17 +198,18 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: 'spring', bounce: 0.5 }}
                   >
-                    <CheckCircle2 size={100} className="text-green-500 mb-6" />
+                    <CheckCircle2 size={90} className="text-green-500 mb-6" />
                   </motion.div>
-                  <h3 className="text-2xl font-sans font-black dark:text-white mb-2">Commande Transmise !</h3>
-                  <p className="text-gray-500 dark:text-gray-400">Confirmation en cours sur WhatsApp...</p>
+                  <h3 className="text-2xl font-black dark:text-white mb-2 uppercase tracking-wide">Commande Enregistrée !</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs mx-auto">Vous allez être redirigé vers WhatsApp pour finaliser la livraison...</p>
                   <div className="mt-8 flex gap-2">
-                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <div className="w-2.5 h-2.5 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                    <div className="w-2.5 h-2.5 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2.5 h-2.5 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                   </div>
                 </motion.div>
               )}
+
               {waveSummaryData && (
                 <motion.div
                   initial={{ x: '100%' }}
@@ -207,57 +219,57 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   className="absolute inset-0 z-[90] bg-white dark:bg-brand-gray-dark flex flex-col h-full"
                 >
                   <div className="flex justify-between items-center p-4 border-b border-gray-150 dark:border-zinc-800 shrink-0">
-                    <h3 className="text-xl font-bold dark:text-white">Récapitulatif</h3>
+                    <h3 className="text-base font-black uppercase tracking-wider dark:text-white">Récapitulatif</h3>
                     <button onClick={() => setWaveSummaryData(null)} className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg dark:text-white transition-colors">
                       <X size={20} />
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-gray-50/50 dark:bg-zinc-900/50">
-                    <div className="bg-white dark:bg-zinc-800 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
-                      <p className="text-gray-700 dark:text-gray-300">
-                        Bonjour <span className="font-bold">{customerName}</span>,
+                  <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50/50 dark:bg-zinc-900/50">
+                    <div className="bg-white dark:bg-zinc-900/80 p-5 rounded-xl shadow-sm border border-gray-150 dark:border-zinc-800 space-y-4">
+                      <p className="text-gray-700 dark:text-gray-300 text-sm">
+                        Bonjour <span className="font-black text-brand-blue">{customerName}</span>,
                       </p>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        Votre commande a été préparée avec succès. Veuillez vérifier les détails ci-dessous avant de procéder au paiement.
+                      <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
+                        Votre commande est prête. Veuillez vérifier les détails ci-dessous avant de procéder au paiement sur Wave.
                       </p>
 
-                      <div className="pt-4 pb-2 border-b border-gray-100 dark:border-gray-700">
-                        <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Numéro de commande</p>
-                        <p className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-wider">
-                          {waveSummaryData.orderId !== "HORS-LIGNE" ? `N°${waveSummaryData.orderId}` : 'HORS-LIGNE'}
+                      <div className="pt-4 pb-2 border-b border-gray-150 dark:border-zinc-800">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Commande N°</p>
+                        <p className="text-xl font-black text-gray-900 dark:text-white tracking-wider">
+                          {waveSummaryData.orderId !== "HORS-LIGNE" ? `#${waveSummaryData.orderId.toString().padStart(4, '0')}` : 'HORS-LIGNE'}
                         </p>
                       </div>
 
                       <div className="space-y-3 pt-2">
-                        <p className="text-xs text-gray-500 uppercase tracking-widest">Articles commandés</p>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Vos Articles</p>
                         {cart.map((item, idx) => (
-                          <div key={idx} className="flex justify-between items-start text-sm">
+                          <div key={idx} className="flex justify-between items-start text-xs sm:text-sm">
                             <div className="flex-1 pr-4">
-                              <span className="font-medium text-gray-800 dark:text-gray-200">{item.quantity}x {item.name}</span>
-                              {item.variant && <p className="text-xs text-gray-500 dark:text-gray-400">{item.variant}</p>}
+                              <span className="font-bold text-gray-800 dark:text-gray-200">{item.quantity}x {item.name}</span>
+                              {item.variant && <p className="text-[10px] text-brand-blue uppercase">{item.variant}</p>}
                             </div>
-                            <span className="font-bold whitespace-nowrap text-gray-800 dark:text-gray-200">
+                            <span className="font-black whitespace-nowrap text-gray-800 dark:text-gray-200">
                               {new Intl.NumberFormat('fr-FR').format(item.price * item.quantity)} FCFA
                             </span>
                           </div>
                         ))}
                       </div>
 
-                      <div className="space-y-2 pt-4 border-t border-gray-100 dark:border-gray-700">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Sous-total</span>
-                          <span className="dark:text-gray-300">{new Intl.NumberFormat('fr-FR').format(subtotal)} FCFA</span>
+                      <div className="space-y-2 pt-4 border-t border-gray-150 dark:border-zinc-800">
+                        <div className="flex justify-between text-xs sm:text-sm">
+                          <span className="text-gray-400 font-medium">Sous-total</span>
+                          <span className="font-bold text-gray-800 dark:text-gray-200">{new Intl.NumberFormat('fr-FR').format(subtotal)} FCFA</span>
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Livraison ({DELIVERY_ZONES[deliveryZone].name})</span>
-                          <span className="dark:text-gray-300">{shippingCost > 0 ? `+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA` : 'Gratuit'}</span>
+                        <div className="flex justify-between text-xs sm:text-sm">
+                          <span className="text-gray-400 font-medium">Livraison ({DELIVERY_ZONES[deliveryZone].name})</span>
+                          <span className="font-bold text-green-500">{shippingCost > 0 ? `+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA` : 'Offerte !'}</span>
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
-                        <span className="font-bold text-gray-800 dark:text-gray-200">Total à payer</span>
-                        <span className="text-xl font-black text-brand-blue">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
+                      <div className="flex justify-between items-center pt-4 border-t border-gray-150 dark:border-zinc-800">
+                        <span className="font-black text-gray-800 dark:text-gray-200 uppercase text-xs tracking-wider">Total à payer</span>
+                        <span className="text-lg font-black text-brand-blue">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
                       </div>
                     </div>
                   </div>
@@ -265,19 +277,24 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   <div className="p-4 border-t border-gray-150 dark:border-zinc-800 bg-white dark:bg-brand-gray-dark shrink-0 space-y-3">
                     <button
                       onClick={handleContinueToWave}
-                      className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-3.5 rounded-lg font-bold flex items-center justify-center gap-3 transition-all text-base shadow-lg shadow-[#1cc6ff]/20"
+                      className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-3 transition-all text-xs uppercase tracking-wider shadow-lg shadow-[#1cc6ff]/20 hover:scale-102"
                     >
-                      CONTINUER VERS WAVE
+                      Payer avec Wave
                     </button>
-                    <p className="text-xs text-center text-gray-400">
-                      Vous serez redirigé vers l'application Wave de manière sécurisée
+                    <p className="text-[10px] text-center text-gray-400 uppercase tracking-widest">
+                      Sécurisé par Wave Payment Services
                     </p>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* HEADER */}
             <div className="flex justify-between items-center border-b border-gray-150 dark:border-zinc-800 pb-4 shrink-0">
-              <h2 id="cart-drawer-title" className="text-xl font-sans font-black dark:text-white uppercase tracking-wider">Votre Panier</h2>
+              <h2 id="cart-drawer-title" className="text-base sm:text-lg font-black dark:text-white uppercase tracking-wider flex items-center gap-2">
+                <ShoppingCart size={18} className="text-brand-blue" />
+                <span>Panier ({cartItemsCount})</span>
+              </h2>
               <div className="flex items-center gap-2">
                 {cart.length > 0 && (
                   <button
@@ -286,55 +303,97 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         clearCart();
                       }
                     }}
-                    className="text-xs font-bold text-red-500 hover:text-red-600 transition-colors uppercase tracking-widest px-2"
+                    className="text-[10px] font-black text-red-500 hover:text-red-600 transition-colors uppercase tracking-widest px-2"
                   >
                     Vider
                   </button>
                 )}
-                <button onClick={onClose} aria-label="Fermer le panier" className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full dark:text-white transition-colors"><X aria-hidden="true" /></button>
+                <button onClick={onClose} aria-label="Fermer le panier" className="p-1.5 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-full dark:text-white transition-colors"><X size={20} aria-hidden="true" /></button>
               </div>
             </div>
 
             {/* ZONE DÉFILANTE (Articles + Formulaire + Total) */}
-            <div className="flex-1 overflow-y-auto py-4 space-y-6 pr-2">
-              {cart.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center px-4 mt-12">
-                  <div className="w-24 h-24 bg-gray-50 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6 text-gray-300 dark:text-gray-600">
-                    <ShoppingCart size={48} strokeWidth={1} />
+            <div className="flex-1 overflow-y-auto py-4 space-y-6 pr-1 select-none">
+              
+              {cart.length > 0 && (
+                <>
+                  {/* BARRE DE PROGRESSION LIVRAISON GRATUITE */}
+                  <div className="bg-brand-blue/5 dark:bg-zinc-900/30 p-4 rounded-2xl border border-brand-blue/10 dark:border-zinc-800/80 space-y-2">
+                    <div className="flex items-center gap-2 text-xs">
+                      <Truck size={16} className="text-brand-blue shrink-0" />
+                      <p className="font-bold text-gray-700 dark:text-gray-300 leading-tight">
+                        {isFreeShippingEligible ? (
+                          <span className="text-green-500 font-extrabold">Livraison offerte sur votre commande</span>
+                        ) : (
+                          <>
+                            Plus que <span className="text-brand-blue font-extrabold">{new Intl.NumberFormat('fr-FR').format(remainingForFreeShipping)} FCFA</span> pour bénéficier de la livraison gratuite.
+                          </>
+                        )}
+                      </p>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                      <div 
+                        className="bg-brand-blue h-full transition-all duration-550 ease-out rounded-full" 
+                        style={{ width: `${freeShippingProgress}%` }}
+                      />
+                    </div>
                   </div>
-                  <h3 className="text-lg font-sans font-bold dark:text-white mb-2">Votre panier est vide</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs mb-8 max-w-[250px] mx-auto leading-relaxed">
-                    Découvrez nos collections d'iPhones, de parfums de luxe et notre sélection de café.
+
+                  {/* ALERTE STOCK */}
+                  <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-900/50 px-3.5 py-2.5 rounded-xl border border-zinc-150 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                    <span>Articles non réservés - finalisez pour garantir la disponibilité</span>
+                  </div>
+                </>
+              )}
+
+              {cart.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center px-4 py-12">
+                  <div className="w-20 h-20 bg-gray-50 dark:bg-zinc-900/50 rounded-full flex items-center justify-center mb-6 text-gray-300 dark:text-gray-600 border border-gray-100 dark:border-zinc-850">
+                    <ShoppingCart size={36} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-base font-bold dark:text-white mb-2 uppercase tracking-wider">Votre panier est vide</h3>
+                  <p className="text-gray-400 dark:text-gray-550 text-xs mb-8 max-w-[240px] mx-auto leading-relaxed">
+                    Ajoutez des lunettes de luxe, des montres ou nos parfums exclusifs pour commencer vos achats.
                   </p>
                   <button 
                     onClick={() => { onClose(); navigate('/shop'); }}
-                    className="flex items-center justify-center w-full gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-50 text-white dark:text-gray-900 px-8 py-3.5 rounded-lg font-bold transition-all shadow-sm text-xs tracking-wider uppercase"
+                    className="flex items-center justify-center w-full gap-2 bg-brand-blue hover:bg-brand-blue-dark text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-brand-blue/15 text-xs tracking-wider uppercase"
                   >
                     Explorer la Boutique
-                    <ArrowRight size={16} />
+                    <ArrowRight size={14} />
                   </button>
                 </div>
               ) : (
-                <div className="space-y-6">
-                  {cart.map((item) => (
-                    <div key={item.id} className="flex gap-4 border-b border-gray-150 dark:border-zinc-800 pb-4">
-                      <div className="flex-1">
-                        <h4 className="font-bold dark:text-white text-sm">{item.name}</h4>
-                        <p className="text-xs text-brand-blue uppercase tracking-tighter">{item.variant}</p>
-                        <div className="flex justify-between items-center mt-2">
-                          <div className="flex items-center gap-2 border border-gray-200 dark:border-zinc-800 rounded-lg">
-                            <button aria-label="Diminuer la quantité" onClick={() => updateQuantity(item.id, -1)} className="px-2 py-1 md:px-3 md:py-1 hover:bg-gray-100 dark:hover:bg-zinc-800 dark:text-gray-300 transition-colors">-</button>
-                            <span className="text-sm font-medium dark:text-gray-300 w-4 text-center">{item.quantity}</span>
-                            <button aria-label="Augmenter la quantité" onClick={() => updateQuantity(item.id, 1)} className="px-2 py-1 md:px-3 md:py-1 hover:bg-gray-100 dark:hover:bg-zinc-800 dark:text-gray-300 transition-colors">+</button>
+                <div className="space-y-4">
+                  {cart.map((item) => {
+                    const img = item.image_url?.match(/\.(mp4|mov|webm)$/i) ? item.image_url.replace(/\.(mp4|mov|webm)$/i, '.jpg') : item.image_url;
+                    return (
+                      <div key={item.id} className="flex gap-3 border-b border-gray-100 dark:border-zinc-850 pb-4 items-center">
+                        <img 
+                          src={img || 'https://placehold.co/60x60/png?text=?'} 
+                          alt={item.name} 
+                          className="w-14 h-14 object-cover rounded-xl border border-gray-150 dark:border-zinc-800 shrink-0" 
+                          onError={e => { e.target.src='https://placehold.co/60x60/png?text=?'; }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold dark:text-white text-xs truncate leading-snug">{item.name}</h4>
+                          {item.variant && <p className="text-[9px] text-brand-blue uppercase font-bold tracking-wider mt-0.5">{item.variant}</p>}
+                          <div className="flex justify-between items-center mt-2.5">
+                            <div className="flex items-center gap-1.5 border border-gray-200 dark:border-zinc-800 rounded-lg overflow-hidden bg-gray-50/50 dark:bg-zinc-900/30">
+                              <button aria-label="Diminuer" onClick={() => updateQuantity(item.id, -1)} className="px-2 py-0.5 text-sm hover:bg-gray-200/50 dark:hover:bg-zinc-800 dark:text-gray-300 transition-colors">-</button>
+                              <span className="text-xs font-bold dark:text-gray-300 w-4 text-center">{item.quantity}</span>
+                              <button aria-label="Augmenter" onClick={() => updateQuantity(item.id, 1)} className="px-2 py-0.5 text-sm hover:bg-gray-200/50 dark:hover:bg-zinc-800 dark:text-gray-300 transition-colors">+</button>
+                            </div>
+                            <span className="font-black text-xs text-gray-805 dark:text-gray-200">{new Intl.NumberFormat('fr-FR').format(item.price * item.quantity)} FCFA</span>
                           </div>
-                          <span className="font-bold text-brand-blue">{new Intl.NumberFormat('fr-FR').format(item.price * item.quantity)} FCFA</span>
                         </div>
+                        <button aria-label={`Supprimer`} onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 transition-colors p-1.5 border border-transparent rounded-full hover:bg-red-50 dark:hover:bg-red-950/20">
+                          <Trash2 size={16} />
+                        </button>
                       </div>
-                      <button aria-label={`Supprimer ${item.name} du panier`} onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 transition-colors p-2 self-start border border-transparent rounded-full">
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
@@ -342,41 +401,49 @@ const CartDrawer = ({ isOpen, onClose }) => {
               {cart.length > 0 && (
                 <div className="space-y-6">
                   {/* FORMULAIRE CLIENT */}
-                  <div className="space-y-4 pt-2">
+                  <div className="space-y-4 pt-2 border-t border-gray-100 dark:border-zinc-850">
+                    <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Informations de livraison</h3>
+                    
                     <div>
-                      <label htmlFor="customerName" className="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Nom Complet</label>
-                      <input id="customerName" type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Ex: Pape Moussa" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-base md:text-sm dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                      <label htmlFor="customerName" className="block text-[9px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Votre Nom Complet</label>
+                      <input id="customerName" type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Ex: Pape Moussa" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-sm dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
+                    
                     <div>
-                      <label htmlFor="customerPhone" className="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Numéro de Téléphone</label>
-                      <input id="customerPhone" type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="Ex: 77 123 45 67" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-base md:text-sm dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                      <label htmlFor="customerPhone" className="block text-[9px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Votre Numéro de Téléphone</label>
+                      <input id="customerPhone" type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="Ex: 77 123 45 67" className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-sm dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
+                    
                     <div>
-                      <label htmlFor="deliveryZone" className="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Zone de Livraison</label>
-                      <select id="deliveryZone" value={deliveryZone} onChange={(e) => setDeliveryZone(e.target.value)} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-base md:text-sm dark:text-white focus:border-brand-blue outline-none transition-colors cursor-pointer text-gray-700 dark:text-gray-300">
+                      <label htmlFor="deliveryZone" className="block text-[9px] font-bold text-gray-400 mb-1 uppercase tracking-wider">Zone de Livraison</label>
+                      <select id="deliveryZone" value={deliveryZone} onChange={(e) => setDeliveryZone(e.target.value)} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-sm dark:text-white focus:border-brand-blue outline-none transition-colors cursor-pointer text-gray-700 dark:text-gray-300">
                         {Object.entries(DELIVERY_ZONES).map(([key, zone]) => (
                           <option key={key} value={key}>
-                            {zone.name} {zone.cost > 0 ? `(+${new Intl.NumberFormat('fr-FR').format(zone.cost)} FCFA)` : '(Gratuit)'}
+                            {zone.name} {(isFreeShippingEligible && key !== 'store') ? '(Livraison Offerte !)' : zone.cost > 0 ? `(+${new Intl.NumberFormat('fr-FR').format(zone.cost)} FCFA)` : '(Gratuit)'}
                           </option>
                         ))}
                       </select>
                     </div>
-                    {formError && <p className="text-xs text-center text-red-500">{formError}</p>}
+                    {formError && <p className="text-xs text-center text-red-500 font-bold">{formError}</p>}
                   </div>
 
                   {/* RÉCAPITULATIF DES PRIX */}
-                  <div className="space-y-2 border-t border-gray-100 dark:border-gray-800 pt-4 pb-2">
-                    <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                  <div className="space-y-2.5 border-t border-gray-100 dark:border-zinc-850 pt-4">
+                    <div className="flex justify-between items-center text-xs text-gray-500 dark:text-zinc-400">
                       <span>Sous-total</span>
-                      <span>{new Intl.NumberFormat('fr-FR').format(subtotal)} FCFA</span>
+                      <span className="font-bold text-gray-800 dark:text-gray-200">{new Intl.NumberFormat('fr-FR').format(subtotal)} FCFA</span>
                     </div>
-                    <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex justify-between items-center text-xs text-gray-500 dark:text-zinc-400">
                       <span>Frais de livraison</span>
-                      <span>{shippingCost > 0 ? `+${new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA` : 'Offerts'}</span>
+                      {shippingCost === 0 ? (
+                        <span className="font-bold text-green-500 uppercase text-[10px] tracking-wider">Gratuit</span>
+                      ) : (
+                        <span className="font-bold text-gray-800 dark:text-gray-200">+{new Intl.NumberFormat('fr-FR').format(shippingCost)} FCFA</span>
+                      )}
                     </div>
-                    <div className="flex justify-between items-center text-base font-bold dark:text-white pt-2 border-t border-gray-150 dark:border-zinc-800">
-                      <span>Total TTC</span>
-                      <span className="text-brand-blue">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
+                    <div className="flex justify-between items-center text-sm font-bold dark:text-white pt-2.5 border-t border-gray-150 dark:border-zinc-850">
+                      <span className="uppercase text-xs tracking-wider">Total Commande</span>
+                      <span className="text-brand-blue font-black text-base">{new Intl.NumberFormat('fr-FR').format(finalTotal)} FCFA</span>
                     </div>
                   </div>
                 </div>
@@ -385,21 +452,21 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
             {/* BOUTON COMMANDER - FIXE EN BAS */}
             {cart.length > 0 && (
-              <div className="pt-4 border-t border-gray-150 dark:border-zinc-800 mt-auto shrink-0 space-y-3">
+              <div className="pt-4 border-t border-gray-150 dark:border-zinc-800 mt-auto shrink-0 space-y-2">
                 <button
                   onClick={() => handleOrderSubmit('wave')}
                   disabled={isSubmitting}
-                  className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] text-white py-3 rounded-lg font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs tracking-wider uppercase"
+                  className="w-full bg-[#1cc6ff] hover:bg-[#15aee6] hover:scale-101 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs tracking-wider uppercase shadow-md shadow-[#1cc6ff]/10"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 size={18} className="animate-spin" />
-                      ENREGISTREMENT...
+                      <Loader2 size={16} className="animate-spin" />
+                      Enregistrement...
                     </>
                   ) : (
                     <>
                       <img src="/Wave.svg" alt="Wave" className="w-5 h-5 object-contain" />
-                      PAYER AVEC WAVE
+                      Payer par Wave
                     </>
                   )}
                 </button>
@@ -407,21 +474,27 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 <button
                   onClick={() => handleOrderSubmit('whatsapp')}
                   disabled={isSubmitting}
-                  className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white py-3 rounded-lg font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs tracking-wider uppercase"
+                  className="w-full bg-[#25D366] hover:bg-[#20ba59] hover:scale-101 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs tracking-wider uppercase shadow-md shadow-[#25D366]/10"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 size={18} className="animate-spin" />
-                      ENREGISTREMENT...
+                      <Loader2 size={16} className="animate-spin" />
+                      Enregistrement...
                     </>
                   ) : (
                     <>
                       <img src="/WhatsApp.svg" alt="WhatsApp" className="w-5 h-5 object-contain" />
-                      COMMANDER SUR WHATSAPP
+                      Confirmer via WhatsApp
                     </>
                   )}
                 </button>
-                <p className="text-[9px] text-center text-gray-400 uppercase tracking-widest pb-1">Paiement 100% sécurisé</p>
+                
+                {/* TRUST SIGNALS */}
+                <div className="flex justify-around items-center pt-2 text-[8px] sm:text-[9px] text-gray-400 font-bold uppercase tracking-wider border-t border-gray-100 dark:border-zinc-850/50 mt-2">
+                  <span className="flex items-center gap-1"><ShieldCheck size={12} className="text-brand-blue" /> Original</span>
+                  <span className="flex items-center gap-1"><Lock size={12} className="text-brand-blue" /> Sécurisé</span>
+                  <span className="flex items-center gap-1"><Truck size={12} className="text-brand-blue" /> Express</span>
+                </div>
               </div>
             )}
           </motion.div>
