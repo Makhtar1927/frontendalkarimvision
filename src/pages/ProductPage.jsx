@@ -225,8 +225,18 @@ const ProductPage = () => {
     message += `💰 *Prix :* ${new Intl.NumberFormat('fr-FR').format(displayPrice)} FCFA\n\n`;
     message += `Pouvez-vous me confirmer la disponibilité et planifier la livraison ?`;
 
+    const phoneNumber = (settings.whatsapp_number || '221774133645').replace(/\D/g, '');
     const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/${settings.whatsapp_number || '221774133645'}?text=${encoded}`, '_blank');
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encoded}`;
+
+    // Sur iOS (iPhone/iPad), window.open('_blank') est bloqué par Safari.
+    // On utilise window.location.href pour une redirection directe vers WhatsApp.
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      window.location.href = whatsappUrl;
+    } else {
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   // Soumission achat rapide Wave
