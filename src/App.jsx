@@ -72,8 +72,7 @@ function App() {
       </main>
       {!isAdminPage && !isMaintenancePage && <Footer />}
       {!isAdminPage && !isMaintenancePage && <MobileBottomNav />}
-
-
+      {/* Trigger build for public repository deployment validation */}
     </div>
   );
 }
