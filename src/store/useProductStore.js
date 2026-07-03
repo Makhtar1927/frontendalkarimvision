@@ -19,6 +19,48 @@ export const useProductStore = create((set, get) => ({
   settings: null,
   isFetchingSettings: false,
 
+  // --- NOTIFICATIONS ADMIN (Nouvelles commandes) ---
+  newOrdersCount: 0,
+  lastKnownOrderId: null, // ID de la dernière commande connue
+
+  markOrdersAsSeen: () => {
+    const { orders } = get();
+    const latestId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) : null;
+    set({ newOrdersCount: 0, lastKnownOrderId: latestId });
+  },
+
+  checkForNewOrders: async () => {
+    const { lastKnownOrderId } = get();
+    try {
+      const response = await apiFetch('/orders');
+      if (!response.ok) return;
+      const data = await response.json();
+      const currentOrders = data;
+
+      if (lastKnownOrderId === null) {
+        // Premier chargement : on mémorise l'état actuel sans notifier
+        const latestId = currentOrders.length > 0 ? Math.max(...currentOrders.map(o => o.id)) : 0;
+        set({ orders: currentOrders, lastKnownOrderId: latestId });
+        return;
+      }
+
+      const newOrders = currentOrders.filter(o => o.id > lastKnownOrderId);
+      if (newOrders.length > 0) {
+        set(state => ({
+          orders: currentOrders,
+          newOrdersCount: state.newOrdersCount + newOrders.length,
+        }));
+        // Retourner les nouvelles commandes pour que le composant puisse notifier
+        return newOrders;
+      } else {
+        set({ orders: currentOrders });
+      }
+    } catch (err) {
+      // Silencieux, le polling ne doit pas créer d'erreurs visibles
+    }
+    return [];
+  },
+
   // Récupérer la configuration globale (cachable au niveau client)
   fetchSettings: async (force = false) => {
     const { settings, isFetchingSettings } = get();

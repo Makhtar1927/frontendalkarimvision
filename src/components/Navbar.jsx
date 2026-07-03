@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Moon, Sun, Search, X, HardHat, LogOut, PackageSearch, Loader2 } from 'lucide-react';
+import { ShoppingCart, Moon, Sun, Search, X, HardHat, LogOut, PackageSearch, Loader2, Glasses, FolderOpen, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
@@ -17,7 +17,8 @@ const NAV_LINKS = [
 const Navbar = () => {
   const { cart, toggleCart } = useCartStore();
   const { isAuthenticated, logout } = useAuthStore();
-  const { products, fetchProducts, settings: storeSettings, fetchSettings } = useProductStore();
+  const { products, fetchProducts, settings: storeSettings, fetchSettings, categories } = useProductStore();
+  const newOrdersCount = useProductStore(state => state.newOrdersCount);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,12 +53,29 @@ const Navbar = () => {
     return () => window.removeEventListener('open-search', handleOpenSearch);
   }, []);
 
-  const searchResults = searchQuery.trim() === ''
-    ? []
-    : products.filter(p =>
-        p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.brand?.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 6);
+  const CATEGORY_LABELS = {
+    glasses: 'Lunettes & Optique',
+    perfume: 'Parfums',
+    watches: 'Horlogerie',
+    other: 'Autres produits',
+  };
+
+  const q = searchQuery.trim().toLowerCase();
+
+  // Résultats catégories (depuis la base de données + noms connus)
+  const categoryResults = q === '' ? [] : categories.filter(c => {
+    const label = CATEGORY_LABELS[c.slug || c.name] || c.display_name || c.name || '';
+    return label.toLowerCase().includes(q) || (c.name || '').toLowerCase().includes(q);
+  }).slice(0, 3);
+
+  // Résultats produits (nom, marque, sous-catégorie)
+  const productResults = q === '' ? [] : products.filter(p =>
+    p.name?.toLowerCase().includes(q) ||
+    p.brand?.toLowerCase().includes(q) ||
+    p.subcategory?.toLowerCase().includes(q)
+  ).slice(0, 5);
+
+  const hasResults = categoryResults.length > 0 || productResults.length > 0;
 
   const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -140,26 +158,58 @@ const Navbar = () => {
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 5 }}
-                      className="absolute left-0 right-0 bg-white dark:bg-brand-gray-dark border border-gray-150 dark:border-zinc-800 rounded-lg shadow-xl mt-1 max-h-60 overflow-y-auto z-50 w-[180px] xs:w-[220px] sm:w-[320px]"
+                      className="absolute left-0 right-0 bg-white dark:bg-brand-gray-dark border border-gray-150 dark:border-zinc-800 rounded-lg shadow-xl mt-1 max-h-72 overflow-y-auto z-50 w-[200px] xs:w-[240px] sm:w-[340px]"
                     >
-                      {searchResults.length > 0 ? (
-                        searchResults.map(product => {
-                          const img = product.image_url?.match(/\.(mp4|mov|webm)$/i) ? product.image_url.replace(/\.(mp4|mov|webm)$/i, '.jpg') : product.image_url;
-                          return (
-                            <div 
-                              key={product.id} 
-                              onClick={() => { navigate(`/product/${product.id}`); setSearchQuery(''); }}
-                              className="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-zinc-900/50 cursor-pointer border-b border-gray-100 dark:border-zinc-800 last:border-b-0 transition-colors"
-                            >
-                              <img src={img || 'https://placehold.co/35x35/png?text=?'} alt={product.name} className="w-8 h-8 object-cover rounded-lg border border-gray-150 dark:border-zinc-850" />
-                              <div className="flex-1 min-w-0">
-                                <h4 className="font-bold dark:text-white text-[10px] sm:text-xs truncate">{product.name}</h4>
-                                <p className="text-[8px] text-brand-blue font-bold uppercase tracking-wider">{product.brand}</p>
-                              </div>
-                              <span className="font-bold text-brand-blue text-[10px] sm:text-xs whitespace-nowrap">{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</span>
+                      {hasResults ? (
+                        <>
+                          {/* Catégories */}
+                          {categoryResults.length > 0 && (
+                            <div>
+                              <p className="px-2 pt-2 pb-1 text-[9px] font-black text-gray-400 uppercase tracking-widest">Catégories</p>
+                              {categoryResults.map(cat => {
+                                const CATEGORY_LABELS = { glasses: 'Lunettes & Optique', perfume: 'Parfums', watches: 'Horlogerie', other: 'Autres produits' };
+                                const label = CATEGORY_LABELS[cat.slug || cat.name] || cat.display_name || cat.name;
+                                const slug = cat.slug || cat.name;
+                                return (
+                                  <div
+                                    key={cat.id}
+                                    onClick={() => { navigate(`/category/${slug}`); setSearchQuery(''); }}
+                                    className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-zinc-900/50 cursor-pointer transition-colors"
+                                  >
+                                    <div className="w-6 h-6 rounded bg-brand-blue/10 flex items-center justify-center shrink-0">
+                                      <FolderOpen size={12} className="text-brand-blue" />
+                                    </div>
+                                    <span className="text-xs font-bold dark:text-white">{label}</span>
+                                  </div>
+                                );
+                              })}
                             </div>
-                          );
-                        })
+                          )}
+                          {/* Produits */}
+                          {productResults.length > 0 && (
+                            <div>
+                              {categoryResults.length > 0 && <div className="border-t border-gray-100 dark:border-zinc-800" />}
+                              <p className="px-2 pt-2 pb-1 text-[9px] font-black text-gray-400 uppercase tracking-widest">Produits</p>
+                              {productResults.map(product => {
+                                const img = product.image_url?.match(/\.(mp4|mov|webm)$/i) ? product.image_url.replace(/\.(mp4|mov|webm)$/i, '.jpg') : product.image_url;
+                                return (
+                                  <div 
+                                    key={product.id} 
+                                    onClick={() => { navigate(`/product/${product.id}`); setSearchQuery(''); }}
+                                    className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-zinc-900/50 cursor-pointer border-b border-gray-100 dark:border-zinc-800 last:border-b-0 transition-colors"
+                                  >
+                                    <img src={img || 'https://placehold.co/35x35/png?text=?'} alt={product.name} className="w-7 h-7 object-cover rounded border border-gray-150 dark:border-zinc-850 shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="font-bold dark:text-white text-[10px] sm:text-xs truncate">{product.name}</h4>
+                                      <p className="text-[8px] text-brand-blue font-bold uppercase tracking-wider">{product.brand}</p>
+                                    </div>
+                                    <span className="font-bold text-brand-blue text-[10px] sm:text-xs whitespace-nowrap">{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </>
                       ) : (
                         <div className="p-3 text-center text-xs text-gray-500 dark:text-gray-400">
                           Aucun résultat pour "{searchQuery}"
@@ -187,8 +237,16 @@ const Navbar = () => {
                 ))}
                 {isAuthenticated && (
                   <>
-                    <Link to="/admin" className="text-xs font-bold tracking-widest text-brand-blue hover:text-brand-blue-dark transition-colors uppercase border-l border-gray-200 dark:border-gray-800 pl-4">
+                    <Link
+                      to="/admin"
+                      className={`relative text-xs font-bold tracking-widest text-brand-blue hover:text-brand-blue-dark transition-colors uppercase border-l border-gray-200 dark:border-gray-800 pl-4 flex items-center gap-1.5`}
+                    >
                       Admin
+                      {newOrdersCount > 0 && (
+                        <span className="flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full animate-pulse">
+                          {newOrdersCount}
+                        </span>
+                      )}
                     </Link>
                     <button onClick={() => { logout(); navigate('/'); }} className="text-xs font-bold tracking-widest text-red-500 hover:text-red-600 transition-colors uppercase">
                       Déconnexion
@@ -314,19 +372,56 @@ const Navbar = () => {
             </div>
             {searchQuery.trim() !== '' && (
               <div className="max-h-[55vh] overflow-y-auto">
-                {searchResults.length > 0 ? searchResults.map(product => {
-                  const img = product.image_url?.match(/\.(mp4|mov|webm)$/i) ? product.image_url.replace(/\.(mp4|mov|webm)$/i, '.jpg') : product.image_url;
-                  return (
-                    <div key={product.id} onClick={() => { navigate(`/product/${product.id}`); setIsSearchOpen(false); setSearchQuery(''); }} className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-zinc-900/50 cursor-pointer border-b border-gray-100 dark:border-zinc-800/50 transition-colors">
-                      <img src={img || 'https://placehold.co/80x80/png?text=?'} alt={product.name} className="w-12 h-12 object-cover rounded-lg border border-gray-150 dark:border-zinc-800" onError={e => { e.target.src='https://placehold.co/80x80/png?text=?'; }} />
-                      <div className="flex-1">
-                        <h4 className="font-bold dark:text-white text-sm">{product.name}</h4>
-                        <p className="text-[10px] text-brand-blue font-bold uppercase tracking-widest">{product.brand}</p>
+                {hasResults ? (
+                  <>
+                    {/* Catégories */}
+                    {categoryResults.length > 0 && (
+                      <div>
+                        <p className="px-4 pt-4 pb-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Catégories</p>
+                        {categoryResults.map(cat => {
+                          const CATEGORY_LABELS_MAP = { glasses: 'Lunettes & Optique', perfume: 'Parfums', watches: 'Horlogerie', other: 'Autres produits' };
+                          const label = CATEGORY_LABELS_MAP[cat.slug || cat.name] || cat.display_name || cat.name;
+                          const slug = cat.slug || cat.name;
+                          return (
+                            <div
+                              key={cat.id}
+                              onClick={() => { navigate(`/category/${slug}`); setIsSearchOpen(false); setSearchQuery(''); }}
+                              className="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 dark:hover:bg-zinc-900/50 cursor-pointer transition-colors border-b border-gray-50 dark:border-zinc-800/50"
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center shrink-0">
+                                <FolderOpen size={18} className="text-brand-blue" />
+                              </div>
+                              <div>
+                                <p className="font-bold dark:text-white text-sm">{label}</p>
+                                <p className="text-[10px] text-brand-blue font-bold uppercase tracking-widest">Voir tous les produits</p>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <span className="font-bold text-brand-blue text-sm">{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</span>
-                    </div>
-                  );
-                }) : (
+                    )}
+                    {/* Produits */}
+                    {productResults.length > 0 && (
+                      <div>
+                        {categoryResults.length > 0 && <div className="border-t border-gray-100 dark:border-zinc-800" />}
+                        <p className="px-4 pt-4 pb-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Produits</p>
+                        {productResults.map(product => {
+                          const img = product.image_url?.match(/\.(mp4|mov|webm)$/i) ? product.image_url.replace(/\.(mp4|mov|webm)$/i, '.jpg') : product.image_url;
+                          return (
+                            <div key={product.id} onClick={() => { navigate(`/product/${product.id}`); setIsSearchOpen(false); setSearchQuery(''); }} className="flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-zinc-900/50 cursor-pointer border-b border-gray-100 dark:border-zinc-800/50 transition-colors">
+                              <img src={img || 'https://placehold.co/80x80/png?text=?'} alt={product.name} className="w-12 h-12 object-cover rounded-lg border border-gray-150 dark:border-zinc-800" onError={e => { e.target.src='https://placehold.co/80x80/png?text=?'; }} />
+                              <div className="flex-1">
+                                <h4 className="font-bold dark:text-white text-sm">{product.name}</h4>
+                                <p className="text-[10px] text-brand-blue font-bold uppercase tracking-widest">{product.brand}</p>
+                              </div>
+                              <span className="font-bold text-brand-blue text-sm">{new Intl.NumberFormat('fr-FR').format(product.base_price)} FCFA</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
+                ) : (
                   <div className="p-10 text-center text-gray-500 dark:text-gray-400">
                     Aucun résultat pour <span className="font-bold dark:text-white">"{searchQuery}"</span>
                   </div>

@@ -93,8 +93,9 @@ const Admin = () => {
   const isFetchingOrders = useProductStore(state => state.isFetchingOrders);
   const fetchOrders = useProductStore(state => state.fetchOrders);
   const fetchStats = useProductStore(state => state.fetchStats);
+  const newOrdersCount = useProductStore(state => state.newOrdersCount);
+  const markOrdersAsSeen = useProductStore(state => state.markOrdersAsSeen);
   
-  const hasCalledInitialFetch = React.useRef(false);
   const [currentView, setCurrentView] = useState('list'); // 'list', 'add-product', 'edit-product', 'add-category'
   const [categoryFormData, setCategoryFormData] = useState({ name: '', description: '' });
   const [isCategoryUploading, setIsCategoryUploading] = useState(false);
@@ -688,6 +689,9 @@ const Admin = () => {
     } else if (tabId === 'add-category') {
       setCategoryFormData({ name: '', description: '' });
       setCurrentView('add-category');
+    } else if (tabId === 'orders') {
+      // Marquer les nouvelles commandes comme vues dès qu'on ouvre l'onglet
+      markOrdersAsSeen();
     }
   };
 
@@ -1598,8 +1602,20 @@ const Admin = () => {
                     : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-900 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
-                <Icon size={20} className="shrink-0" />
-                {!isSidebarCollapsed && <span className="text-sm">{tab.label}</span>}
+                <div className="relative shrink-0">
+                  <Icon size={20} />
+                  {tab.id === 'orders' && newOrdersCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full animate-pulse">
+                      {newOrdersCount}
+                    </span>
+                  )}
+                </div>
+                {!isSidebarCollapsed && <span className="text-sm flex-1 text-left">{tab.label}</span>}
+                {!isSidebarCollapsed && tab.id === 'orders' && newOrdersCount > 0 && (
+                  <span className="ml-auto flex items-center justify-center min-w-[20px] h-5 bg-red-500 text-white text-[9px] font-black rounded-full px-1.5 animate-pulse">
+                    {newOrdersCount}
+                  </span>
+                )}
                 {isActive && !isSidebarCollapsed && <motion.div layoutId="activeTab" className="absolute right-2 w-1.5 h-1.5 bg-white rounded-full" />}
               </button>
             );
@@ -1723,8 +1739,20 @@ const Admin = () => {
                           : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800'
                       }`}
                     >
-                      <Icon size={18} />
-                      {tab.label}
+                      <div className="relative shrink-0">
+                        <Icon size={18} />
+                        {tab.id === 'orders' && newOrdersCount > 0 && (
+                          <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[9px] font-black rounded-full animate-pulse">
+                            {newOrdersCount}
+                          </span>
+                        )}
+                      </div>
+                      <span className="flex-1 text-left">{tab.label}</span>
+                      {tab.id === 'orders' && newOrdersCount > 0 && (
+                        <span className="ml-auto flex items-center justify-center min-w-[20px] h-5 bg-red-500 text-white text-[9px] font-black rounded-full px-1.5">
+                          {newOrdersCount}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
