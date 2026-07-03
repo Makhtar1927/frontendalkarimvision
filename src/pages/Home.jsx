@@ -63,12 +63,12 @@ const Home = () => {
   const storeSchema = {
     "@context": "https://schema.org",
     "@type": "Store",
-    "@id": "https://boustanetech-store.vercel.app/#store",
+    "@id": "https://www.alkarimvision.com/#store",
     "name": "Al Karim Vision",
-    "url": "https://boustanetech-store.vercel.app/",
-    "logo": "https://boustanetech-store.vercel.app/logo.png",
-    "image": "https://boustanetech-store.vercel.app/logo.png",
-    "description": "Al Karim Vision - Votre opticien de prestige, haute parfumerie et horlogerie d'exception à Dakar.",
+    "url": "https://www.alkarimvision.com/",
+    "logo": "https://www.alkarimvision.com/logo.png",
+    "image": "https://www.alkarimvision.com/logo.png",
+    "description": "Al Karim Vision - Votre opticien de prestige, haute parfumerie et horlogerie d'exception à Touba.",
     "telephone": "+221784379462",
     "priceRange": "$$$",
     "address": {

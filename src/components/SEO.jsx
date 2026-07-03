@@ -3,8 +3,8 @@ import { Helmet } from 'react-helmet-async';
 
 const SEO = ({ title, description, keywords, image, url, schema, noindex }) => {
   const siteName = "Al Karim Vision";
-  const defaultDesc = "L'alliance parfaite entre l'innovation technologique, le luxe de la haute parfumerie et l'art du café de spécialité.";
-  const defaultImage = "https://boustanetech-store.vercel.app/Boustanetech.png";
+  const defaultDesc = "Al Karim Vision à Touba : votre opticien de prestige (lunettes de vue et de soleil de marque), parfumerie haut de gamme et horlogerie de luxe au meilleur prix.";
+  const defaultImage = "https://www.alkarimvision.com/logo.png";
   
   // Dé-duplication intelligente du titre pour éviter de répéter le nom de marque
   const finalTitle = title 

@@ -58,14 +58,14 @@ const Shop = () => {
       return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
     });
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://boustanetech-store.vercel.app/shop';
-  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://boustanetech-store.vercel.app';
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://www.alkarimvision.com/shop';
+  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://www.alkarimvision.com';
 
   const shopSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "Boutique en Ligne | Al Karim Vision",
-    "description": "Parcourez tous nos univers et trouvez les meilleurs produits à Dakar : lunettes de soleil, montres de prestige, parfums de niche et articles divers.",
+    "description": "Parcourez tous nos univers et trouvez les meilleurs produits à Touba : lunettes de soleil, montres de prestige, parfums de niche et articles divers.",
     "url": currentUrl,
     "mainEntity": {
       "@type": "ItemList",

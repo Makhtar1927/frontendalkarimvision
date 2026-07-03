@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Star, Shield, Award, Heart, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getOptimizedImageUrl } from '../utils/cloudinary';
+import SEO from '../components/SEO';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 12 },
@@ -47,6 +48,10 @@ const HORAIRES = [
 export default function About() {
   return (
     <div className="min-h-screen bg-white dark:bg-brand-gray-dark text-gray-800 dark:text-gray-200 overflow-x-hidden">
+      <SEO 
+        title="À Propos" 
+        description="Découvrez l'histoire d'Al Karim Vision à Touba, notre engagement pour l'authenticité et notre sélection de lunettes, parfums et montres de prestige." 
+      />
 
       {/* ── HERO FONDATEUR ── */}
       <section className="relative overflow-hidden border-b border-gray-100 dark:border-zinc-800">

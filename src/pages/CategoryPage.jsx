@@ -89,8 +89,8 @@ const CategoryPage = () => {
 
   const info = CATEGORY_INFO[categoryId] || { title: "Collection Exclusive", subtitle: "Découvrez nos articles", image: "", color: "from-gray-100 to-white dark:from-zinc-900 dark:to-black" };
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://boustanetech-store.vercel.app/category/${categoryId}`;
-  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://boustanetech-store.vercel.app';
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://www.alkarimvision.com/category/${categoryId}`;
+  const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://www.alkarimvision.com';
 
   const categorySchema = {
     "@context": "https://schema.org",

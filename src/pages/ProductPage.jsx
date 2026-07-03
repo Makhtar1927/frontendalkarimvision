@@ -326,9 +326,9 @@ const ProductPage = () => {
 
   const isVariantOutOfStock = selectedVariant ? selectedVariant.stock_quantity === 0 : false;
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://boustanetech-store.vercel.app/product/${currentProduct.id}`;
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://www.alkarimvision.com/product/${currentProduct.id}`;
   const imageGallery = mediaUrls.filter(url => typeof url === 'string' && !url.match(/\.(mp4|mov|webm)$/i));
-  const productImages = imageGallery.length > 0 ? imageGallery : [currentProduct.image_url || 'https://res.cloudinary.com/dg8ppnqcy/image/upload/v1778875919/Boustanetech3_gstihc.png'];
+  const productImages = imageGallery.length > 0 ? imageGallery : [currentProduct.image_url || 'https://www.alkarimvision.com/logo.png'];
 
   const productSchema = {
     "@context": "https://schema.org/",
