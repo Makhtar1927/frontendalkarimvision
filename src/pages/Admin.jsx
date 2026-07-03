@@ -814,7 +814,23 @@ const Admin = () => {
     const newVariants = formData.variants.filter((_, i) => i !== index);
     setFormData({ ...formData, variants: newVariants });
   };
-  
+  // --- LIENS DE CONFIRMATION WHATSAPP POUR LE PAIEMENT WAVE ---
+  const getWhatsAppVerifyLink = (order) => {
+    const phone = (order.customer_phone || '').replace(/\s+/g, '');
+    const cleanPhone = phone.startsWith('+') ? phone.slice(1) : phone;
+    const finalPhone = cleanPhone.length === 9 ? `221${cleanPhone}` : cleanPhone;
+    const text = `Bonjour ${order.customer_name}, nous avons bien reçu votre commande #${order.id} d'un montant de ${new Intl.NumberFormat('fr-FR').format(order.total_amount)} FCFA sur Al Karim Vision. Vous avez choisi le paiement Wave. Pourriez-vous s'il vous plaît nous envoyer la capture d'écran de votre reçu de transfert Wave pour que nous puissions valider votre commande ? Merci !`;
+    return `https://wa.me/${finalPhone}?text=${encodeURIComponent(text)}`;
+  };
+
+  const getWhatsAppPaidLink = (order) => {
+    const phone = (order.customer_phone || '').replace(/\s+/g, '');
+    const cleanPhone = phone.startsWith('+') ? phone.slice(1) : phone;
+    const finalPhone = cleanPhone.length === 9 ? `221${cleanPhone}` : cleanPhone;
+    const text = `Bonjour ${order.customer_name}, votre paiement Wave de ${new Intl.NumberFormat('fr-FR').format(order.total_amount)} FCFA a bien été reçu et validé pour la commande #${order.id}. Votre colis est en cours de préparation et de livraison. Merci de votre confiance !`;
+    return `https://wa.me/${finalPhone}?text=${encodeURIComponent(text)}`;
+  };
+
   // --- GESTION DES COMMANDES ---
   const toggleOrderDetails = (orderId) => {
     setExpandedOrderId(prev => prev === orderId ? null : orderId);
@@ -2434,7 +2450,12 @@ const Admin = () => {
                           # {order.id.toString().padStart(4, '0')}
                         </td>
                         <td className="p-4">
-                          <p className="font-bold dark:text-white">{order.customer_name}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold dark:text-white">{order.customer_name}</p>
+                            {order.payment_method === 'Wave' && (
+                              <span className="text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 px-2 py-0.5 rounded-full font-bold">Wave 📲</span>
+                            )}
+                          </div>
                           <p className="text-xs text-gray-500">{order.customer_phone}</p>
                         </td>
                         <td className="p-4 dark:text-gray-300">
@@ -2473,6 +2494,59 @@ const Admin = () => {
                                 <Printer size={14} /> Imprimer Facture
                               </button>
                             </div>
+
+                            {/* Section Métadonnées Paiement & Adresse & Actions Wave */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5 text-xs">
+                              <div className="bg-gray-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-gray-100 dark:border-zinc-800/80">
+                                <span className="font-bold text-gray-400 dark:text-gray-500 block mb-1.5 uppercase tracking-wider text-[10px]">Moyen de Paiement</span>
+                                <span className={`font-black text-sm ${order.payment_method === 'Wave' ? 'text-blue-500 dark:text-blue-400' : 'text-gray-800 dark:text-gray-200'}`}>
+                                  {order.payment_method === 'Wave' ? 'Wave 📲' : (order.payment_method || 'Livraison / Espèces 📦')}
+                                </span>
+                              </div>
+                              <div className="bg-gray-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-gray-100 dark:border-zinc-800/80">
+                                <span className="font-bold text-gray-400 dark:text-gray-500 block mb-1.5 uppercase tracking-wider text-[10px]">Adresse de livraison</span>
+                                <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">
+                                  {order.customer_address || 'Non spécifiée'}
+                                </span>
+                              </div>
+                              <div className="bg-gray-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-gray-100 dark:border-zinc-800/80 flex flex-col justify-center gap-2">
+                                {order.payment_method === 'Wave' && order.status === 'pending' && (
+                                  <>
+                                    <a
+                                      href={getWhatsAppVerifyLink(order)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded-lg text-center flex items-center justify-center gap-1.5 transition-all shadow-sm text-[11px]"
+                                    >
+                                      <AlertTriangle size={12} /> Demander reçu (WhatsApp)
+                                    </a>
+                                    <button
+                                      onClick={async () => {
+                                        const success = await updateOrderStatus(order.id, 'paid');
+                                        if (success) {
+                                          showNotification("Commande confirmée comme payée !");
+                                          window.open(getWhatsAppPaidLink(order), '_blank');
+                                        }
+                                      }}
+                                      className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 px-3 rounded-lg text-center flex items-center justify-center gap-1.5 transition-all shadow-sm text-[11px]"
+                                    >
+                                      Confirmer & Envoyer Reçu
+                                    </button>
+                                  </>
+                                )}
+                                {order.payment_method === 'Wave' && order.status === 'paid' && (
+                                  <span className="text-emerald-500 font-extrabold text-center flex items-center justify-center gap-1.5 text-xs py-2">
+                                    ✓ Paiement Wave validé & enregistré
+                                  </span>
+                                )}
+                                {order.payment_method !== 'Wave' && (
+                                  <span className="text-gray-500 dark:text-gray-400 font-bold text-center py-2">
+                                    Règlement prévu à la livraison
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
                             <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
                               <table className="w-full text-left text-sm">
                                 <thead className="bg-gray-100 dark:bg-zinc-900 text-gray-500 dark:text-gray-400">
@@ -2549,7 +2623,12 @@ const Admin = () => {
 
                       <div className="flex justify-between items-end mt-4">
                         <div>
-                          <p className="font-bold text-xs text-gray-800 dark:text-gray-200">{order.customer_name}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-bold text-xs text-gray-800 dark:text-gray-200">{order.customer_name}</p>
+                            {order.payment_method === 'Wave' && (
+                              <span className="text-[8px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 px-1.5 py-0.5 rounded-full font-bold">Wave 📲</span>
+                            )}
+                          </div>
                           <p className="text-[11px] text-gray-500">{order.customer_phone}</p>
                         </div>
                         <div className="flex items-center gap-3">
@@ -2597,10 +2676,56 @@ const Admin = () => {
                             ))}
                           </div>
 
+                          <div className="grid grid-cols-2 gap-2 text-[10px]">
+                            <div className="bg-gray-50/50 dark:bg-zinc-950/20 p-2.5 rounded-xl border border-gray-150 dark:border-zinc-800/50">
+                              <span className="font-bold text-gray-500 dark:text-gray-400 block mb-0.5">Mode Paiement :</span>
+                              <span className={order.payment_method === 'Wave' ? 'text-blue-500 font-bold' : 'text-gray-700 dark:text-gray-300'}>
+                                {order.payment_method === 'Wave' ? 'Wave 📲' : (order.payment_method || 'Livraison / Espèces 📦')}
+                              </span>
+                            </div>
+                            <div className="bg-gray-50/50 dark:bg-zinc-950/20 p-2.5 rounded-xl border border-gray-150 dark:border-zinc-800/50">
+                              <span className="font-bold text-gray-500 dark:text-gray-400 block mb-0.5">Statut :</span>
+                              <span className="uppercase font-bold text-gray-700 dark:text-gray-300">
+                                {order.status === 'pending' ? 'En attente ⏳' : order.status === 'paid' ? 'Payé ✓' : 'Livré 🚚'}
+                              </span>
+                            </div>
+                          </div>
+
                           {order.customer_address && (
                             <div className="text-[11px] text-gray-500 bg-gray-50/50 dark:bg-zinc-950/25 p-3 rounded-xl border border-gray-150 dark:border-zinc-800/40">
                               <span className="font-bold text-gray-700 dark:text-gray-300 block mb-0.5">Adresse de livraison :</span>
                               {order.customer_address}
+                            </div>
+                          )}
+
+                          {order.payment_method === 'Wave' && order.status === 'pending' && (
+                            <div className="flex flex-col gap-2 pt-1">
+                              <a
+                                href={getWhatsAppVerifyLink(order)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl text-center flex items-center justify-center gap-1.5 text-xs transition-colors shadow-sm"
+                              >
+                                <AlertTriangle size={14} /> Demander reçu (WhatsApp)
+                              </a>
+                              <button
+                                onClick={async () => {
+                                  const success = await updateOrderStatus(order.id, 'paid');
+                                  if (success) {
+                                    showNotification("Commande confirmée comme payée !");
+                                    window.open(getWhatsAppPaidLink(order), '_blank');
+                                  }
+                                }}
+                                className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-xl text-center flex items-center justify-center gap-1.5 text-xs transition-colors shadow-sm"
+                              >
+                                Confirmer & Envoyer Reçu (WhatsApp)
+                              </button>
+                            </div>
+                          )}
+
+                          {order.payment_method === 'Wave' && order.status === 'paid' && (
+                            <div className="text-center text-emerald-500 font-extrabold text-xs py-1.5 bg-emerald-50 dark:bg-emerald-950/10 rounded-xl">
+                              ✓ Paiement Wave validé
                             </div>
                           )}
                         </div>
