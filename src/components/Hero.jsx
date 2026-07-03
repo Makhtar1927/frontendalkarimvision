@@ -186,11 +186,8 @@ const Hero = () => {
                 key={index}
                 onClick={() => setCurrent(index)}
                 aria-label={`Aller à la diapositive ${index + 1}`}
-                className="group flex flex-col items-start gap-1 text-left focus:outline-none cursor-pointer"
+                className="group focus:outline-none cursor-pointer py-2"
               >
-                <span className={`text-[9px] font-bold tracking-widest transition-colors duration-300 ${isActive ? 'text-brand-blue font-black' : 'text-gray-400 dark:text-zinc-500 group-hover:text-gray-650 dark:group-hover:text-zinc-300'}`}>
-                  0{index + 1}
-                </span>
                 <div className="w-12 sm:w-16 h-[2px] bg-gray-200 dark:bg-zinc-800 rounded-full overflow-hidden relative">
                   {isActive && (
                     <motion.div 
