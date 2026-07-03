@@ -5,8 +5,12 @@ import { Link } from 'react-router-dom';
 import { getOptimizedImageUrl } from '../utils/cloudinary';
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.1 } }),
+  hidden: { opacity: 0, y: 12 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }
+  }),
 };
 
 const VALEURS = [

@@ -173,12 +173,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
             className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm cursor-pointer"
           />
 
-          {/* Drawer */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 35 }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="cart-drawer-title"
@@ -191,14 +190,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute inset-0 z-[80] bg-white dark:bg-brand-gray-dark flex flex-col items-center justify-center text-center p-6"
                 >
                   <motion.div
-                    initial={{ scale: 0.5, rotate: -20 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: 'spring', bounce: 0.5 }}
+                    initial={{ scale: 0.92, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <CheckCircle2 size={90} className="text-green-500 mb-6" />
+                    <CheckCircle2 size={80} className="text-green-500 mb-6" />
                   </motion.div>
                   <h3 className="text-2xl font-black dark:text-white mb-2 uppercase tracking-wide">Commande Enregistrée !</h3>
                   <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs mx-auto">Vous allez être redirigé vers WhatsApp pour finaliser la livraison...</p>

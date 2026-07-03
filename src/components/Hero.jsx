@@ -104,7 +104,7 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0 flex items-center px-4 sm:px-12 lg:px-24"
         >
           {slideImage && (
@@ -124,9 +124,9 @@ const Hero = () => {
             <div className="max-w-xl space-y-3 sm:space-y-4">
               {currentSlide.category && (
                 <motion.span 
-                  initial={{ y: 15, opacity: 0 }}
+                  initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 }}
+                  transition={{ delay: 0.05, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold tracking-widest text-brand-blue bg-brand-blue/5 dark:bg-brand-blue/10 border border-brand-blue/20 uppercase backdrop-blur-md"
                 >
                   {currentSlide.category}
@@ -135,9 +135,9 @@ const Hero = () => {
 
               {currentSlide.title && (
                 <motion.h1 
-                  initial={{ y: 20, opacity: 0 }}
+                  initial={{ y: 12, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.1, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="text-2xl sm:text-5xl lg:text-6xl font-sans font-black text-gray-900 dark:text-white leading-tight tracking-tight uppercase"
                 >
                   {currentSlide.title}
@@ -146,9 +146,9 @@ const Hero = () => {
 
               {currentSlide.subtitle && (
                 <motion.p 
-                  initial={{ y: 15, opacity: 0 }}
+                  initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
+                  transition={{ delay: 0.15, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="text-xs sm:text-base md:text-lg text-gray-650 dark:text-gray-300 max-w-lg font-normal leading-relaxed"
                 >
                   {currentSlide.subtitle}
@@ -157,9 +157,9 @@ const Hero = () => {
 
               {slideRoute && (
                 <motion.div
-                  initial={{ y: 15, opacity: 0 }}
+                  initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.2, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="pt-2 sm:pt-4"
                 >
                   <button

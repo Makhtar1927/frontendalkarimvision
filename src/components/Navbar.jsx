@@ -232,8 +232,9 @@ const Navbar = () => {
       {isTrackingOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={closeTracking}>
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }} 
+            initial={{ opacity: 0, scale: 0.97 }} 
             animate={{ opacity: 1, scale: 1 }} 
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             onClick={e => e.stopPropagation()} 
             className="bg-white dark:bg-brand-gray-dark w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-gray-150 dark:border-zinc-800"
           >
@@ -299,7 +300,13 @@ const Navbar = () => {
       {/* MODALE RECHERCHE (DESKTOP) */}
       {isSearchOpen && (
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsSearchOpen(false)}>
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} onClick={e => e.stopPropagation()} className="bg-white dark:bg-brand-gray-dark w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-gray-150 dark:border-zinc-800">
+          <motion.div 
+            initial={{ opacity: 0, y: -12 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            onClick={e => e.stopPropagation()} 
+            className="bg-white dark:bg-brand-gray-dark w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-gray-150 dark:border-zinc-800"
+          >
             <div className="flex items-center p-4 border-b border-gray-100 dark:border-zinc-800">
               <Search className="text-gray-400 mr-3" size={22} />
               <input autoFocus type="text" placeholder="Rechercher des lunettes, des parfums, des montres..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex-1 bg-transparent border-none focus:outline-none dark:text-white text-base font-medium" />
