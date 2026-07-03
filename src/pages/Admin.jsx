@@ -504,7 +504,7 @@ const Admin = () => {
   // Fonction pour ouvrir la page en mode "Ajout"
   const handleOpenAdd = () => {
     setEditingId(null);
-    setFormData({ name: categories && categories.length > 0 ? categories[0].name : 'glasses', brand: '', category: categories && categories.length > 0 ? categories[0].name : 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: [] });
+    setFormData({ name: '', brand: '', category: categories && categories.length > 0 ? categories[0].name : 'glasses', base_price: '', compare_at_price: '', existing_media: [], subcategory: '', variants: [] });
     setSelectedFiles([]);
     setCurrentView('add-product');
   };
