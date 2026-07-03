@@ -1,18 +1,22 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const CATEGORIES = [
+const BASE_CATEGORIES = [
   { id: 'glasses', name: 'Lunettes',  route: '/category/glasses' },
   { id: 'perfume', name: 'Parfums',   route: '/category/perfume'  },
   { id: 'watches', name: 'Montres',   route: '/category/watches'  },
   { id: 'other',   name: 'Divers',    route: '/category/other'    },
-  { id: 'shop',    name: 'Tout voir', route: '/shop'              },
 ];
+
+// Repeat categories to fill the screen and make the infinite loop perfectly seamless
+const CATEGORIES = [];
+for (let i = 0; i < 6; i++) {
+  CATEGORIES.push(...BASE_CATEGORIES);
+}
 
 const CategoryStrip = () => {
   const navigate = useNavigate();
 
-  // Create two identical lists for seamless loop translation
   const firstList = [...CATEGORIES];
   const secondList = [...CATEGORIES];
 
