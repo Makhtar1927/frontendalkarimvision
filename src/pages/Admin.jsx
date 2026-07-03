@@ -2557,6 +2557,10 @@ const Admin = () => {
                       <input value={siteSettings.contact_email} onChange={e => setSiteSettings({...siteSettings, contact_email: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                     <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Téléphone de Contact</label>
+                      <input value={siteSettings.contact_phone} onChange={e => setSiteSettings({...siteSettings, contact_phone: e.target.value})} placeholder="22177..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                    </div>
+                    <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Téléphone WhatsApp (International)</label>
                       <input value={siteSettings.whatsapp_number} onChange={e => setSiteSettings({...siteSettings, whatsapp_number: e.target.value})} placeholder="22177..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-3 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
