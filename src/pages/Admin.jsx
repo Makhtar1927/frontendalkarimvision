@@ -25,6 +25,55 @@ const MONTHS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Se
 
 const PIE_COLORS = ['#0284c7', '#1e293b', '#0369a1', '#64748b', '#0ea5e9']; // Bleu de la marque, Slate, Bleu foncé, Gris, Accent
 
+// Fonction utilitaire de compression d'image côté client
+const compressImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0.7) => {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/')) {
+      return resolve(file);
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return resolve(file);
+            const compressedFile = new File([blob], file.name, {
+              type: file.type,
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          },
+          file.type,
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+};
+
 const Admin = () => {
   // --- ÉTAT DU STORE (Sélecteurs optimisés pour éviter les re-renders infinis) ---
   const products = useProductStore(state => state.products);
@@ -680,10 +729,23 @@ const Admin = () => {
     data.append('is_on_sale', formData.compare_at_price && parseFloat(formData.compare_at_price) > parseFloat(formData.base_price) ? 'true' : 'false');
     data.append('subcategory', formData.subcategory || '');
     
-    // Ajout des fichiers multiples
-    selectedFiles.forEach(file => {
-      data.append('media', file);
-    });
+    // On active le spinner
+    setIsUploading(true);
+
+    // Ajout des fichiers multiples avec compression côté client pour éviter les timeouts (ex: photos 17MB)
+    try {
+      const compressedFiles = await Promise.all(
+        selectedFiles.map(file => compressImage(file, 1200, 1200, 0.7))
+      );
+      compressedFiles.forEach(file => {
+        data.append('media', file);
+      });
+    } catch (err) {
+      console.error("Erreur lors de la compression des images, envoi des fichiers originaux:", err);
+      selectedFiles.forEach(file => {
+        data.append('media', file);
+      });
+    }
     
     // Si c'est une modification, on envoie aussi les médias existants conservés
     if (editingId) {
@@ -693,8 +755,6 @@ const Admin = () => {
     // Ajout des variantes
     data.append('variants', JSON.stringify(formData.variants || []));
 
-    // On active le spinner, on attend l'upload complet, puis on désactive
-    setIsUploading(true);
     let success = false;
     if (editingId) {
       success = await updateProduct(editingId, data);
