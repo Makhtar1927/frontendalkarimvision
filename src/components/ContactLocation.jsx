@@ -104,7 +104,7 @@ const ContactLocation = () => {
             {/* Carte Google Maps */}
             <div className="relative h-[200px] w-full rounded-xl overflow-hidden border-4 border-white dark:border-brand-gray-dark shadow-xl">
               <iframe 
-                src="https://maps.google.com/maps?q=14.8605356,-15.8835194&hl=fr&z=17&output=embed" 
+                src="https://maps.google.com/maps?q=14.860536,-15.883519&hl=fr&z=17&output=embed" 
                 width="100%" 
                 height="100%" 
                 title="Carte Google Maps indiquant l'emplacement du Showroom Al Karim Vision"

@@ -79,8 +79,8 @@ const Home = () => {
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": "14.8605356",
-      "longitude": "-15.8835194"
+      "latitude": "14.860536",
+      "longitude": "-15.883519"
     },
     "openingHoursSpecification": {
       "@type": "OpeningHoursSpecification",
@@ -96,7 +96,7 @@ const Home = () => {
       "closes": "21:00"
     },
     "sameAs": [
-      "https://maps.app.goo.gl/tUo6M6r6uXyS1JbZ8"
+      "https://maps.google.com/?q=14.860536,-15.883519"
     ]
   };
 

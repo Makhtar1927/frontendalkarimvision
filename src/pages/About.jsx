@@ -264,7 +264,7 @@ export default function About() {
                 </p>
               </div>
               <a
-                href="https://maps.google.com/?q=Touba+Senegal"
+                href="https://maps.google.com/?q=14.860536,-15.883519"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 mt-6 text-xs font-bold text-brand-blue hover:underline"
