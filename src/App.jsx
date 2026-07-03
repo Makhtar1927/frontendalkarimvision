@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
 import MobileBottomNav from './components/MobileBottomNav';
 import { useProductStore } from './store/useProductStore';
+import ScrollToTop from './components/ScrollToTop';
 
 // Le "Lazy loading" des pages améliore les performances.
 const Admin = React.lazy(() => import('./pages/Admin'));
@@ -42,6 +43,7 @@ function App() {
   
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-brand-gray-dark transition-colors duration-300 overflow-x-hidden w-full md:pb-0 pb-16">
+      <ScrollToTop />
       {!isAdminPage && !isMaintenancePage && <Navbar />}
       <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
       <main id="main-content" className="flex-grow">
