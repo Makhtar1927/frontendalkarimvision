@@ -1,134 +1,8 @@
 import { create } from 'zustand';
 import { apiFetch } from '../components/api';
 
-// --- RICH DEMO DATA ---
-const DEMO_PRODUCTS = [
-  // ----------- LUNETTES (glasses) -----------
-  {
-    id: 'glasses-1',
-    category: 'glasses',
-    subcategory: 'noir_fume',
-    brand: 'Ray-Ban',
-    name: 'Ray-Ban Aviator Classic',
-    base_price: '85000.00',
-    image_url: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=800&auto=format&fit=crop',
-    variants: [
-      { sku: 'RB-AVIATOR', attribute_value: 'Standard', price_modifier: 0, stock_quantity: 15 }
-    ]
-  },
-  {
-    id: 'glasses-2',
-    category: 'glasses',
-    subcategory: 'photogray',
-    brand: 'Oakley',
-    name: 'Oakley Holbrook',
-    base_price: '95000.00',
-    image_url: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=800&auto=format&fit=crop',
-    variants: [
-      { sku: 'OK-HOLBROOK-BLK', attribute_value: 'Noir Mat', price_modifier: 0, stock_quantity: 10 },
-      { sku: 'OK-HOLBROOK-BLU', attribute_value: 'Prism Saphir', price_modifier: 15000, stock_quantity: 5 }
-    ]
-  },
-  {
-    id: 'glasses-3',
-    category: 'glasses',
-    subcategory: 'noir_fume',
-    brand: 'Tom Ford',
-    name: 'Tom Ford Square Sunglasses',
-    base_price: '120000.00',
-    image_url: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?q=80&w=800&auto=format&fit=crop',
-    variants: [
-      { sku: 'TF-SQR-SUN', attribute_value: 'Standard', price_modifier: 0, stock_quantity: 8 }
-    ]
-  },
+// Mode Production : Pas de données de démonstration.
 
-  // ----------- PARFUMERIE (perfume) -----------
-  {
-    id: 'perf-1',
-    category: 'perfume',
-    subcategory: 'avec_alcool',
-    brand: 'Tom Ford',
-    name: 'Oud Wood Eau de Parfum',
-    base_price: '160000.00',
-    image_url: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800',
-    variants: [{ sku: 'TF-OUD-50', attribute_value: '50ml', price_modifier: 0, stock_quantity: 5 }]
-  },
-  {
-    id: 'perf-2',
-    category: 'perfume',
-    subcategory: 'sans_alcool',
-    brand: 'Maison Francis Kurkdjian',
-    name: 'Baccarat Rouge 540',
-    base_price: '200000.00',
-    image_url: 'https://images.unsplash.com/photo-1616422285623-14bf93f2f0c7?auto=format&fit=crop&q=80&w=800',
-    variants: [{ sku: 'MFK-BR540-70', attribute_value: '70ml', price_modifier: 0, stock_quantity: 12 }]
-  },
-  {
-    id: 'perf-3',
-    category: 'perfume',
-    subcategory: 'avec_alcool',
-    brand: 'Creed',
-    name: 'Aventus',
-    base_price: '195000.00',
-    image_url: 'https://images.unsplash.com/photo-1629858607106-9bd6d5254dfb?auto=format&fit=crop&q=80&w=800',
-    variants: [{ sku: 'CRD-AVE-100', attribute_value: '100ml', price_modifier: 0, stock_quantity: 8 }]
-  },
-  {
-    id: 'perf-4',
-    category: 'perfume',
-    subcategory: 'avec_alcool',
-    brand: 'Dior',
-    name: 'Sauvage Elixir',
-    base_price: '120000.00',
-    image_url: 'https://images.unsplash.com/photo-1582211594533-268f4f1edcb9?auto=format&fit=crop&q=80&w=800',
-    variants: [{ sku: 'DIOR-SAU-60', attribute_value: '60ml', price_modifier: 0, stock_quantity: 25 }]
-  },
-
-  // ----------- MONTRES (watches) -----------
-  {
-    id: 'watches-1',
-    category: 'watches',
-    brand: 'Seiko',
-    name: 'Seiko 5 Sports',
-    base_price: '195000.00',
-    image_url: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=800&auto=format&fit=crop',
-    variants: [
-      { sku: 'SK-5SPORTS', attribute_value: 'Acier', price_modifier: 0, stock_quantity: 8 }
-    ]
-  },
-  {
-    id: 'watches-2',
-    category: 'watches',
-    brand: 'Tissot',
-    name: 'Tissot PRX Powermatic 80',
-    base_price: '450000.00',
-    image_url: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?q=80&w=800&auto=format&fit=crop',
-    variants: [
-      { sku: 'TS-PRX-BLU', attribute_value: 'Cadran Bleu', price_modifier: 0, stock_quantity: 5 },
-      { sku: 'TS-PRX-BLK', attribute_value: 'Cadran Noir', price_modifier: 0, stock_quantity: 4 }
-    ]
-  },
-
-  // ----------- DIVERS (other) -----------
-  {
-    id: 'other-1',
-    category: 'other',
-    brand: 'Oraimo',
-    name: 'SpaceBuds Beyond Sound',
-    base_price: '35000.00',
-    image_url: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=800&auto=format&fit=crop',
-    variants: [{ sku: 'OR-SPACEBUDS', attribute_value: 'Standard', price_modifier: 0, stock_quantity: 15 }]
-  },
-  {
-    id: 'other-2',
-    category: 'other',
-    brand: 'Oraimo',
-    name: 'SmartTrimmer Multi-fonction',
-    base_price: '18000.00',
-    image_url: 'https://images.unsplash.com/photo-1621607512214-68297480165e?q=80&w=800&auto=format&fit=crop',
-    variants: [{ sku: 'OR-TRIMMER', attribute_value: 'Standard', price_modifier: 0, stock_quantity: 10 }]
-  }
-];
 
 export const useProductStore = create((set, get) => ({
   products: [],
@@ -199,8 +73,8 @@ export const useProductStore = create((set, get) => ({
     } catch (err) {
       console.error("Erreur fetchProducts:", err);
       set({ 
-        products: DEMO_PRODUCTS, 
-        categories: [
+        products: [], 
+        categories: get().categories.length > 0 ? get().categories : [
           { id: 1, name: 'glasses', slug: 'glasses' },
           { id: 2, name: 'perfume', slug: 'perfume' },
           { id: 3, name: 'watches', slug: 'watches' },
@@ -230,7 +104,7 @@ export const useProductStore = create((set, get) => ({
         apiFetch('/products/categories')
       ]);
 
-      let productsData = DEMO_PRODUCTS;
+      let productsData = [];
       if (productsRes.ok) {
         const data = await productsRes.json();
         productsData = data.products || data;
@@ -261,10 +135,10 @@ export const useProductStore = create((set, get) => ({
         isInitialLoaded: true 
       });
     } catch (err) {
-      console.error("Échec du chargement Admin - Mode Démo activé:", err);
+      console.error("Échec du chargement Admin :", err);
       set({ 
-        products: DEMO_PRODUCTS, 
-        categories: [
+        products: [], 
+        categories: get().categories.length > 0 ? get().categories : [
           { id: 1, name: 'glasses', slug: 'glasses' },
           { id: 2, name: 'perfume', slug: 'perfume' },
           { id: 3, name: 'watches', slug: 'watches' },
