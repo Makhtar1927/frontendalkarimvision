@@ -164,8 +164,9 @@ const INITIAL_SETTINGS = {
   delivery_cost_dakar: 2000,
   delivery_cost_suburbs: 3000,
   delivery_cost_regions: 5000,
-  instagram_link: "https://instagram.com/alkarimvision",
-  tiktok_link: "https://tiktok.com/@alkarimvision"
+  instagram_link: "https://www.instagram.com/al_karim_vision_566?igsh=MnhkcXV3emQ5MDNr",
+  tiktok_link: "https://www.tiktok.com/@alkarimvision?_r=1&_t=ZS-97ekUvrRmZ2",
+  snapchat_link: "https://www.snapchat.com/add/alkarimvision66"
 };
 
 const INITIAL_SLIDES = [

@@ -88,7 +88,7 @@ const Admin = () => {
   const [siteSettings, setSiteSettings] = useState({
     store_name: '', contact_phone: '', contact_email: '', contact_address: '',
     maps_link: '', whatsapp_number: '', facebook_link: '', instagram_link: '',
-    tiktok_link: '', maintenance_mode: false, delivery_cost_dakar: 2000,
+    tiktok_link: '', snapchat_link: '', maintenance_mode: false, delivery_cost_dakar: 2000,
     delivery_cost_suburbs: 3000, delivery_cost_regions: 5000
   });
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
@@ -2594,11 +2594,15 @@ const Admin = () => {
                     <h3 className="md:col-span-2 font-bold dark:text-white uppercase tracking-widest text-sm text-brand-blue">Réseaux Sociaux</h3>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Instagram</label>
-                      <input value={siteSettings.instagram_link} onChange={e => setSiteSettings({...siteSettings, instagram_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                      <input value={siteSettings.instagram_link} onChange={e => setSiteSettings({...siteSettings, instagram_link: e.target.value})} placeholder="https://instagram.com/..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">TikTok</label>
-                      <input value={siteSettings.tiktok_link} onChange={e => setSiteSettings({...siteSettings, tiktok_link: e.target.value})} className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                      <input value={siteSettings.tiktok_link} onChange={e => setSiteSettings({...siteSettings, tiktok_link: e.target.value})} placeholder="https://tiktok.com/@..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Snapchat</label>
+                      <input value={siteSettings.snapchat_link} onChange={e => setSiteSettings({...siteSettings, snapchat_link: e.target.value})} placeholder="https://snapchat.com/add/..." className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-full px-4 py-2 dark:text-white focus:border-brand-blue outline-none transition-colors" />
                     </div>
                   </div>
 
