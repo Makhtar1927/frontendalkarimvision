@@ -259,7 +259,7 @@ export default function About() {
                 </div>
                 <h3 className="font-bold text-base mb-2 dark:text-white">Adresse</h3>
                 <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
-                  Niari, Route de Ndiouga Kébé<br />
+                  Niary Etage, Route de Ndiouga Kébé<br />
                   <strong className="text-gray-800 dark:text-gray-200">Touba, Sénégal</strong>
                 </p>
               </div>

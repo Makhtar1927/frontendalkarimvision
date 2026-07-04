@@ -159,7 +159,7 @@ const INITIAL_SETTINGS = {
   contact_email: "amdydieng062@gmail.com",
   contact_phone: "221765662711",
   whatsapp_number: "221765662711",
-  contact_address: "Niari, Route de Ndiouga Kébé, Touba, Sénégal",
+  contact_address: "Niary Etage, Route de Ndiouga Kébé, Touba, Sénégal",
   maps_link: "https://www.google.com/maps?q=14.8605356,-15.8835194&z=17&hl=fr",
   delivery_cost_dakar: 2000,
   delivery_cost_suburbs: 3000,
