@@ -131,20 +131,20 @@ const Navbar = () => {
               </Link>
 
               {/* ZONE DE RECHERCHE MOBILE (ALIGNÉE À CÔTÉ DU LOGO) */}
-              <div className="lg:hidden flex-1 max-w-[150px] xs:max-w-[200px] sm:max-w-md mx-1 sm:mx-4 relative">
+              <div className="lg:hidden flex-1 max-w-[180px] xs:max-w-[240px] sm:max-w-lg mx-1 sm:mx-4 relative">
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
                   <input 
                     type="text" 
                     placeholder="Rechercher..." 
                     value={searchQuery} 
                     onChange={e => setSearchQuery(e.target.value)} 
-                    className="w-full pl-8 pr-7 py-1.5 text-xs bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-brand-blue dark:text-white" 
+                    className="w-full pl-9 pr-8 py-1.5 text-xs bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-full focus:outline-none focus:border-brand-blue dark:text-white" 
                   />
                   {searchQuery && (
                     <button 
                       onClick={() => setSearchQuery('')} 
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-650"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-650"
                     >
                       <X size={10} />
                     </button>
