@@ -11,6 +11,7 @@ import { useProductStore } from './store/useProductStore';
 import ScrollToTop from './components/ScrollToTop';
 import { TrackingManager } from './components/TrackingManager';
 import AdminNotificationManager from './components/AdminNotificationManager';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 // Le "Lazy loading" des pages améliore les performances.
 const Admin = React.lazy(() => import('./pages/Admin'));
@@ -74,6 +75,7 @@ function App() {
       </main>
       {!isAdminPage && !isMaintenancePage && <Footer />}
       {!isAdminPage && !isMaintenancePage && <MobileBottomNav />}
+      {!isAdminPage && !isMaintenancePage && <PWAInstallPrompt />}
       {/* Trigger build for public repository deployment validation */}
     </div>
   );
