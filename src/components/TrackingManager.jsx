@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useProductStore } from '../store/useProductStore';
+import { apiFetch } from './api';
 
 // Déclarations globales pour empêcher les erreurs de compilation/linter JS
 /* global fbq, gtag, ttq */
@@ -13,6 +15,35 @@ const isScriptLoaded = (id) => !!document.getElementById(id);
  */
 export const TrackingManager = () => {
   const { settings } = useProductStore();
+  const location = useLocation();
+
+  // --- SUIVI AUTOMATIQUE DES VISITEURS ---
+  useEffect(() => {
+    // Récupérer ou générer un ID de session unique
+    let sessionId = sessionStorage.getItem('site_session_id');
+    if (!sessionId) {
+      sessionId = 'sess_' + Math.random().toString(36).substring(2, 15) + '_' + Date.now();
+      sessionStorage.setItem('site_session_id', sessionId);
+    }
+
+    const path = location.pathname;
+
+    // Ne pas tracer les pages d'administration
+    if (path.startsWith('/admin')) return;
+
+    // Envoi de la visite au backend
+    apiFetch('/visits', {
+      method: 'POST',
+      body: JSON.stringify({
+        session_id: sessionId,
+        page_path: path,
+        referrer: document.referrer || ''
+      })
+    }).catch(err => {
+      // Échoue silencieusement pour ne pas perturber l'expérience utilisateur
+      console.debug('[Tracking] Erreur enregistrement visite:', err);
+    });
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!settings) return;

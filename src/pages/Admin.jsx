@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '../store/useProductStore';
 import { useAuthStore } from '../store/useAuthStore';
-import { AlertTriangle, LayoutGrid, List, PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image, ArrowLeft, PlusCircle, FolderPlus, Tag } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { AlertTriangle, LayoutGrid, List, PackageSearch, Plus, LayoutDashboard, Settings, Trash2, Edit, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Users, DollarSign, ShoppingBag, X, MessageSquare, Star, UserPlus, Shield, Download, Printer, Activity, LogOut, Menu, Link, Loader2, Filter, Save, Image, ArrowLeft, PlusCircle, FolderPlus, Tag, Eye, Globe, Monitor, Smartphone, RefreshCw } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, AreaChart, Area } from 'recharts';
 import { apiFetch } from '../components/api';
 import SEO from '../components/SEO';
 
@@ -14,6 +14,7 @@ const ADMIN_TABS = [
   { id: 'add-category', label: 'Créer Catalogue', icon: FolderPlus },
   { id: 'orders', label: 'Commandes', icon: ShoppingBag },
   { id: 'reviews', label: 'Avis Clients', icon: MessageSquare },
+  { id: 'traffic', label: 'Visiteurs', icon: Eye, adminOnly: true },
   { id: 'team', label: 'Équipe', icon: Users, adminOnly: true },
   { id: 'audit', label: 'Journal', icon: Activity, adminOnly: true },
   { id: 'slides', label: 'Carrousel Accueil', icon: Image, adminOnly: true },
@@ -130,6 +131,10 @@ const Admin = () => {
 
   // Nouveaux états pour le journal d'audit
   const [auditLogs, setAuditLogs] = useState([]);
+  
+  // États pour le trafic (Visiteurs)
+  const [trafficStats, setTrafficStats] = useState(null);
+  const [isTrafficLoading, setIsTrafficLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [catalogViewMode, setCatalogViewMode] = useState('grid');
@@ -607,6 +612,22 @@ const Admin = () => {
         } catch (err) { console.error("Erreur audit:", err); }
       };
       loadAudit();
+    }
+  }, [activeTab, userRole]);
+
+  // Charger les statistiques de trafic
+  const fetchTrafficStats = async () => {
+    setIsTrafficLoading(true);
+    try {
+      const res = await apiFetch('/visits/stats');
+      if (res.ok) setTrafficStats(await res.json());
+    } catch (err) { console.error("Erreur trafic:", err); }
+    finally { setIsTrafficLoading(false); }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'traffic' && userRole === 'admin') {
+      fetchTrafficStats();
     }
   }, [activeTab, userRole]);
 
@@ -2908,6 +2929,328 @@ const Admin = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* SECTION : TRAFIC (VISITEURS) */}
+        {activeTab === 'traffic' && userRole === 'admin' && (
+          <div className="animate-in fade-in duration-300">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold dark:text-white flex items-center gap-2">
+                  <Eye className="text-brand-blue" size={28} />
+                  Analyses & Trafic
+                </h1>
+                <p className="text-gray-500 mt-2 text-sm sm:text-base">Suivi en temps réel des visiteurs, de l'audience et du comportement des utilisateurs.</p>
+              </div>
+              <button 
+                onClick={fetchTrafficStats} 
+                disabled={isTrafficLoading}
+                className="self-start sm:self-center flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-gray-200 dark:border-zinc-800 rounded-xl text-sm font-semibold dark:text-white transition-colors duration-200"
+              >
+                <RefreshCw size={16} className={isTrafficLoading ? "animate-spin" : ""} />
+                Actualiser
+              </button>
+            </div>
+
+            {/* CHARGEMENT STATS */}
+            {isTrafficLoading && !trafficStats ? (
+              <div className="min-h-[400px] flex flex-col items-center justify-center gap-3">
+                <Loader2 className="animate-spin text-brand-blue" size={32} />
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Chargement des statistiques...</p>
+              </div>
+            ) : !trafficStats ? (
+              <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-8 text-center text-gray-500">
+                Aucune donnée de trafic disponible.
+              </div>
+            ) : (
+              <>
+                {/* CARTES KPI */}
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+                  {/* Visiteurs en ligne */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[11px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-wider">En ligne (15m)</span>
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                      </span>
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-extrabold dark:text-white">{trafficStats.kpis.active_15m}</div>
+                    <p className="text-[10px] text-gray-400 mt-2">Sessions actives</p>
+                  </div>
+
+                  {/* Visiteurs uniques 24h */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
+                    <div className="text-[11px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-wider mb-3">Visiteurs (24h)</div>
+                    <div className="text-2xl sm:text-3xl font-extrabold dark:text-white">{trafficStats.kpis.visitors_24h}</div>
+                    <p className="text-[10px] text-gray-400 mt-2">Visiteurs uniques</p>
+                  </div>
+
+                  {/* Pages Vues 24h */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
+                    <div className="text-[11px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-wider mb-3">Pages Vues (24h)</div>
+                    <div className="text-2xl sm:text-3xl font-extrabold dark:text-white">{trafficStats.kpis.views_24h}</div>
+                    <p className="text-[10px] text-gray-400 mt-2">Total des pages vues</p>
+                  </div>
+
+                  {/* Total Visiteurs */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
+                    <div className="text-[11px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-wider mb-3">Visiteurs (Total)</div>
+                    <div className="text-2xl sm:text-3xl font-extrabold dark:text-white">{trafficStats.kpis.visitors_total}</div>
+                    <p className="text-[10px] text-gray-400 mt-2">Visiteurs cumulés</p>
+                  </div>
+
+                  {/* Total Vues */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
+                    <div className="text-[11px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-wider mb-3">Pages Vues (Total)</div>
+                    <div className="text-2xl sm:text-3xl font-extrabold dark:text-white">{trafficStats.kpis.views_total}</div>
+                    <p className="text-[10px] text-gray-400 mt-2">Pages vues cumulées</p>
+                  </div>
+                </div>
+
+                {/* GRAPHIQUE DE TRAFIC DES 14 DERNIERS JOURS */}
+                <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 shadow-sm mb-8">
+                  <h3 className="font-bold text-gray-800 dark:text-white mb-4 text-base">Historique des visites (14 derniers jours)</h3>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={trafficStats.history}
+                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#0284c7" stopOpacity={0.2}/>
+                            <stop offset="95%" stopColor="#0284c7" stopOpacity={0}/>
+                          </linearGradient>
+                          <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" className="dark:stroke-zinc-800" />
+                        <XAxis 
+                          dataKey="date_str" 
+                          stroke="#94a3b8" 
+                          fontSize={10} 
+                          tickLine={false}
+                          axisLine={false}
+                          tickFormatter={(str) => {
+                            const date = new Date(str);
+                            return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+                          }}
+                        />
+                        <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            borderColor: '#e2e8f0', 
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                            fontSize: '11px',
+                            color: '#1e293b'
+                          }}
+                          labelFormatter={(str) => {
+                            const date = new Date(str);
+                            return date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                          }}
+                        />
+                        <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                        <Area type="monotone" name="Pages consultées" dataKey="page_views" stroke="#0284c7" strokeWidth={2.5} fillOpacity={1} fill="url(#colorViews)" />
+                        <Area type="monotone" name="Visiteurs uniques" dataKey="unique_visitors" stroke="#0ea5e9" strokeWidth={2.5} fillOpacity={1} fill="url(#colorUsers)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* DOUBLE GRILLE DES TABLES : TOP PAGES & TOP REFERRERS */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                  {/* Top Pages */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-150 dark:border-zinc-800 rounded-2xl shadow-sm p-6 overflow-hidden">
+                    <h3 className="font-bold text-gray-800 dark:text-white mb-4 text-base flex items-center gap-2">
+                      <Link size={18} className="text-brand-blue" />
+                      Pages les plus visitées
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse text-sm">
+                        <thead>
+                          <tr className="text-gray-400 text-xs border-b border-gray-100 dark:border-zinc-800">
+                            <th className="pb-2 font-medium">Page</th>
+                            <th className="pb-2 font-medium text-right">Vues</th>
+                            <th className="pb-2 font-medium text-right">Uniques</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50 dark:divide-zinc-850">
+                          {trafficStats.topPages.length === 0 ? (
+                            <tr><td colSpan="3" className="py-4 text-center text-gray-500">Aucune donnée.</td></tr>
+                          ) : (
+                            trafficStats.topPages.map((page, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-zinc-900/30 transition-colors">
+                                <td className="py-2.5 font-medium truncate max-w-[200px] dark:text-zinc-300">
+                                  {page.page_path === '/' ? 'Accueil ( / )' : page.page_path}
+                                </td>
+                                <td className="py-2.5 text-right font-bold text-gray-900 dark:text-white">{page.views}</td>
+                                <td className="py-2.5 text-right font-medium text-gray-500 dark:text-gray-400">{page.unique_views}</td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Top Referrers */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-150 dark:border-zinc-800 rounded-2xl shadow-sm p-6 overflow-hidden">
+                    <h3 className="font-bold text-gray-800 dark:text-white mb-4 text-base flex items-center gap-2">
+                      <Globe size={18} className="text-brand-blue" />
+                      Origine des visites (Référents)
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse text-sm">
+                        <thead>
+                          <tr className="text-gray-400 text-xs border-b border-gray-100 dark:border-zinc-800">
+                            <th className="pb-2 font-medium">Source</th>
+                            <th className="pb-2 font-medium text-right">Vues</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50 dark:divide-zinc-850">
+                          {trafficStats.topReferrers.length === 0 ? (
+                            <tr><td colSpan="2" className="py-4 text-center text-gray-500">Aucune donnée.</td></tr>
+                          ) : (
+                            trafficStats.topReferrers.map((ref, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-zinc-900/30 transition-colors">
+                                <td className="py-2.5 font-medium truncate max-w-[220px] dark:text-zinc-300">
+                                  {ref.referrer_site}
+                                </td>
+                                <td className="py-2.5 text-right font-bold text-gray-900 dark:text-white">{ref.views}</td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* RÉPARTITION APPAREILS & NAVIGATEURS */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                  {/* Appareils */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm p-6">
+                    <h3 className="font-bold text-gray-800 dark:text-white mb-5 text-base flex items-center gap-2">
+                      <Smartphone size={18} className="text-brand-blue" />
+                      Répartition par appareil (30 derniers jours)
+                    </h3>
+                    <div className="space-y-4">
+                      {trafficStats.devices.length === 0 ? (
+                        <p className="text-center text-gray-500 py-4">Aucune donnée d'appareil.</p>
+                      ) : (
+                        trafficStats.devices.map((device, idx) => (
+                          <div key={idx} className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="font-medium dark:text-zinc-300 flex items-center gap-2">
+                                {device.name === 'Mobile' ? <Smartphone size={14} className="text-gray-400" /> : <Monitor size={14} className="text-gray-400" />}
+                                {device.name}
+                              </span>
+                              <span className="font-bold dark:text-white">{device.percentage}% ({device.value} vues)</span>
+                            </div>
+                            <div className="w-full h-2.5 bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-brand-blue rounded-full" 
+                                style={{ width: `${device.percentage}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Navigateurs */}
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm p-6">
+                    <h3 className="font-bold text-gray-800 dark:text-white mb-5 text-base flex items-center gap-2">
+                      <Monitor size={18} className="text-brand-blue" />
+                      Répartition par navigateur (30 derniers jours)
+                    </h3>
+                    <div className="space-y-4">
+                      {trafficStats.browsers.length === 0 ? (
+                        <p className="text-center text-gray-500 py-4">Aucune donnée de navigateur.</p>
+                      ) : (
+                        trafficStats.browsers.map((browser, idx) => (
+                          <div key={idx} className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="font-medium dark:text-zinc-300">{browser.name}</span>
+                              <span className="font-bold dark:text-white">{browser.percentage}% ({browser.value} vues)</span>
+                            </div>
+                            <div className="w-full h-2.5 bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-sky-500 rounded-full" 
+                                style={{ width: `${browser.percentage}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* JOURNAL DES VISITES EN DIRECT (LATEST 100) */}
+                <div className="bg-white dark:bg-brand-gray-dark border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-gray-100 dark:border-zinc-800/80">
+                    <h3 className="font-bold text-gray-800 dark:text-white text-base">Journal des visites en direct</h3>
+                    <p className="text-xs text-gray-400 mt-1">Les 100 dernières requêtes enregistrées sur la boutique.</p>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs min-w-[800px]">
+                      <thead>
+                        <tr className="bg-gray-50 dark:bg-zinc-900 text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-zinc-800">
+                          <th className="p-4 font-semibold">Date / Heure</th>
+                          <th className="p-4 font-semibold">Adresse IP</th>
+                          <th className="p-4 font-semibold">Appareil / Navigateur</th>
+                          <th className="p-4 font-semibold">Page consultée</th>
+                          <th className="p-4 font-semibold">Source (Referrer)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50 dark:divide-zinc-850">
+                        {trafficStats.recentVisits.length === 0 ? (
+                          <tr><td colSpan="5" className="p-8 text-center text-gray-500">Aucun visiteur enregistré pour le moment.</td></tr>
+                        ) : (
+                          trafficStats.recentVisits.map((visit) => {
+                            // Mask last segment of IP for basic privacy
+                            const parts = visit.ip_address.split('.');
+                            const maskedIp = parts.length === 4 
+                              ? `${parts[0]}.${parts[1]}.${parts[2]}.***` 
+                              : visit.ip_address;
+                            
+                            return (
+                              <tr key={visit.id} className="hover:bg-gray-50/50 dark:hover:bg-zinc-900/30 transition-colors">
+                                <td className="p-4 text-gray-500 whitespace-nowrap">
+                                  {new Date(visit.created_at).toLocaleString('fr-FR')}
+                                </td>
+                                <td className="p-4 font-mono font-medium text-gray-700 dark:text-zinc-300">
+                                  {maskedIp}
+                                </td>
+                                <td className="p-4 dark:text-zinc-300 whitespace-nowrap">
+                                  <span className="font-bold">{visit.device}</span>
+                                  <span className="text-gray-400 dark:text-zinc-500 mx-1.5">•</span>
+                                  <span>{visit.browser}</span>
+                                </td>
+                                <td className="p-4 font-semibold text-brand-blue truncate max-w-[200px]">
+                                  {visit.page_path}
+                                </td>
+                                <td className="p-4 text-gray-500 truncate max-w-[200px]">
+                                  {visit.referrer || 'Direct'}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 
